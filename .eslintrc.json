@@ -25,6 +25,7 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "import/no-anonymous-default-export": "off",
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
     "no-return-assign": "off",
