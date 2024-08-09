@@ -13,6 +13,12 @@ export default {
   // Theme Properties를 Tailwind에 적용합니다.
   theme: {
     extend: {
+      borderRadius: {
+        "ex-large": "2rem",
+        large: "1.5rem",
+        medium: "1rem",
+        small: "0.5rem",
+      },
       // Tailwind에서 "text-{semantic}-{size}"로 Text Style을 적용할 수 있습니다.
       fontSize: ({ theme }) =>
         Object.entries(text).reduce(

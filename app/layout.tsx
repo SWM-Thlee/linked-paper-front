@@ -42,7 +42,7 @@ export default function RootLayout({
     >
       <body className="bg-light-surfaceContainer dark:bg-dark-surfaceContainer">
         <Providers themeProps={{ attribute: "class", enableSystem: true }}>
-          <div className="mx-auto flex min-h-dvh flex-col flex-nowrap items-center gap-16">
+          <div className="mx-auto flex min-h-dvh flex-col items-center justify-between gap-16">
             {header}
             {children}
             {footer}

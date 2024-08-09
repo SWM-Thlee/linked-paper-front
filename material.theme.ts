@@ -1,23 +1,31 @@
-// Material Theme에서 정의하는 Text Styles입니다.
-type FontSemantic = "display" | "headline" | "body" | "label" | "title";
-type FontSize = "large" | "medium" | "small";
-type FontWeight =
-  | "thin"
-  | "extralight"
-  | "light"
-  | "normal"
-  | "medium"
-  | "semibold"
-  | "bold"
-  | "extrabold"
-  | "black";
+export const scheme = {
+  theme: ["light", "dark"],
+  color: ["primary", "secondary", "teritary", "error"],
+  extraColor: ["container"],
+  font: {
+    semantic: ["display", "headline", "body", "label", "title"],
+    size: ["large", "medium", "small"],
+    weight: [
+      "thin",
+      "extralight",
+      "light",
+      "normal",
+      "medium",
+      "semibold",
+      "bold",
+      "extrabold",
+      "black",
+    ],
+  },
+} as const;
 
+// Material Theme에서 정의하는 Text Styles입니다.
 export type MaterialThemeTextStyles = {
-  [semantic in FontSemantic]: {
-    [size in FontSize]: {
+  [semantic in (typeof scheme.font.semantic)[number]]: {
+    [size in (typeof scheme.font.size)[number]]: {
       fontSize: number;
       lineHeight: number;
-      fontWeight: FontWeight;
+      fontWeight: (typeof scheme.font.weight)[number];
       letterSpacing: number;
     };
   };
@@ -127,11 +135,9 @@ export const text: MaterialThemeTextStyles = {
 };
 
 // Material Theme에서 정의하는 Color Styles입니다.
-type ColorTheme = "light" | "dark";
-
 export type MaterialThemeColorStyles = {
-  [theme in ColorTheme]: {
-    // 각 색상은 Hex Code로 삽입된다.
+  [theme in (typeof scheme.theme)[number]]: {
+    // 각 색상은 Hex Code로 삽입됩니다.
     [semanticColor: string]: `#${string}`;
   };
 };
@@ -165,21 +171,6 @@ export const color: MaterialThemeColorStyles = {
     outlineVariant: "#C7C5D0",
     shadow: "#000000",
     scrim: "#000000",
-    inverseSurface: "#303036",
-    inverseOnSurface: "#F2EFF7",
-    inversePrimary: "#BEC2FF",
-    primaryFixed: "#E0E0FF",
-    onPrimaryFixed: "#10144B",
-    primaryFixedDim: "#BEC2FF",
-    onPrimaryFixedVariant: "#3D4279",
-    secondaryFixed: "#E1E0F9",
-    onSecondaryFixed: "#191A2C",
-    secondaryFixedDim: "#C5C4DD",
-    onSecondaryFixedVariant: "#444559",
-    tertiaryFixed: "#FFD8EE",
-    onTertiaryFixed: "#2E1126",
-    tertiaryFixedDim: "#E7B9D5",
-    onTertiaryFixedVariant: "#5E3C53",
     surfaceDim: "#DBD9E0",
     surfaceBright: "#FBF8FF",
     surfaceContainerLowest: "#FFFFFF",
@@ -216,21 +207,6 @@ export const color: MaterialThemeColorStyles = {
     outlineVariant: "#46464F",
     shadow: "#000000",
     scrim: "#000000",
-    inverseSurface: "#E4E1E9",
-    inverseOnSurface: "#303036",
-    inversePrimary: "#555A92",
-    primaryFixed: "#E0E0FF",
-    onPrimaryFixed: "#10144B",
-    primaryFixedDim: "#BEC2FF",
-    onPrimaryFixedVariant: "#3D4279",
-    secondaryFixed: "#E1E0F9",
-    onSecondaryFixed: "#191A2C",
-    secondaryFixedDim: "#C5C4DD",
-    onSecondaryFixedVariant: "#444559",
-    tertiaryFixed: "#FFD8EE",
-    onTertiaryFixed: "#2E1126",
-    tertiaryFixedDim: "#E7B9D5",
-    onTertiaryFixedVariant: "#5E3C53",
     surfaceDim: "#131318",
     surfaceBright: "#39393F",
     surfaceContainerLowest: "#0E0E13",

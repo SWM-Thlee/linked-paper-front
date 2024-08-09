@@ -16,7 +16,7 @@ function IconTitle({
   title?: ReactNode;
 }) {
   return (
-    <div className="flex flex-row flex-nowrap items-center gap-2">
+    <div className="flex items-center gap-2">
       <Icon size={16} />
       <span>{title}</span>
     </div>
