@@ -30,11 +30,7 @@ export default function ThemeSwitcher() {
     return <themes.default size={36} />;
 
   return (
-    <button
-      onClick={toggle}
-      type="button"
-      aria-label={`Convert to ${resolvedTheme.toUpperCase()} Mode`}
-    >
+    <button type="button" onClick={toggle}>
       {resolvedTheme === "light" ? (
         <themes.light size={36} />
       ) : (
