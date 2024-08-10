@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { NextUIProvider } from "@nextui-org/system";
-import { useRouter } from "next/navigation";
 import { Provider } from "jotai";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
@@ -11,11 +9,6 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-
-export interface ProvidersProps {
-  children: React.ReactNode;
-  themeProps?: ThemeProviderProps;
-}
 
 // QueryClient를 생성합니다.
 function createQueryClient() {
@@ -34,16 +27,13 @@ function getQueryClient() {
   return browserQueryClient ?? (browserQueryClient = createQueryClient());
 }
 
-export default function Providers({ children, themeProps }: ProvidersProps) {
-  const router = useRouter();
+export default function Providers({ children, ...props }: ThemeProviderProps) {
   const queryClient = getQueryClient();
 
   return (
     <Provider>
       <QueryClientProvider client={queryClient}>
-        <NextUIProvider navigate={router.push}>
-          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-        </NextUIProvider>
+        <NextThemesProvider {...props}>{children}</NextThemesProvider>
       </QueryClientProvider>
     </Provider>
   );

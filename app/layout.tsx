@@ -41,7 +41,7 @@ export default function RootLayout({
       className={`${playfair.variable} ${urbanist.variable}`}
     >
       <body className="bg-light-surfaceContainer dark:bg-dark-surfaceContainer">
-        <Providers themeProps={{ attribute: "class", enableSystem: true }}>
+        <Providers attribute="class" defaultTheme="system" enableSystem>
           <div className="mx-auto flex min-h-dvh flex-col items-center justify-between gap-16">
             {header}
             {children}
