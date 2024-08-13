@@ -14,6 +14,7 @@ export const buttonVariant = tv({
       default: [],
       bordered: ["ring-inset", "ring-2"],
       ghost: [],
+      light: [],
     },
     _size: {
       large: [
@@ -80,6 +81,20 @@ export const buttonVariant = tv({
       ],
     },
     {
+      _color: "primary",
+      _variant: "light",
+      className: [
+        "bg-light-primaryContainer/50",
+        "text-light-onPrimaryContainer",
+        "dark:bg-dark-primaryContainer/50",
+        "dark:text-dark-onPrimaryContainer",
+        "hover:bg-light-primaryContainer/75",
+        "hover:text-light-onPrimaryContainer/75",
+        "dark:hover:bg-dark-primaryContainer/75",
+        "dark:hover:text-dark-onPrimaryContainer/75",
+      ],
+    },
+    {
       _color: "secondary",
       _variant: "default",
       className: [
@@ -119,6 +134,20 @@ export const buttonVariant = tv({
           "dark:hover:bg-dark-secondary",
           "dark:hover:text-dark-onSecondary",
         ],
+      ],
+    },
+    {
+      _color: "secondary",
+      _variant: "light",
+      className: [
+        "bg-light-secondaryContainer/50",
+        "text-light-onSecondaryContainer",
+        "dark:bg-dark-secondaryContainer/50",
+        "dark:text-dark-onSecondaryContainer",
+        "hover:bg-light-secondaryContainer/75",
+        "hover:text-light-onSecondaryContainer/75",
+        "dark:hover:bg-dark-secondaryContainer/75",
+        "dark:hover:text-dark-onSecondaryContainer/75",
       ],
     },
     {
@@ -164,6 +193,20 @@ export const buttonVariant = tv({
       ],
     },
     {
+      _color: "tertiary",
+      _variant: "light",
+      className: [
+        "bg-light-tertiaryContainer/50",
+        "text-light-onTertiaryContainer",
+        "dark:bg-dark-tertiaryContainer/50",
+        "dark:text-dark-onTertiaryContainer",
+        "hover:bg-light-tertiaryContainer/75",
+        "hover:text-light-onTertiaryContainer/75",
+        "dark:hover:bg-dark-tertiaryContainer/75",
+        "dark:hover:text-dark-onTertiaryContainer/75",
+      ],
+    },
+    {
       _color: "error",
       _variant: "default",
       className: [
@@ -203,6 +246,20 @@ export const buttonVariant = tv({
           "dark:hover:bg-dark-error",
           "dark:hover:text-dark-onError",
         ],
+      ],
+    },
+    {
+      _color: "error",
+      _variant: "light",
+      className: [
+        "bg-light-errorContainer/50",
+        "text-light-onErrorContainer",
+        "dark:bg-dark-errorContainer/50",
+        "dark:text-dark-onErrorContainer",
+        "hover:bg-light-errorContainer/75",
+        "hover:text-light-onErrorContainer/75",
+        "dark:hover:bg-dark-errorContainer/75",
+        "dark:hover:text-dark-onErrorContainer/75",
       ],
     },
   ],
