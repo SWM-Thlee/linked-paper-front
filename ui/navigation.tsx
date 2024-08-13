@@ -45,8 +45,8 @@ export const navigationVariant = tv({
       "transition-[width,_height]",
       "duration-300",
       "sm:w-[var(--radix-navigation-menu-viewport-width)]",
-      "bg-light-surfaceContainerLowest/75",
-      "dark:bg-dark-surfaceContainerLowest/75",
+      "bg-light-surfaceContainerLowest",
+      "dark:bg-dark-surfaceContainerLowest",
     ],
     viewportWrapper: [
       "perspective-[2000px]",
