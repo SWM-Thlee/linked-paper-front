@@ -4,18 +4,18 @@ import { tv, VariantProps } from "@/utils/tailwind-variants";
 export const buttonVariant = tv({
   base: ["transition-colors", "duration-200"],
   variants: {
-    color: {
+    _color: {
       primary: [],
       secondary: [],
       tertiary: [],
       error: [],
     },
-    variant: {
+    _variant: {
       default: [],
       bordered: ["ring-inset", "ring-2"],
       ghost: [],
     },
-    size: {
+    _size: {
       large: [
         "px-[2rem]",
         "py-[0.75rem]",
@@ -38,8 +38,8 @@ export const buttonVariant = tv({
   },
   compoundVariants: [
     {
-      color: "primary",
-      variant: "default",
+      _color: "primary",
+      _variant: "default",
       className: [
         "bg-light-primary",
         "text-light-onPrimary",
@@ -52,8 +52,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "primary",
-      variant: "bordered",
+      _color: "primary",
+      _variant: "bordered",
       className: [
         "ring-light-primary",
         "text-light-primary",
@@ -66,8 +66,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "primary",
-      variant: "ghost",
+      _color: "primary",
+      _variant: "ghost",
       className: [
         [
           "text-light-primary",
@@ -80,8 +80,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "secondary",
-      variant: "default",
+      _color: "secondary",
+      _variant: "default",
       className: [
         "bg-light-secondary",
         "text-light-onSecondary",
@@ -94,8 +94,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "secondary",
-      variant: "bordered",
+      _color: "secondary",
+      _variant: "bordered",
       className: [
         "ring-light-secondary",
         "text-light-secondary",
@@ -108,8 +108,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "secondary",
-      variant: "ghost",
+      _color: "secondary",
+      _variant: "ghost",
       className: [
         [
           "text-light-secondary",
@@ -122,8 +122,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "tertiary",
-      variant: "default",
+      _color: "tertiary",
+      _variant: "default",
       className: [
         "bg-light-tertiary",
         "text-light-onTertiary",
@@ -136,8 +136,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "tertiary",
-      variant: "bordered",
+      _color: "tertiary",
+      _variant: "bordered",
       className: [
         "ring-light-tertiary",
         "text-light-tertiary",
@@ -150,8 +150,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "tertiary",
-      variant: "ghost",
+      _color: "tertiary",
+      _variant: "ghost",
       className: [
         [
           "text-light-tertiary",
@@ -164,8 +164,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "error",
-      variant: "default",
+      _color: "error",
+      _variant: "default",
       className: [
         "bg-light-error",
         "text-light-onError",
@@ -178,8 +178,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "error",
-      variant: "bordered",
+      _color: "error",
+      _variant: "bordered",
       className: [
         "ring-light-error",
         "text-light-error",
@@ -192,8 +192,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      color: "error",
-      variant: "ghost",
+      _color: "error",
+      _variant: "ghost",
       className: [
         [
           "text-light-error",
@@ -207,9 +207,9 @@ export const buttonVariant = tv({
     },
   ],
   defaultVariants: {
-    color: "primary",
-    variant: "default",
-    size: "medium",
+    _color: "primary",
+    _variant: "default",
+    _size: "medium",
   },
 });
 
@@ -217,11 +217,11 @@ type Props = React.ComponentPropsWithoutRef<"button"> &
   VariantProps<typeof buttonVariant>;
 
 const Button = forwardRef<HTMLButtonElement, Props>(
-  ({ children, className, color, variant, size, ...props }, ref) => (
+  ({ children, className, _color, _variant, _size, ...props }, ref) => (
     <button
       type="button"
       ref={ref}
-      className={buttonVariant({ color, size, variant, className })}
+      className={buttonVariant({ _color, _size, _variant, className })}
       {...props}
     >
       {children}
