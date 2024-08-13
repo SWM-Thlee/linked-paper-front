@@ -46,7 +46,7 @@ const items: NavigationItem[] = [
 export default function Navigation() {
   return (
     <div className="justify-self-center">
-      <UiNavigation color="primary" items={items} />
+      <UiNavigation _color="primary" items={items} />
     </div>
   );
 }

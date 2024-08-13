@@ -18,7 +18,7 @@ const tooltipVariant = tv({
     arrow: [],
   },
   variants: {
-    color: {
+    _color: {
       primary: {
         content: [
           "bg-light-primaryContainer",
@@ -67,7 +67,7 @@ const tooltipVariant = tv({
     },
   },
   defaultVariants: {
-    color: "primary",
+    _color: "primary",
   },
 });
 
@@ -75,8 +75,8 @@ type Props = { children: React.ReactNode; title: string } & VariantProps<
   typeof tooltipVariant
 >;
 
-export default function Tooltip({ color, children, title }: Props) {
-  const { content, arrow } = tooltipVariant({ color });
+export default function Tooltip({ _color, children, title }: Props) {
+  const { content, arrow } = tooltipVariant({ _color });
 
   return (
     <UiTooltip.Root delayDuration={100}>

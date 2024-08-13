@@ -20,14 +20,14 @@ const popoverVariant = tv({
     ],
   },
   variants: {
-    size: {
+    _size: {
       large: { content: ["rounded-large", "p-6"] },
       medium: { content: ["rounded-medium", "p-4"] },
       small: { content: ["rounded-small", "p-4"] },
     },
   },
   defaultVariants: {
-    size: "medium",
+    _size: "medium",
   },
 });
 
@@ -37,8 +37,8 @@ type Props = {
 } & VariantProps<typeof popoverVariant> &
   UiPopover.PopoverProps;
 
-export default function Popover({ children, trigger, size, ...props }: Props) {
-  const { content, arrow } = popoverVariant({ size });
+export default function Popover({ children, trigger, _size, ...props }: Props) {
+  const { content, arrow } = popoverVariant({ _size });
   return (
     <UiPopover.Root {...props}>
       <UiPopover.Trigger asChild>{trigger}</UiPopover.Trigger>

@@ -59,7 +59,7 @@ export const navigationVariant = tv({
     ],
   },
   variants: {
-    color: {
+    _color: {
       none: {
         button: ["text-light-onSurface", "dark:text-dark-onSurface"],
       },
@@ -112,7 +112,7 @@ export const navigationVariant = tv({
         ],
       },
     },
-    size: {
+    _size: {
       large: {
         button: ["px-6", "py-2"],
         content: ["p-8"],
@@ -131,7 +131,8 @@ export const navigationVariant = tv({
     },
   },
   defaultVariants: {
-    size: "medium",
+    _color: "none",
+    _size: "medium",
   },
 });
 
@@ -157,11 +158,11 @@ export type NavigationItem =
 export default function Navigation({
   items,
   accentItemKeys = ["search"],
-  color: accentColor,
-  size,
+  _color: accentColor,
+  _size,
 }: Props) {
   const { root, list, button, content, viewport, viewportWrapper } =
-    navigationVariant({ color: accentColor, size });
+    navigationVariant({ _color: accentColor, _size });
 
   return (
     <NavigationMenu.Root delayDuration={0} className={root()}>
@@ -172,7 +173,7 @@ export default function Navigation({
               <>
                 <NavigationMenu.Trigger
                   className={button({
-                    color:
+                    _color:
                       accentColor && accentItemKeys?.includes(props.key)
                         ? accentColor
                         : "none",
@@ -188,7 +189,7 @@ export default function Navigation({
               <NavigationMenu.Link asChild>
                 <Link
                   className={button({
-                    color:
+                    _color:
                       accentColor && accentItemKeys?.includes(props.key)
                         ? accentColor
                         : "none",
