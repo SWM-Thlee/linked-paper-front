@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { tv, VariantProps } from "tailwind-variants";
-import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import Link from "next/link";
+import { tv, VariantProps } from "@/utils/tailwind-variants";
+import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 
 export const navigationVariant = tv({
   slots: {
@@ -67,14 +67,14 @@ export const navigationVariant = tv({
         button: [
           "bg-light-primary",
           "text-light-onPrimary",
-          "hover:bg-light-primary/75",
-          "hover:text-light-onPrimary/75",
-          "data-[state=open]:bg-light-primary/75",
-          "data-[state=open]:text-light-onPrimary/75",
           "dark:bg-dark-primary",
           "dark:text-dark-onPrimary",
+          "hover:bg-light-primary/75",
+          "hover:text-light-onPrimary/75",
           "dark:hover:bg-dark-primary/75",
           "dark:hover:text-dark-onPrimary/75",
+          "data-[state=open]:bg-light-primary/75",
+          "data-[state=open]:text-light-onPrimary/75",
           "dark:data-[state=open]:bg-dark-primary/75",
           "dark:data-[state=open]:text-dark-onPrimary/75",
         ],
@@ -83,14 +83,14 @@ export const navigationVariant = tv({
         button: [
           "bg-light-secondary",
           "text-light-onSecondary",
-          "hover:bg-light-secondary/75",
-          "hover:text-light-onSecondary/75",
-          "data-[state=open]:bg-light-secondary/75",
-          "data-[state=open]:text-light-onSecondary/75",
           "dark:bg-dark-secondary",
           "dark:text-dark-onSecondary",
+          "hover:bg-light-secondary/75",
+          "hover:text-light-onSecondary/75",
           "dark:hover:bg-dark-secondary/75",
           "dark:hover:text-dark-onSecondary/75",
+          "data-[state=open]:bg-light-secondary/75",
+          "data-[state=open]:text-light-onSecondary/75",
           "dark:data-[state=open]:bg-dark-secondary/75",
           "dark:data-[state=open]:text-dark-onSecondary/75",
         ],
@@ -99,14 +99,14 @@ export const navigationVariant = tv({
         button: [
           "bg-light-tertiary",
           "text-light-onTertiary",
-          "hover:bg-light-tertiary/75",
-          "hover:text-light-onTertiary/75",
-          "data-[state=open]:bg-light-tertiary/75",
-          "data-[state=open]:text-light-onTertiary/75",
           "dark:bg-dark-tertiary",
           "dark:text-dark-onTertiary",
+          "hover:bg-light-tertiary/75",
+          "hover:text-light-onTertiary/75",
           "dark:hover:bg-dark-tertiary/75",
           "dark:hover:text-dark-onTertiary/75",
+          "data-[state=open]:bg-light-tertiary/75",
+          "data-[state=open]:text-light-onTertiary/75",
           "dark:data-[state=open]:bg-dark-tertiary/75",
           "dark:data-[state=open]:text-dark-onTertiary/75",
         ],
@@ -156,7 +156,7 @@ export type NavigationItem =
 
 export default function Navigation({
   items,
-  accentItemKeys,
+  accentItemKeys = ["search"],
   color: accentColor,
   size,
 }: Props) {
@@ -164,7 +164,7 @@ export default function Navigation({
     navigationVariant({ color: accentColor, size });
 
   return (
-    <NavigationMenu.Root className={root()}>
+    <NavigationMenu.Root delayDuration={0} className={root()}>
       <NavigationMenu.List className={list()}>
         {items.map((props) => (
           <NavigationMenu.Item key={props.key}>
