@@ -2,8 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
-import { tv, VariantProps } from "@/utils/tailwind-variants";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
+import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { NavigationModule } from "./types";
 
 export const navigationVariant = tv({
   slots: {
@@ -137,27 +138,11 @@ export const navigationVariant = tv({
 });
 
 type Props = {
-  items: NavigationItem[];
-  accentItemKeys?: string[];
+  modules: NavigationModule[];
 } & VariantProps<typeof navigationVariant>;
 
-export type NavigationItem =
-  | {
-      elementType: "dropdown";
-      title: React.ReactNode;
-      key: string;
-      content?: React.ReactNode;
-    }
-  | {
-      elementType: "button";
-      title: React.ReactNode;
-      key: string;
-      href: string;
-    };
-
 export default function Navigation({
-  items,
-  accentItemKeys = ["search"],
+  modules,
   _color: accentColor,
   _size,
 }: Props) {
@@ -167,36 +152,30 @@ export default function Navigation({
   return (
     <NavigationMenu.Root delayDuration={0} className={root()}>
       <NavigationMenu.List className={list()}>
-        {items.map((props) => (
-          <NavigationMenu.Item key={props.key}>
-            {props.elementType === "dropdown" ? (
+        {modules.map((module) => (
+          <NavigationMenu.Item key={module.key}>
+            {module.type === "dropdown" ? (
               <>
                 <NavigationMenu.Trigger
                   className={button({
-                    _color:
-                      accentColor && accentItemKeys?.includes(props.key)
-                        ? accentColor
-                        : "none",
+                    _color: accentColor,
                   })}
                 >
-                  {props.title}
+                  {module.title}
                 </NavigationMenu.Trigger>
                 <NavigationMenu.Content className={content()}>
-                  {props.content}
+                  {module.content}
                 </NavigationMenu.Content>
               </>
             ) : (
               <NavigationMenu.Link asChild>
                 <Link
                   className={button({
-                    _color:
-                      accentColor && accentItemKeys?.includes(props.key)
-                        ? accentColor
-                        : "none",
+                    _color: accentColor,
                   })}
-                  href={props.href}
+                  href={module.href}
                 >
-                  {props.title}
+                  {module.title}
                 </Link>
               </NavigationMenu.Link>
             )}
