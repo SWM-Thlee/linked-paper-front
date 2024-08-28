@@ -39,6 +39,7 @@ type Props = {
 
 export default function Popover({ children, trigger, _size, ...props }: Props) {
   const { content, arrow } = popoverVariant({ _size });
+
   return (
     <UiPopover.Root {...props}>
       <UiPopover.Trigger asChild>{trigger}</UiPopover.Trigger>
