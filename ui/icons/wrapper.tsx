@@ -4,7 +4,7 @@ import { tv, VariantProps } from "@/utils/tailwind-variants";
 export const iconVariant = tv({
   variants: {
     _size: {
-      small: 14,
+      small: 16,
       medium: 20,
       large: 32,
       exlarge: 40,

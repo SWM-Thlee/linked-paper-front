@@ -13,10 +13,12 @@ const popoverVariant = tv({
       "shadow-2xl",
       "bg-light-surfaceContainerLowest",
       "dark:bg-dark-surfaceContainerLowest",
+      "z-50",
     ],
     arrow: [
       "fill-light-surfaceContainerLowest",
       "dark:fill-dark-surfaceContainerLowest",
+      "z-50",
     ],
   },
   variants: {
