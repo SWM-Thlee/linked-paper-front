@@ -98,7 +98,7 @@ const Search = forwardRef<HTMLInputElement, Props>(
     const { container, input, icon } = searchVariant({ _color, _size });
 
     return (
-      <div key={key} className={container()}>
+      <div key={key} className={container({ className })}>
         <input
           ref={ref}
           type={type ?? "text"}

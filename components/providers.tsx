@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Provider } from "jotai";
+import { Provider as JotaiProvider } from "jotai";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import {
@@ -9,6 +9,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
 
 // QueryClient를 생성합니다.
 function createQueryClient() {
@@ -31,10 +32,12 @@ export default function Providers({ children, ...props }: ThemeProviderProps) {
   const queryClient = getQueryClient();
 
   return (
-    <Provider>
+    <JotaiProvider>
       <QueryClientProvider client={queryClient}>
-        <NextThemesProvider {...props}>{children}</NextThemesProvider>
+        <ReactQueryStreamedHydration>
+          <NextThemesProvider {...props}>{children}</NextThemesProvider>
+        </ReactQueryStreamedHydration>
       </QueryClientProvider>
-    </Provider>
+    </JotaiProvider>
   );
 }
