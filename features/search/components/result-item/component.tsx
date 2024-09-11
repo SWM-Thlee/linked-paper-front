@@ -1,13 +1,13 @@
 import { SearchResult } from "../../types/result";
-import SearchResultItemInfo from "./attributes/attributes";
-import SearchResultItemLinks from "./links/links";
+import SearchResultItemInfo from "./attributes/component";
+import SearchResultItemLinks from "./links/component";
 
 export default function SearchResultItem({
   id,
   title,
   abstraction,
   authors,
-  fields,
+  categories,
   journal,
   date,
   reference_count,
@@ -22,7 +22,7 @@ export default function SearchResultItem({
         </div>
         <SearchResultItemInfo
           authors={authors}
-          fields={fields}
+          categories={categories}
           journal={journal}
           date={date}
           reference_count={reference_count}

@@ -2,53 +2,57 @@
 
 import React from "react";
 import Link from "next/link";
-import * as NavigationMenu from "@radix-ui/react-navigation-menu";
+import * as Primitive from "@radix-ui/react-navigation-menu";
+
 import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { sem } from "@/utils/semantic-styles";
 import { NavigationModule } from "./types";
 
 export const navigationVariant = tv({
   slots: {
     root: ["flex", "w-screen", "justify-center"],
-    list: [
-      "flex",
-      "p-1",
-      "gap-1",
-      "list-none",
-      "rounded-full",
-      "bg-light-surfaceDim",
-      "dark:bg-dark-surfaceDim",
-    ],
-    button: ["rounded-full", "transition-colors", "block", "select-none"],
-    content: [
-      "data-[motion=from-start]:animate-enterFromLeft",
-      "data-[motion=from-end]:animate-enterFromRight",
-      "data-[motion=to-start]:animate-exitToLeft",
-      "data-[motion=to-end]:animate-exitToRight",
-      "absolute",
-      "left-0",
-      "top-0",
-      "min-w-[1024px]",
-      "max-w-[60%]",
-      "sm:w-auto",
-      "text-light-onSurface",
-      "dark:text-dark-onSurface",
-    ],
-    viewport: [
-      "data-[state=open]:animate-scaleIn",
-      "data-[state=closed]:animate-scaleOut",
-      "relative",
-      "mt-[-14px]",
-      "h-[var(--radix-navigation-menu-viewport-height)]",
-      "w-full",
-      "origin-[top_center]",
-      "overflow-hidden",
-      "shadow-md",
-      "transition-[width,_height]",
-      "duration-300",
-      "sm:w-[var(--radix-navigation-menu-viewport-width)]",
-      "bg-light-surfaceContainerLow",
-      "dark:bg-dark-surfaceContainerLow",
-    ],
+    list: sem()
+      .layout(["flex", "p-1", "gap-1", "list-none", "rounded-circle"])
+      .color(["bg-light-surfaceDim", "dark:bg-dark-surfaceDim"])
+      .build(),
+    button: ["rounded-circle", "transition-colors", "block", "select-none"],
+    content: sem()
+      .layout([
+        "absolute",
+        "left-0 top-0",
+        "min-w-[1024px] max-w-[60%] sm:w-auto",
+      ])
+      .color(["text-light-onSurface", "dark:text-dark-onSurface"])
+      .transition([
+        "data-[motion=from-start]:animate-enterFromLeft",
+        "data-[motion=from-end]:animate-enterFromRight",
+        "data-[motion=to-start]:animate-exitToLeft",
+        "data-[motion=to-end]:animate-exitToRight",
+      ])
+      .build(),
+    viewport: sem()
+      .layout([
+        "relative",
+        "mt-[-14px]",
+        "h-[var(--radix-navigation-menu-viewport-height)]",
+        "sm:w-[var(--radix-navigation-menu-viewport-width)]",
+        "w-full",
+        "overflow-hidden",
+        "shadow-md",
+      ])
+      .color([
+        "bg-light-surfaceContainerLow",
+        "dark:bg-dark-surfaceContainerLow",
+      ])
+      .transition([
+        "data-[state=open]:animate-scaleIn",
+        "data-[state=closed]:animate-scaleOut",
+
+        "origin-[top_center]",
+        "transition-[width,_height]",
+        "duration-300",
+      ])
+      .build(),
     viewportWrapper: [
       "perspective-[2000px]",
       "absolute",
@@ -60,7 +64,7 @@ export const navigationVariant = tv({
     ],
   },
   variants: {
-    _color: {
+    ui_color: {
       none: {
         button: ["text-light-onSurface", "dark:text-dark-onSurface"],
       },
@@ -113,79 +117,87 @@ export const navigationVariant = tv({
         ],
       },
     },
-    _size: {
+    ui_size: {
       large: {
         button: ["px-6", "py-2"],
         content: ["p-8"],
-        viewport: ["rounded-ex-large"],
+        viewport: ["rounded-6"],
       },
       medium: {
         button: ["px-4", "py-1.5"],
         content: ["p-8"],
-        viewport: ["rounded-large"],
+        viewport: ["rounded-4"],
       },
       small: {
         button: ["px-3", "py-1"],
         content: ["p-6"],
-        viewport: ["rounded-medium"],
+        viewport: ["rounded-2"],
       },
     },
   },
   defaultVariants: {
-    _color: "none",
-    _size: "medium",
+    ui_color: "none",
+    ui_size: "medium",
   },
 });
 
-type Props = {
+export interface NavigationProps
+  extends Primitive.NavigationMenuProps,
+    VariantProps<typeof navigationVariant> {
   modules: NavigationModule[];
-} & VariantProps<typeof navigationVariant>;
+}
 
 export default function Navigation({
   modules,
-  _color: accentColor,
-  _size,
-}: Props) {
+  ui_color: accentColor,
+  ui_size,
+  className,
+  ...props
+}: NavigationProps) {
   const { root, list, button, content, viewport, viewportWrapper } =
-    navigationVariant({ _color: accentColor, _size });
+    navigationVariant({ ui_color: accentColor, ui_size });
 
   return (
-    <NavigationMenu.Root delayDuration={0} className={root()}>
-      <NavigationMenu.List className={list()}>
+    <Primitive.Root
+      delayDuration={0}
+      className={root({ className })}
+      {...props}
+    >
+      <Primitive.List className={list()}>
         {modules.map((module) => (
-          <NavigationMenu.Item key={module.key}>
+          <Primitive.Item key={module.key}>
             {module.type === "dropdown" ? (
               <>
-                <NavigationMenu.Trigger
+                <Primitive.Trigger
                   className={button({
-                    _color: accentColor,
+                    ui_color: accentColor,
                   })}
                 >
                   {module.title}
-                </NavigationMenu.Trigger>
-                <NavigationMenu.Content className={content()}>
+                </Primitive.Trigger>
+                <Primitive.Content className={content()}>
                   {module.content}
-                </NavigationMenu.Content>
+                </Primitive.Content>
               </>
             ) : (
-              <NavigationMenu.Link asChild>
+              <Primitive.Link asChild>
                 <Link
                   className={button({
-                    _color: accentColor,
+                    ui_color: accentColor,
                   })}
                   href={module.href}
                 >
                   {module.title}
                 </Link>
-              </NavigationMenu.Link>
+              </Primitive.Link>
             )}
-          </NavigationMenu.Item>
+          </Primitive.Item>
         ))}
-      </NavigationMenu.List>
+      </Primitive.List>
 
       <div className={viewportWrapper()}>
-        <NavigationMenu.Viewport className={viewport()} />
+        <Primitive.Viewport className={viewport()} />
       </div>
-    </NavigationMenu.Root>
+    </Primitive.Root>
   );
 }

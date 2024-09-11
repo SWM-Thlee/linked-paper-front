@@ -1,1 +1,1 @@
-export { navigation as search } from "./navigation";
+export { navigation as search } from "./component";

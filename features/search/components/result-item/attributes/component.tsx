@@ -2,13 +2,13 @@
 
 import { PaperMetadata } from "@/types/paper";
 import AttributeAuthors from "./authors";
-import AttributeFields from "./fields";
+import AttributeCategories from "./categories";
 import AttributeOthers from "./others";
 
 type Props = Pick<
   PaperMetadata,
   | "authors"
-  | "fields"
+  | "categories"
   | "journal"
   | "date"
   | "reference_count"
@@ -17,7 +17,7 @@ type Props = Pick<
 
 export default function SearchResultItemInfo({
   authors,
-  fields,
+  categories,
   journal,
   date,
   reference_count,
@@ -26,7 +26,7 @@ export default function SearchResultItemInfo({
   return (
     <div className="flex flex-wrap gap-2">
       <AttributeAuthors authors={authors} />
-      <AttributeFields fields={fields} />
+      <AttributeCategories categories={categories} />
       <AttributeOthers
         journal={journal}
         date={date}

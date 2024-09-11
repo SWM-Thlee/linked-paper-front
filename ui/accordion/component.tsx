@@ -1,8 +1,19 @@
-import * as UiAccordion from "@radix-ui/react-accordion";
-import { tv, VariantProps } from "@/utils/tailwind-variants";
-import React from "react";
+"use client";
 
-export const accordionVariant = tv({
+import { forwardRef } from "react";
+import * as Primitive from "@radix-ui/react-accordion";
+
+import { tv, VariantProps } from "@/utils/tailwind-variants";
+
+export type AccordionRootProps =
+  | Primitive.AccordionSingleProps
+  | Primitive.AccordionMultipleProps;
+
+export function Root({ children, ...props }: AccordionRootProps) {
+  return <Primitive.Accordion {...props}>{children}</Primitive.Accordion>;
+}
+
+export const accordionItemVariant = tv({
   slots: {
     item: ["focus-within:relative", "mt-px", "overflow-hidden"],
     header: ["flex"],
@@ -72,17 +83,17 @@ export const accordionVariant = tv({
     },
     ui_size: {
       small: {
-        item: ["first:rounded-t-[0.5rem]", "last:rounded-b-[0.5rem]"],
+        item: ["first:rounded-t-2", "last:rounded-b-2"],
         trigger: ["p-2.5", "text-label-medium"],
         content: ["p-2.5", "text-label-medium"],
       },
       medium: {
-        item: ["first:rounded-t-[0.5rem]", "last:rounded-b-[0.5rem]"],
+        item: ["first:rounded-t-2", "last:rounded-b-2"],
         trigger: ["p-3.5", "text-label-medium"],
         content: ["p-3.5", "text-label-medium"],
       },
       large: {
-        item: ["first:rounded-t-[1rem]", "last:rounded-b-[1rem]"],
+        item: ["first:rounded-t-4", "last:rounded-b-4"],
         trigger: ["p-4", "text-label-large"],
         content: ["p-4", "text-label-large"],
       },
@@ -94,47 +105,33 @@ export const accordionVariant = tv({
   },
 });
 
-type Props = {
-  ui_trigger: React.ReactNode;
-  ui_content: React.ReactNode;
-} & VariantProps<typeof accordionVariant> &
-  UiAccordion.AccordionItemProps &
-  React.ComponentPropsWithoutRef<"div">;
+export interface AccordionItemProps
+  extends Primitive.AccordionItemProps,
+    VariantProps<typeof accordionItemVariant> {
+  itemTrigger: React.ReactNode;
+}
 
-const AccordionItem = React.forwardRef<HTMLDivElement, Props>(
-  (
-    {
-      ui_trigger: triggerElement,
-      ui_content: contentElement,
-      ui_color,
-      ui_size,
-      className,
-      ...props
-    }: Props,
-    ref,
-  ) => {
-    const { item, contentWrapper, content, header, trigger } = accordionVariant(
-      {
+export const Item = forwardRef<HTMLDivElement, AccordionItemProps>(
+  ({ itemTrigger, children, ui_color, ui_size, className, ...props }, ref) => {
+    const { item, contentWrapper, content, header, trigger } =
+      accordionItemVariant({
         ui_color,
         ui_size,
-      },
-    );
+      });
 
     return (
-      <UiAccordion.Item ref={ref} className={item({ className })} {...props}>
-        <UiAccordion.Header className={header()}>
-          <UiAccordion.Trigger className={trigger()}>
-            {triggerElement}
-          </UiAccordion.Trigger>
-        </UiAccordion.Header>
-        <UiAccordion.Content className={contentWrapper()}>
-          <div className={content()}>{contentElement}</div>
-        </UiAccordion.Content>
-      </UiAccordion.Item>
+      <Primitive.Item ref={ref} className={item({ className })} {...props}>
+        <Primitive.Header className={header()}>
+          <Primitive.Trigger className={trigger()}>
+            {itemTrigger}
+          </Primitive.Trigger>
+        </Primitive.Header>
+        <Primitive.Content className={contentWrapper()}>
+          <div className={content()}>{children}</div>
+        </Primitive.Content>
+      </Primitive.Item>
     );
   },
 );
 
-AccordionItem.displayName = "AccordionItem";
-
-export default AccordionItem;
+Item.displayName = "AccordionItem";

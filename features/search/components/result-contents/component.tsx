@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { SearchResultItem } from "@/features/search/components/result-item";
-import useSearchQuery from "@/features/search/hooks/use-search-query";
 import SearchSimilarityWarning from "./similarity-warning";
+import useSearchQuery from "../../hooks/query/use-search-query";
+import { SearchResultItem } from "../result-item";
 
-export default function SearchResults() {
+export default function SearchResultContents() {
   const { data } = useSearchQuery();
 
   return (
