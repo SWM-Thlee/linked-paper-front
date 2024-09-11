@@ -1,34 +1,28 @@
-import { SUB_ID_DESC, SUB_TO_TOP } from "@/utils/field-mappings";
+import { Category } from "@/utils/category";
 
-// 하위 분류에 대한 상세 설명을 반환합니다.
-export function description(sub: string) {
-  return SUB_ID_DESC[sub] ?? "";
-}
-
-export type FieldGroup = {
+export type CategoryGroup = {
   [group: string]: string[];
 };
 
 // 상위 분류를 기준으로 그룹화합니다.
-export function group(fieldIds: string[]) {
-  return fieldIds
-    .filter((field) => SUB_TO_TOP[field])
-    .map((field) => [field, SUB_TO_TOP[field]])
-    .reduce<FieldGroup>(
-      (result, [currentFieldName, currentGroupName]) => ({
+export function group(categoryIds: string[]) {
+  return categoryIds
+    .filter((category) => Category[category])
+    .map((category) => [category, Category[category]] as const)
+    .reduce<CategoryGroup>(
+      (result, [categoryID, { subject }]) => ({
         ...result,
-        [currentGroupName]: [
-          ...(result[currentGroupName] ?? []),
-          currentFieldName,
-        ],
+        [subject]: [...(result[subject] ?? []), categoryID],
       }),
       {},
     );
 }
 
 // 특정 논문의 여러 분류를 간략화한 대표 분류를 반환합니다.
-export function representative(fieldGroup: FieldGroup) {
-  const [count, result] = Object.entries(fieldGroup).reduce<[number, string]>(
+export function representative(categoryGroup: CategoryGroup) {
+  const [count, result] = Object.entries(categoryGroup).reduce<
+    [number, string]
+  >(
     ([maxCount, dominantGroupName], [currentGroupName, currentGroup]) =>
       maxCount > currentGroup.length
         ? [maxCount, dominantGroupName]
@@ -37,5 +31,7 @@ export function representative(fieldGroup: FieldGroup) {
   );
 
   // 우세한 상위 분류 내 하위 분류가 하나이거나, 상위 분류가 유효하지 않은 경우 가장 앞의 하위 분류를 반환합니다.
-  return count === 1 ? description(fieldGroup[result][0]) : result;
+  return count === 1
+    ? Category[categoryGroup[result][0]]?.description ?? ""
+    : result;
 }
