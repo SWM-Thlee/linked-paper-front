@@ -13,11 +13,16 @@ import useTabDirection from "@/ui/settings/hooks/use-tab-direction";
 import { TAB_PREVIEW } from "@/features/search/types/tab";
 
 type Props = {
+  titleEditable?: boolean;
   dataID: FilterDataID<Search.Type>;
   store: FilterStore;
 };
 
-export default function EditFilterOption({ dataID, store }: Props) {
+export default function EditFilterOption({
+  titleEditable = true,
+  dataID,
+  store,
+}: Props) {
   const { status, begin } = useSearchFilterEditor({
     store,
     dataID,
@@ -29,7 +34,7 @@ export default function EditFilterOption({ dataID, store }: Props) {
     switch (status) {
       case EditStatus.NOT_EDITING:
         request(TAB_PREVIEW.ID, dataID);
-        begin();
+        begin(titleEditable);
         break;
       case EditStatus.EDITING:
         request(TAB_PREVIEW.ID, dataID);
@@ -37,7 +42,7 @@ export default function EditFilterOption({ dataID, store }: Props) {
       default:
         break;
     }
-  }, [begin, status, dataID, request]);
+  }, [begin, status, dataID, request, titleEditable]);
 
   return status !== EditStatus.UNSPECIFIED ? (
     <Button

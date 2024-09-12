@@ -6,11 +6,14 @@ import { createFilterSnapshot, createSnapshotDispatch } from "./snapshot";
 import { FilterStore } from "../types/store";
 
 export const TAG_EDITOR = "EDITOR";
-export interface TagEditor {}
+export interface TagEditor {
+  titleEditable: boolean;
+}
 
 export function createFilterEditor<T extends FilterFeatureID>(
   data: FilterData<T>,
   store: FilterStore,
+  titleEditable: boolean = true,
   initFn?: (draft: Draft<FilterData<T>>) => void,
 ) {
   if (data.tags[TAG_EDITOR])
@@ -26,7 +29,9 @@ export function createFilterEditor<T extends FilterFeatureID>(
         "Error from FilterEditor: Cannot add editor settings on init.",
       );
 
-    draft.tags[TAG_EDITOR] = {} satisfies TagEditor;
+    draft.tags[TAG_EDITOR] = {
+      titleEditable,
+    } satisfies TagEditor;
   });
 }
 

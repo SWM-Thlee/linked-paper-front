@@ -14,7 +14,11 @@ export default CustomizedFilterInfo<Search.Type>({
   options(filter, store) {
     return (
       <>
-        <EditFilterOption store={store} dataID={filter.dataID} />
+        <EditFilterOption
+          titleEditable={false}
+          store={store}
+          dataID={filter.dataID}
+        />
         <AddToPresetsOption />
       </>
     );

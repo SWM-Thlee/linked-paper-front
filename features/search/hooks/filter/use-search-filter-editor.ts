@@ -54,21 +54,24 @@ export default function useSearchFilterEditor({
   });
 
   /** 편집을 시작합니다. */
-  const begin = useCallback(() => {
-    if (editor) {
-      throw new Error(
-        "Error from SearchFilterEditor: Filter is already on editing.",
-      );
-    }
+  const begin = useCallback(
+    (titleEditable: boolean = true) => {
+      if (editor) {
+        throw new Error(
+          "Error from SearchFilterEditor: Filter is already on editing.",
+        );
+      }
 
-    if (!filter) {
-      throw new Error(
-        "Error from SearchFilterEditor: Target filter is not found.",
-      );
-    }
+      if (!filter) {
+        throw new Error(
+          "Error from SearchFilterEditor: Target filter is not found.",
+        );
+      }
 
-    temp(createFilterEditor<Search.Type>(filter, store));
-  }, [filter, temp, editor, store]);
+      temp(createFilterEditor<Search.Type>(filter, store, titleEditable));
+    },
+    [filter, temp, editor, store],
+  );
 
   /** 편집 내용을 초기화합니다. 일부만 초기화할 수도 있습니다. */
   const reset = useCallback(
@@ -150,6 +153,11 @@ export default function useSearchFilterEditor({
     [dispatch, editor, removeEditor],
   );
 
+  const isTitleEditable = useMemo(
+    () => !!editor?.tags[TAG_EDITOR]?.titleEditable,
+    [editor],
+  );
+
   /** 수정 사항의 존재 여부를 확인합니다. */
   const isModified = useMemo(
     () =>
@@ -172,6 +180,7 @@ export default function useSearchFilterEditor({
     editor,
     filter,
     isModified,
+    isTitleEditable,
     status,
     begin,
     reset,

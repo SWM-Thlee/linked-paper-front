@@ -5,7 +5,6 @@ import { CustomizedFilterInfo } from "@/features/filter/components/info";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import { FilterAttributeKey, FilterData } from "@/features/filter/types/filter";
 import { FilterStore } from "@/features/filter/types/store";
-import { TAG_SEARCH_QUERY } from "@/features/search/utils/filter/search-query";
 import EditTitleOption from "../common/option/edit-title";
 import { JournalContent } from "../common/attribute/journal";
 import { CategoryContent } from "../common/attribute/category";
@@ -40,12 +39,29 @@ function CustomAttributeContent({
   }
 }
 
+function CustomTitleContent({
+  attrData,
+  attrStore,
+}: {
+  attrData: FilterData<Search.Type>;
+  attrStore: FilterStore;
+}) {
+  const { isTitleEditable } = useSearchFilterEditor({
+    dataID: attrData.dataID,
+    store: attrStore,
+  });
+
+  return isTitleEditable ? (
+    <EditTitleOption dataID={attrData.dataID} store={attrStore} />
+  ) : (
+    attrData.name
+  );
+}
+
 export default CustomizedFilterInfo<Search.Type>({
   extend: DefaultSearchFilterInfo,
   title(data, store) {
-    // Edge Case. Search Query이면 Title을 변경할 수 없습니다.
-    if (data.tags[TAG_SEARCH_QUERY]) return data.name;
-    return <EditTitleOption dataID={data.dataID} store={store} />;
+    return <CustomTitleContent attrData={data} attrStore={store} />;
   },
   // Preview이므로 Editing Filter의 정보를 반영해야 합니다.
   attributeContentCustom(key, data, store) {

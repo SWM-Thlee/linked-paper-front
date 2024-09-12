@@ -93,6 +93,7 @@ type Props<T extends FilterFeatureID> = {
 
 /** FilterInfo의 네 부분을 직접 Customize할 수 있습니다. */
 export type CustomizedFilterInfoProps<T extends FilterFeatureID> = {
+  extend?: CustomizedFilterInfo<T>;
   title?: (data: FilterData<T>, store: FilterStore) => React.ReactNode;
   options?: (data: FilterData<T>, store: FilterStore) => React.ReactNode;
 
@@ -116,17 +117,36 @@ export type CustomizedFilterInfoProps<T extends FilterFeatureID> = {
   order?: FilterAttributeKey<T>[];
 };
 
+type CustomizedFilterInfo<T extends FilterFeatureID> = {
+  attributes: Omit<CustomizedFilterInfoProps<T>, "extend">;
+} & ((props: Props<T>) => React.ReactNode);
+
 /** FilterInfo 컴포넌트의 틀은 유지하되, 각 Feature에 맞춰 컴포넌트를 Customize할 수 있도록 제공합니다. */
 export function CustomizedFilterInfo<T extends FilterFeatureID>({
-  title: titleComponent,
-  options: optionsComponent,
-  attributeKey: attributeKeyComponent,
-  attributeContent: attributeContentComponent,
-  attributeKeyCustom: attributeKeyCustomComponent,
-  attributeContentCustom: attributeContentCustomComponent,
-  order,
-}: CustomizedFilterInfoProps<T>) {
-  return function FilterInfo({ data, description, store }: Props<T>) {
+  extend,
+  title: _title,
+  options: _options,
+  attributeKey: _attributeKey,
+  attributeContent: _attributeContent,
+  attributeKeyCustom: _attributeKeyCustom,
+  attributeContentCustom: _attributeContentCustom,
+  order: _order,
+}: CustomizedFilterInfoProps<T>): CustomizedFilterInfo<T> {
+  // 기존 컴포넌트의 Attributes와 merge합니다. (= 재활용할 수 있으면 재활용합니다.)
+  const attributes: Omit<CustomizedFilterInfoProps<T>, "extend"> = {
+    title: _title ?? extend?.attributes.title,
+    options: _options ?? extend?.attributes.options,
+    attributeKey: _attributeKey ?? extend?.attributes.attributeKey,
+    attributeContent: _attributeContent ?? extend?.attributes.attributeContent,
+    attributeKeyCustom:
+      _attributeKeyCustom ?? extend?.attributes.attributeKeyCustom,
+    attributeContentCustom:
+      _attributeContentCustom ?? extend?.attributes.attributeContentCustom,
+    order: _order ?? extend?.attributes.order,
+  };
+
+  /* eslint-disable react/function-component-definition */
+  const FilterInfo = ({ data, description, store }: Props<T>) => {
     const {
       container,
       header,
@@ -137,8 +157,8 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
     } = filterInfoVariant();
 
     const entries = (
-      order
-        ? order.map((key) => [
+      attributes.order
+        ? attributes.order.map((key) => [
             key,
             (data.attributes as FilterData<T>["attributes"])[key],
           ])
@@ -149,35 +169,35 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
       <div className={container()}>
         <div className={header()}>
           <div className={title()}>
-            {titleComponent?.(data, store) ?? data.name}
+            {attributes.title?.(data, store) ?? data.name}
           </div>
           {description && (
             <InfoTooltip title={description}>
               <InfoIcon ui_size="small" />
             </InfoTooltip>
           )}
-          {optionsComponent && (
-            <div className={options()}>{optionsComponent(data, store)}</div>
+          {attributes.options && (
+            <div className={options()}>{attributes.options(data, store)}</div>
           )}
         </div>
         {entries.map(([key, content]) => (
           <React.Fragment key={key}>
             <div className={attributeKey()}>
-              {attributeKeyCustomComponent?.(
+              {attributes.attributeKeyCustom?.(
                 key as FilterAttributeKey<T>,
                 data,
                 store,
               ) ??
-                attributeKeyComponent?.(key as FilterAttributeKey<T>) ??
+                attributes.attributeKey?.(key as FilterAttributeKey<T>) ??
                 key}
             </div>
             <div className={attributeContent()}>
-              {attributeContentCustomComponent?.(
+              {attributes.attributeContentCustom?.(
                 key as FilterAttributeKey<T>,
                 data,
                 store,
               ) ??
-                attributeContentComponent?.([
+                attributes.attributeContent?.([
                   key,
                   content,
                 ] as FilterAttributeEntry<T>) ??
@@ -188,6 +208,13 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
       </div>
     );
   };
+
+  // 해당 컴포넌트의 요소를 재활용할 수 있도록 별도의 Attributes를 제공합니다.
+  Object.defineProperty(FilterInfo, "attributes", {
+    value: attributes,
+  });
+
+  return FilterInfo as CustomizedFilterInfo<T>;
 }
 
 // 기본 컴포넌트
