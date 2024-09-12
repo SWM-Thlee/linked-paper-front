@@ -1,4 +1,4 @@
-import { SearchResult } from "../../types/result";
+import { SearchResult } from "../../../../features/search/types/result";
 import SearchResultItemInfo from "./attributes/component";
 import SearchResultItemLinks from "./links/component";
 

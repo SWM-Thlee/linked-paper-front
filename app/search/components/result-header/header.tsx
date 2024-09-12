@@ -5,7 +5,7 @@ import EditIcon from "@/ui/icons/edit";
 import { Popover } from "@/ui/popover";
 import Search from "@/ui/search";
 import SearchSorting from "./sorting";
-import { SearchFilterSettings } from "../filter-settings";
+import { FilterSettings } from "../filter-settings";
 
 export default function SearchResultHeader() {
   return (
@@ -21,12 +21,12 @@ export default function SearchResultHeader() {
             </Popover.Trigger>
             <Popover.Content>Hello!</Popover.Content>
           </Popover.Root>
-          <SearchFilterSettings>
+          <FilterSettings>
             <Button ui_color="secondary" className="flex items-center gap-2">
               <EditIcon ui_size="small" />
               <div>Edit Filter...</div>
             </Button>
-          </SearchFilterSettings>
+          </FilterSettings>
         </div>
         <SearchSorting />
       </div>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import SearchSimilarityWarning from "./similarity-warning";
-import useSearchQuery from "../../hooks/query/use-search-query";
+import useSearchQuery from "../../../../features/search/hooks/query/use-search-query";
 import { SearchResultItem } from "../result-item";
 
 export default function SearchResultContents() {

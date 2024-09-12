@@ -7,7 +7,7 @@ import { TAG_EDITOR } from "@/features/filter/utils/editor";
 import { TAG_SNAPSHOT } from "@/features/filter/utils/snapshot";
 import useIsClient from "@/hooks/use-is-client";
 import useSearchFilters from "../../hooks/filter/use-search-filters";
-import SearchFilterEditor from "./tabs/editor-group/component";
+import { SearchFilterEditor } from "./filter-editor";
 
 function isSearchDataID(
   dataID: string | number | boolean,

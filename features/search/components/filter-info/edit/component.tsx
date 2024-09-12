@@ -6,11 +6,11 @@ import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-fil
 import { FilterAttributeKey, FilterData } from "@/features/filter/types/filter";
 import { FilterStore } from "@/features/filter/types/store";
 import { TAG_SEARCH_QUERY } from "@/features/search/utils/filter/search-query";
-import { SearchFilterAttributeKey } from "../common/attribute";
 import EditTitleOption from "../common/option/edit-title";
 import { JournalContent } from "../common/attribute/journal";
 import { CategoryContent } from "../common/attribute/category";
 import { DateContent } from "../common/attribute/date";
+import { DefaultSearchFilterInfo } from "../default-info";
 
 function CustomAttributeContent({
   attrKey,
@@ -41,15 +41,12 @@ function CustomAttributeContent({
 }
 
 export default CustomizedFilterInfo<Search.Type>({
-  // Journal, Category, Date 순서로 정렬됩니다.
-  order: ["journal", "category", "date"],
+  extend: DefaultSearchFilterInfo,
   title(data, store) {
     // Edge Case. Search Query이면 Title을 변경할 수 없습니다.
     if (data.tags[TAG_SEARCH_QUERY]) return data.name;
     return <EditTitleOption dataID={data.dataID} store={store} />;
   },
-  attributeKey: SearchFilterAttributeKey,
-
   // Preview이므로 Editing Filter의 정보를 반영해야 합니다.
   attributeContentCustom(key, data, store) {
     return (

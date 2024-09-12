@@ -1,10 +1,11 @@
+import React from "react";
+
 import SearchQueryFilterProvider from "@/features/search/components/query-filter-provider/component";
+import { SearchResultHeader } from "./components/result-header";
 import {
   SearchResultContents,
   SearchResultSkeleton,
-} from "@/features/search/components/result-contents";
-import { SearchResultHeader } from "@/features/search/components/result-header";
-import React from "react";
+} from "./components/result-contents";
 
 export default function Page() {
   return (

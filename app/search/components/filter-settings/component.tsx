@@ -1,12 +1,12 @@
 import { Settings } from "@/ui/settings";
-import SearchFilterEditorContainer from "./editor-container";
-import SearchQuery from "./tabs/search-query";
+import SearchFilterEditorContainer from "@/features/search/components/filter-settings/editor-container";
+import SearchQuery from "./search-query";
 
 type Props = {
   children: React.ReactNode;
 };
 
-export default function SearchFilterSettings({ children }: Props) {
+export default function FilterSettings({ children }: Props) {
   return (
     <Settings.Root>
       <Settings.Trigger>{children}</Settings.Trigger>

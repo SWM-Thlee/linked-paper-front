@@ -12,8 +12,8 @@ import LabelButton from "@/ui/label-button";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useTabDirectionObserver from "@/ui/settings/hooks/use-tab-direction-observer";
 import { TAB_PREVIEW } from "@/features/search/types/tab";
-import { SearchFilterEditInfo } from "../../info";
 import { EditorContext } from "./context";
+import { SearchFilterEditInfo } from "../../filter-info/edit";
 
 export default function EditorPreview() {
   const tabID = useTabID(TAB_PREVIEW.ID);

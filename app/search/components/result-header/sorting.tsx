@@ -1,7 +1,7 @@
 "use client";
 
 import Select from "@/ui/select";
-import { SearchSorting as Sorting } from "../../types/query";
+import { SearchSorting as Sorting } from "../../../../features/search/types/query";
 
 const items = Object.keys(Sorting).map((sorting) => ({
   value: sorting,

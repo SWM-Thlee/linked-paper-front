@@ -2,16 +2,12 @@
 
 import { Search } from "@/features/search/types";
 import { CustomizedFilterInfo } from "@/features/filter/components/info";
-import {
-  SearchFilterAttributeContent,
-  SearchFilterAttributeKey,
-} from "../common/attribute";
-import EditFilterOption from "../preset/options/edit-filter";
+import EditFilterOption from "@/features/search/components/filter-info/preset/options/edit-filter";
+import { DefaultSearchFilterInfo } from "@/features/search/components/filter-info/default-info";
 import AddToPresetsOption from "./options/add-to-presets";
 
 export default CustomizedFilterInfo<Search.Type>({
-  // Journal, Category, Date 순서로 정렬됩니다.
-  order: ["journal", "category", "date"],
+  extend: DefaultSearchFilterInfo,
   title() {
     return "Current Settings";
   },
@@ -23,6 +19,4 @@ export default CustomizedFilterInfo<Search.Type>({
       </>
     );
   },
-  attributeKey: SearchFilterAttributeKey,
-  attributeContent: SearchFilterAttributeContent,
 });

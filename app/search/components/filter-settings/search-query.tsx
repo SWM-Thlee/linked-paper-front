@@ -19,7 +19,8 @@ import {
   TAG_SEARCH_FILTER_PRESET,
 } from "@/features/search/utils/filter/preset";
 import { TAB_SEARCH_QUERY } from "@/features/search/types/tab";
-import { SearchFilterPresetInfo, SearchQueryFilterInfo } from "../info";
+import { SearchQueryFilterInfo } from "../filter-info/search-query";
+import { SearchQueryFilterPresetInfo } from "../filter-info/search-query-preset";
 
 function AddPresetButton() {
   const dispatch = useSearchFilterDispatcher({ store: FilterStore.PERSIST });
@@ -96,7 +97,10 @@ function SearchFilterPresets() {
     <div className="flex flex-col gap-8">
       {sorted.map(([dataID, data]) => (
         <div key={dataID} className="animate-fadeIn">
-          <SearchFilterPresetInfo store={FilterStore.PERSIST} data={data} />
+          <SearchQueryFilterPresetInfo
+            store={FilterStore.PERSIST}
+            data={data}
+          />
         </div>
       ))}
     </div>

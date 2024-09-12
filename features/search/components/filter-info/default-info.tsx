@@ -7,7 +7,7 @@ import {
   SearchFilterAttributeKey,
 } from "./common/attribute";
 
-export default CustomizedFilterInfo<Search.Type>({
+export const DefaultSearchFilterInfo = CustomizedFilterInfo<Search.Type>({
   // Journal, Category, Date 순서로 정렬됩니다.
   order: ["journal", "category", "date"],
   attributeKey: SearchFilterAttributeKey,
