@@ -4,8 +4,10 @@ import React from "react";
 import { tv, VariantProps } from "@/utils/tailwind-variants";
 import { sem } from "@/utils/semantic-styles";
 
-import InfoTooltip from "@/ui/info-tooltip";
-import InfoIcon from "@/ui/icons/info";
+import IconButton from "@/ui/icon-button";
+import MenuIcon from "@/ui/icons/menu";
+import { Popover } from "@/ui/popover";
+import FieldContainer from "@/ui/container/field-container";
 import { AttributeDefaultRenderer } from "./default-renderer";
 import {
   FilterAttributeEntry,
@@ -45,16 +47,12 @@ const filterInfoVariant = tv({
       .build(),
     title: sem()
       .layout([
-        "only:w-full",
-        "gap-4",
-        "overflow-hidden",
+        "flex-1",
         "text-ellipsis",
         "text-nowrap",
+        "overflow-hidden",
         "text-title-medium",
       ])
-      .build(),
-    options: sem()
-      .layout(["flex", "flex-1", "items-center", "justify-end", "gap-2"])
       .build(),
     attributeKey: sem()
       .layout([
@@ -147,14 +145,8 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
 
   /* eslint-disable react/function-component-definition */
   const FilterInfo = ({ data, description, store }: Props<T>) => {
-    const {
-      container,
-      header,
-      title,
-      options,
-      attributeKey,
-      attributeContent,
-    } = filterInfoVariant();
+    const { container, header, title, attributeKey, attributeContent } =
+      filterInfoVariant();
 
     const entries = (
       attributes.order
@@ -171,13 +163,33 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
           <div className={title()}>
             {attributes.title?.(data, store) ?? data.name}
           </div>
-          {description && (
-            <InfoTooltip title={description}>
-              <InfoIcon ui_size="small" />
-            </InfoTooltip>
-          )}
-          {attributes.options && (
-            <div className={options()}>{attributes.options(data, store)}</div>
+          {(description || attributes.options) && (
+            <Popover.Root>
+              <Popover.Trigger>
+                <IconButton>
+                  <MenuIcon ui_size="small" />
+                </IconButton>
+              </Popover.Trigger>
+              <Popover.Content className="flex w-[30rem] flex-col gap-4">
+                {description && (
+                  <FieldContainer
+                    ui_size="medium"
+                    ui_variant="bordered"
+                    title="INFO"
+                    className="text-body-medium"
+                  >
+                    {description}
+                  </FieldContainer>
+                )}
+                {attributes.options && (
+                  <FieldContainer title="OPTIONS" ui_size="medium">
+                    <div className="grid grid-cols-2 gap-2">
+                      {attributes.options(data, store)}
+                    </div>
+                  </FieldContainer>
+                )}
+              </Popover.Content>
+            </Popover.Root>
           )}
         </div>
         {entries.map(([key, content]) => (

@@ -17,8 +17,10 @@ import useSearchQueryFilter from "@/features/search/hooks/filter/use-search-quer
 import { TAB_SEARCH_QUERY } from "@/features/search/types/tab";
 import { Tag } from "@/features/filter/types/tag";
 import { Search } from "@/features/search/types";
-import { SearchQueryFilterInfo } from "../filter-info/search-query";
-import { SearchQueryFilterPresetInfo } from "../filter-info/search-query-preset";
+import TipIcon from "@/ui/icons/tip";
+import { SearchQueryPresetFilterInfo } from "../filter-info/search-query-preset-info";
+import { SearchQueryFilterInfo } from "../filter-info/search-query-info";
+import { SearchQueryDefaultFilterInfo } from "../filter-info/search-query-default-info";
 
 function AddPresetButton() {
   const dispatch = useSearchFilterDispatcher({ store: FilterStore.PERSIST });
@@ -95,12 +97,48 @@ function SearchFilterPresets() {
     <div className="flex flex-col gap-8">
       {sorted.map(([dataID, data]) => (
         <div key={dataID} className="animate-fadeIn">
-          <SearchQueryFilterPresetInfo
+          <SearchQueryPresetFilterInfo
             store={FilterStore.PERSIST}
             data={data}
           />
         </div>
       ))}
+    </div>
+  );
+}
+
+function DefaultFilterNotFound() {
+  return (
+    <div className="flex flex-col gap-6 rounded-4 p-6 text-body-large ring-2 ring-inset ring-light-outlineVariant dark:ring-dark-outlineVariant">
+      <TipIcon ui_size="large" />
+      <div className="text-title-large">Default Filter is Not Set</div>
+      <p>
+        Save time by setting up a Default Filter for faster, more accurate
+        search results.
+      </p>
+    </div>
+  );
+}
+
+function DefaultFilterSection() {
+  const { filter } = useSearchFilters({
+    store: FilterStore.PERSIST,
+    track: { tag: [Tag.DEFAULT] },
+  });
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="text-title-large">Default Filter</div>
+      <div className="animate-fadeIn">
+        {filter ? (
+          <SearchQueryDefaultFilterInfo
+            data={filter}
+            store={FilterStore.PERSIST}
+          />
+        ) : (
+          <DefaultFilterNotFound />
+        )}
+      </div>
     </div>
   );
 }
@@ -124,15 +162,14 @@ export default function SearchQuery() {
       </Settings.Tab.Title>
       <Settings.Tab.Content>
         <div className="mt-8 flex flex-col gap-16">
-          {query?.filter ? (
+          {query?.filter && (
             <SearchQueryFilterInfo
               store={FilterStore.TEMPORARY}
               description="This filter was taken from a search query and has not been saved to the client."
               data={query.filter}
             />
-          ) : (
-            <div>Loading Search Filters...</div>
           )}
+          <DefaultFilterSection />
           <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between gap-6">
               <div className="text-title-large">Presets</div>

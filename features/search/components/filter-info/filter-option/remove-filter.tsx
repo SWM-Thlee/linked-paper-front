@@ -2,13 +2,13 @@
 
 import { useCallback } from "react";
 
-import { Search } from "@/features/search/types";
-import { FilterDataID } from "@/features/filter/types/filter";
 import DeleteIcon from "@/ui/icons/delete";
-import { FilterStore } from "@/features/filter/types/store";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
-import IconButton from "@/ui/icon-button";
+import { Search } from "@/features/search/types";
 import { EditStatus } from "@/features/search/types/edit";
+import { FilterDataID } from "@/features/filter/types/filter";
+import { FilterStore } from "@/features/filter/types/store";
+import Button from "@/ui/button";
 
 type Props = {
   dataID: FilterDataID<Search.Type>;
@@ -16,6 +16,7 @@ type Props = {
 };
 
 export default function RemoveFilterOption({ dataID, store }: Props) {
+  // Target Filter Editor
   const { status, remove } = useSearchFilterEditor({
     store,
     dataID,
@@ -23,17 +24,21 @@ export default function RemoveFilterOption({ dataID, store }: Props) {
 
   const onClick = useCallback(() => {
     if (status !== EditStatus.NOT_EDITING) {
-      throw new Error(
-        "Error from RemoveFilterOption: Cannot remove on editing.",
-      );
+      throw new Error("Error from Removing Filter: Cannot remove on editing.");
     }
 
+    // Remove Filter + Editor
     remove(true);
   }, [status, remove]);
 
   return status === EditStatus.NOT_EDITING ? (
-    <IconButton ui_color="tertiary" ui_variant="bordered" onClick={onClick}>
-      <DeleteIcon />
-    </IconButton>
+    <Button
+      ui_size="small"
+      ui_color="tertiary"
+      className="flex items-center justify-between gap-2 text-nowrap text-label-large"
+      onClick={onClick}
+    >
+      <DeleteIcon /> Remove This Filter
+    </Button>
   ) : null;
 }

@@ -18,7 +18,7 @@ import { toSearchEdit } from "../../utils/filter/edit";
 
 type Props = {
   dataID: FilterDataID<Search.Type>;
-  store?: FilterStore;
+  store: FilterStore;
 };
 
 export type SearchFilterEditorHook = ReturnType<typeof useSearchFilterEditor>;
@@ -26,10 +26,7 @@ export type SearchFilterEditorHook = ReturnType<typeof useSearchFilterEditor>;
 /**
  * Search Filter를 편집하기 위해 사용됩니다.
  */
-export default function useSearchFilterEditor({
-  dataID,
-  store = FilterStore.PERSIST,
-}: Props) {
+export default function useSearchFilterEditor({ dataID, store }: Props) {
   const temp = useSearchFilterDispatcher({
     store: FilterStore.TEMPORARY,
   });

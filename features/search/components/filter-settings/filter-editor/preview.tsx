@@ -13,7 +13,7 @@ import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useTabDirectionObserver from "@/ui/settings/hooks/use-tab-direction-observer";
 import { TAB_PREVIEW } from "@/features/search/types/tab";
 import { EditorContext } from "./context";
-import { SearchFilterEditInfo } from "../../filter-info/edit";
+import { EditSearchFilterInfo } from "../../filter-info/edit-info";
 
 export default function EditorPreview() {
   const tabID = useTabID(TAB_PREVIEW.ID);
@@ -41,7 +41,7 @@ export default function EditorPreview() {
       </Settings.Tab.Title>
       <Settings.Tab.Content>
         <div className="mt-8 flex flex-col gap-16">
-          <SearchFilterEditInfo store={edit.store} data={edit.filter} />
+          <EditSearchFilterInfo store={edit.store} data={edit.filter} />
         </div>
       </Settings.Tab.Content>
       <Settings.Tab.Options>

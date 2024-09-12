@@ -5,11 +5,11 @@ import { CustomizedFilterInfo } from "@/features/filter/components/info";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import { FilterAttributeKey, FilterData } from "@/features/filter/types/filter";
 import { FilterStore } from "@/features/filter/types/store";
-import EditTitleOption from "../common/option/edit-title";
-import { JournalContent } from "../common/attribute/journal";
-import { CategoryContent } from "../common/attribute/category";
-import { DateContent } from "../common/attribute/date";
-import { DefaultSearchFilterInfo } from "../default-info";
+import EditTitleOption from "./filter-option/edit-title";
+import { JournalContent } from "./filter-attribute/journal";
+import { CategoryContent } from "./filter-attribute/category";
+import { DateContent } from "./filter-attribute/date";
+import { RawSearchFilterInfo } from "./raw-info";
 
 function CustomAttributeContent({
   attrKey,
@@ -58,8 +58,8 @@ function CustomTitleContent({
   );
 }
 
-export default CustomizedFilterInfo<Search.Type>({
-  extend: DefaultSearchFilterInfo,
+export const EditSearchFilterInfo = CustomizedFilterInfo<Search.Type>({
+  extend: RawSearchFilterInfo,
   title(data, store) {
     return <CustomTitleContent attrData={data} attrStore={store} />;
   },

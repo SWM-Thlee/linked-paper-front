@@ -20,7 +20,7 @@ type Props = {
   store: FilterStore;
 };
 
-export default function ApplyToSearch({ dataID, store }: Props) {
+export default function ApplyToSearchOption({ dataID, store }: Props) {
   const { filter, status } = useSearchFilterEditor({
     store,
     dataID,
@@ -49,8 +49,7 @@ export default function ApplyToSearch({ dataID, store }: Props) {
   return !searchQueryEditor && status === EditStatus.NOT_EDITING ? (
     <Button
       ui_size="small"
-      ui_variant="bordered"
-      className="flex items-center gap-2 text-nowrap text-label-large"
+      className="flex items-center justify-between gap-2 text-nowrap text-label-large"
       onClick={onClick}
     >
       <SearchIcon />

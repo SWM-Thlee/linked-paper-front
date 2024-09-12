@@ -2,12 +2,12 @@
 
 import { Search } from "@/features/search/types";
 import { CustomizedFilterInfo } from "@/features/filter/components/info";
-import EditFilterOption from "./options/edit-filter";
-import RemoveFilterOption from "./options/remove-filter";
-import { DefaultSearchFilterInfo } from "../default-info";
+import EditFilterOption from "./filter-option/edit-filter";
+import RemoveFilterOption from "./filter-option/remove-filter";
+import { RawSearchFilterInfo } from "./raw-info";
 
-export default CustomizedFilterInfo<Search.Type>({
-  extend: DefaultSearchFilterInfo,
+export const PresetSearchFilterInfo = CustomizedFilterInfo<Search.Type>({
+  extend: RawSearchFilterInfo,
   options(filter, store) {
     return (
       <>

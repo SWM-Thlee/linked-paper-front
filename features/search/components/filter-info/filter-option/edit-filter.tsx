@@ -48,12 +48,11 @@ export default function EditFilterOption({
     <Button
       ui_size="small"
       ui_color="secondary"
-      className="flex items-center gap-2 text-nowrap text-label-large"
-      ui_variant={status === EditStatus.NOT_EDITING ? "bordered" : "default"}
+      className="flex items-center justify-between gap-2 text-nowrap text-label-large"
       onClick={onClick}
     >
       <EditIcon />
-      {status === EditStatus.NOT_EDITING ? "Edit" : "Continue Editing"}
+      {status === EditStatus.NOT_EDITING ? "Edit Filter" : "Continue Editing"}
     </Button>
   ) : null;
 }

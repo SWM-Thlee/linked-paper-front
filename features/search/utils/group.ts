@@ -5,10 +5,13 @@ export type CategoryGroup = {
 };
 
 // 상위 분류를 기준으로 그룹화합니다.
-export function group(categoryIds: string[]) {
+export function group(
+  categoryIds: string[],
+  indexFn: (categoryID: string) => Category[string] | undefined,
+) {
   return categoryIds
-    .filter((category) => Category[category])
-    .map((category) => [category, Category[category]] as const)
+    .filter((category) => indexFn(category))
+    .map((category) => [category, indexFn(category)!] as const)
     .reduce<CategoryGroup>(
       (result, [categoryID, { subject }]) => ({
         ...result,
@@ -19,7 +22,10 @@ export function group(categoryIds: string[]) {
 }
 
 // 특정 논문의 여러 분류를 간략화한 대표 분류를 반환합니다.
-export function representative(categoryGroup: CategoryGroup) {
+export function representative(
+  categoryGroup: CategoryGroup,
+  indexFn: (categoryID: string) => Category[string] | undefined,
+) {
   const [count, result] = Object.entries(categoryGroup).reduce<
     [number, string]
   >(
@@ -32,6 +38,6 @@ export function representative(categoryGroup: CategoryGroup) {
 
   // 우세한 상위 분류 내 하위 분류가 하나이거나, 상위 분류가 유효하지 않은 경우 가장 앞의 하위 분류를 반환합니다.
   return count === 1
-    ? Category[categoryGroup[result][0]]?.description ?? ""
+    ? indexFn(categoryGroup[result][0])?.description ?? ""
     : result;
 }

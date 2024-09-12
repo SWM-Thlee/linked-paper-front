@@ -8,6 +8,7 @@ import Button from "@/ui/button";
 import { Popover } from "@/ui/popover";
 import CategoryIcon from "@/ui/icons/category";
 import { Category } from "@/utils/category";
+import useCategories from "@/hooks/use-categories";
 
 type Props = Pick<PaperMetadata, "categories">;
 
@@ -44,11 +45,19 @@ function Categories({ categories }: Props) {
 
 // 해당 논문의 하위 분류를 표시하는 버튼 컴포넌트입니다.
 export default function SearchResultAttributeCategories({ categories }: Props) {
+  const { index } = useCategories();
+
   // 상위 분류를 기준으로 그룹화
-  const categoryGroup = useMemo(() => group(categories), [categories]);
+  const categoryGroup = useMemo(
+    () => group(categories, index),
+    [categories, index],
+  );
 
   // 특정 규칙에 따라 간략화된 분류
-  const title = useMemo(() => representative(categoryGroup), [categoryGroup]);
+  const title = useMemo(
+    () => representative(categoryGroup, index),
+    [categoryGroup, index],
+  );
 
   // 하위 분류의 개수
   const amount = useMemo(

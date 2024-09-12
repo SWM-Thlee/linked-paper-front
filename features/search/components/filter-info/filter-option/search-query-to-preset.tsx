@@ -12,20 +12,27 @@ import { Search } from "@/features/search/types";
 import { revertQuery } from "@/features/filter/utils/converter/query";
 import { toPreset } from "@/features/filter/utils/converter/preset";
 
-export default function AddToPresetsOption() {
+export function SearchQueryToPresetOption() {
+  // Preset은 Persistent Store에 저장되어야 한다.
   const dispatch = useSearchFilterDispatcher({ store: FilterStore.PERSIST });
+
+  // Search Query Filter는 "/search" Page 내에서만 존재합니다.
   const query = useSearchQueryFilter();
 
-  const addToPresets = useCallback(() => {
+  const onClick = useCallback(() => {
     if (!query?.filter)
-      throw new Error("Error from AddToPresets: Target filter is not found");
+      throw new Error(
+        "Error from Converting Search Query To Preset: Target filter is not found",
+      );
 
+    // Convert Query to Preset
     const filter = toPreset<Search.Type>({
       data: revertQuery<Search.Type>({ data: query.filter }),
     });
 
     dispatch(
       produce(filter, (draft) => {
+        // Default Name
         draft.name = "Preset From Search Query";
       }),
     );
@@ -35,12 +42,11 @@ export default function AddToPresetsOption() {
     <Button
       ui_size="small"
       ui_color="tertiary"
-      ui_variant="bordered"
-      className="flex items-center gap-2 text-nowrap text-label-large"
-      onClick={addToPresets}
+      className="flex items-center justify-between gap-2 text-nowrap text-label-large"
+      onClick={onClick}
     >
       <AddIcon />
-      Preset
+      Add Query to Preset
     </Button>
   ) : null;
 }
