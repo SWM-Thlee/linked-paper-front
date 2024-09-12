@@ -1,15 +1,14 @@
 import { produce } from "immer";
 
-import { FilterData } from "@/features/filter/types/filter";
+import { FilterData, FilterDataID } from "@/features/filter/types/filter";
+import { toQuery } from "@/features/filter/utils/converter/query";
 import { RawSearchQueryInfo } from "../../types/query";
 import createSearchFilter from "./initial";
 import { Search } from "../../types";
 
-export const TAG_SEARCH_QUERY = "SEARCH_QUERY";
 export const DEFAULT_FILTER_NAME = "Search Query";
-export interface SearchFilterQuery {}
 
-export type SearchQueryFilterInitialData = Pick<
+export type SearchQueryFilterData = Pick<
   RawSearchQueryInfo,
   "filter_category" | "filter_end_date" | "filter_start_date" | "filter_journal"
 >;
@@ -23,9 +22,9 @@ function isNotEmpty<T extends object>(obj?: T): obj is T {
   return obj !== undefined && Object.keys(obj).length > 0;
 }
 
-export function convertFilterToQuery({
+export function fromSearchFilterToQuery({
   attributes: { journal, category, date },
-}: FilterData<Search.Type>): SearchQueryFilterInitialData {
+}: FilterData<Search.Type>): SearchQueryFilterData {
   return {
     filter_journal: isNotEmpty(journal.value)
       ? Object.values(journal.value).map(({ info: [id] }) => id)
@@ -38,18 +37,27 @@ export function convertFilterToQuery({
   };
 }
 
+export type ConvertingSearchQueryToFilterProps = SearchQueryFilterData & {
+  queryDataID: FilterDataID<Search.Type>;
+};
+
 /**
  * Search Query를 기반으로 Filter 정보를 생성합니다.
  */
-export function createSearchQueryFilter({
-  filter_start_date,
-  filter_end_date,
-  filter_category,
-  filter_journal,
-}: SearchQueryFilterInitialData) {
-  const filter = createSearchFilter({
-    name: DEFAULT_FILTER_NAME,
-    tags: { [TAG_SEARCH_QUERY]: {} },
+export function fromSearchQueryToFilter({
+  filter_start_date: _startDate,
+  filter_end_date: _endDate,
+  filter_category: _category,
+  filter_journal: _journal,
+  queryDataID,
+}: ConvertingSearchQueryToFilterProps) {
+  // Create Raw Search Query Filter
+  const filter = toQuery<Search.Type>({
+    data: createSearchFilter({
+      name: DEFAULT_FILTER_NAME,
+      tags: {},
+    }),
+    queryDataID,
   });
 
   return produce(filter, (draft) => {
@@ -59,8 +67,8 @@ export function createSearchQueryFilter({
       (categoryDraft) => {
         if (!categoryDraft.value) categoryDraft.value = {};
 
-        if (filter_category) {
-          filter_category.forEach((categoryID) => {
+        if (_category) {
+          _category.forEach((categoryID) => {
             categoryDraft.value![categoryID] = {
               itemID: categoryID,
               info: [categoryID],
@@ -76,8 +84,8 @@ export function createSearchQueryFilter({
       (journalDraft) => {
         if (!journalDraft.value) journalDraft.value = {};
 
-        if (filter_journal) {
-          filter_journal.forEach((journal) => {
+        if (_journal) {
+          _journal.forEach((journal) => {
             journalDraft.value![journal] = {
               itemID: journal,
               info: [journal],
@@ -91,27 +99,13 @@ export function createSearchQueryFilter({
     draft.attributes.date = produce(draft.attributes.date, (dateDraft) => {
       if (!dateDraft.value) dateDraft.value = {};
 
-      if (filter_start_date && isDate(filter_start_date)) {
-        dateDraft.value!.min = filter_start_date;
+      if (_startDate && isDate(_startDate)) {
+        dateDraft.value!.min = _startDate;
       }
 
-      if (filter_end_date && isDate(filter_end_date)) {
-        dateDraft.value!.max = filter_end_date;
+      if (_endDate && isDate(_endDate)) {
+        dateDraft.value!.max = _endDate;
       }
     });
-  });
-}
-
-/**
- *  특정 Search Filter의 Query 마크를 지웁니다. 이는 Search Query를 다른 용도로 이용할 때 사용됩니다.
- */
-export function unmarkSearchQueryFilter(data: FilterData<Search.Type>) {
-  if (!data.tags[TAG_SEARCH_QUERY])
-    throw new Error(
-      "Error from UnmarkSearchQueryFilter: Target filter is not marked",
-    );
-
-  return produce(data, (draft) => {
-    delete draft.tags[TAG_SEARCH_QUERY];
   });
 }

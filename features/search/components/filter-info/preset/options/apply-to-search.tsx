@@ -11,10 +11,9 @@ import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-fil
 import { EditStatus } from "@/features/search/types/edit";
 import SearchIcon from "@/ui/icons/search";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
-import { TAG_SEARCH_QUERY } from "@/features/search/utils/filter/search-query";
-import { TAG_EDITOR } from "@/features/filter/utils/editor";
 import useSearchQueryFilter from "@/features/search/hooks/filter/use-search-query-filter";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
+import { Tag } from "@/features/filter/types/tag";
 
 type Props = {
   dataID: FilterDataID<Search.Type>;
@@ -29,7 +28,7 @@ export default function ApplyToSearch({ dataID, store }: Props) {
 
   const { filter: searchQueryEditor } = useSearchFilters({
     store: FilterStore.TEMPORARY,
-    track: { tag: [TAG_SEARCH_QUERY, TAG_EDITOR] },
+    track: { tag: [Tag.QUERY, Tag.EDIT] },
   });
 
   const query = useSearchQueryFilter();

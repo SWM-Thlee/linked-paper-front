@@ -29,3 +29,10 @@ export const TAB_SEARCH_QUERY = {
   DESCRIPTION:
     "You can set the filter to be used for search queries. When the changes are applied, they are immediately applied to the search results.",
 } as const;
+
+export const TAB_DEFAULT_SEARCH_FILTER = {
+  ID: "DefaultSearchFilter",
+  TITLE: "Default Filter",
+  DESCRIPTION:
+    "Default Filter lets users pre-set search criteria to streamline their search and get more relevant results from the start.",
+} as const;

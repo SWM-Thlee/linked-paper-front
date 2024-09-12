@@ -2,13 +2,9 @@ import { useCallback, useMemo } from "react";
 import { Draft, produce } from "immer";
 import equal from "fast-deep-equal";
 
-import { TAG_SNAPSHOT } from "@/features/filter/utils/snapshot";
-import {
-  createEditorDispatch,
-  createFilterEditor,
-  TAG_EDITOR,
-} from "@/features/filter/utils/editor";
 import { FilterStore } from "@/features/filter/types/store";
+import { Tag } from "@/features/filter/types/tag";
+import { revertEdit } from "@/features/filter/utils/converter/edit";
 import { Search } from "../../types";
 import {
   FilterAttributeKey,
@@ -18,6 +14,7 @@ import {
 import useSearchFilterDispatcher from "./use-search-filter-dispatcher";
 import useSearchFilters from "./use-search-filters";
 import { EditStatus } from "../../types/edit";
+import { toSearchEdit } from "../../utils/filter/edit";
 
 type Props = {
   dataID: FilterDataID<Search.Type>;
@@ -49,7 +46,7 @@ export default function useSearchFilterEditor({
 
   // 편집 중인 Filter를 나타냅니다.
   const { filter: editor, reset: removeEditor } = useSearchFilters({
-    track: { tag: [TAG_EDITOR, [TAG_SNAPSHOT, { target: dataID }]] },
+    track: { tag: [[Tag.EDIT, { target: dataID }]] },
     store: FilterStore.TEMPORARY,
   });
 
@@ -68,7 +65,7 @@ export default function useSearchFilterEditor({
         );
       }
 
-      temp(createFilterEditor<Search.Type>(filter, store, titleEditable));
+      temp(toSearchEdit({ data: filter, store, titleEditable }));
     },
     [filter, temp, editor, store],
   );
@@ -147,14 +144,14 @@ export default function useSearchFilterEditor({
         );
       }
 
-      dispatch(createEditorDispatch<Search.Type>(editor));
+      dispatch(revertEdit<Search.Type>({ data: editor }));
       if (afterRemove) removeEditor();
     },
     [dispatch, editor, removeEditor],
   );
 
   const isTitleEditable = useMemo(
-    () => !!editor?.tags[TAG_EDITOR]?.titleEditable,
+    () => !!editor?.tags[Tag.EDIT]?.titleEditable,
     [editor],
   );
 

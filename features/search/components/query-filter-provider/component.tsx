@@ -2,24 +2,22 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { produce } from "immer";
 import { useDeepCompareMemo } from "use-deep-compare";
 import equal from "fast-deep-equal";
 
+import { Tag } from "@/features/filter/types/tag";
 import { FilterStore } from "@/features/filter/types/store";
 import { generateFilterDataID } from "@/features/filter/utils/id";
-import { TAG_EDITOR } from "@/features/filter/utils/editor";
 import useSearchFilterDispatcher from "../../hooks/filter/use-search-filter-dispatcher";
 import useSearchInfoFromQuery from "../../hooks/query/use-search-info-from-query";
 import useSearchFilters from "../../hooks/filter/use-search-filters";
-import {
-  convertFilterToQuery,
-  createSearchQueryFilter,
-  SearchQueryFilterInitialData,
-  TAG_SEARCH_QUERY,
-} from "../../utils/filter/search-query";
 import { SearchQueryFilterContext } from "./context";
 import { Search } from "../../types";
+import {
+  fromSearchFilterToQuery,
+  fromSearchQueryToFilter,
+  SearchQueryFilterData,
+} from "../../utils/filter/query";
 
 type Props = React.PropsWithChildren;
 
@@ -55,16 +53,14 @@ export default function SearchQueryFilterProvider({ children }: Props) {
 
   const { filter: currentFilter } = useSearchFilters({
     store: FilterStore.TEMPORARY,
-    track: { tag: [TAG_SEARCH_QUERY, [TAG_EDITOR]] },
+    track: { tag: [Tag.QUERY, [Tag.EDIT]] },
   });
 
   useEffect(() => {
-    const filterFromQuery = produce(
-      createSearchQueryFilter(queryFilterInfo),
-      (draft) => {
-        draft.dataID = searchFilterRef.current;
-      },
-    );
+    const filterFromQuery = fromSearchQueryToFilter({
+      ...queryFilterInfo,
+      queryDataID: searchFilterRef.current,
+    });
 
     if (!currentFilter) {
       dispatcher(filterFromQuery);
@@ -73,11 +69,11 @@ export default function SearchQueryFilterProvider({ children }: Props) {
 
     if (equal(filterFromQuery.attributes, currentFilter.attributes)) return;
 
-    const queryFromFilter = convertFilterToQuery(currentFilter);
+    const queryFromFilter = fromSearchFilterToQuery(currentFilter);
     const queryToRefresh = {
       ...otherQueryInfo,
       ...queryFromFilter,
-    } satisfies SearchQueryFilterInitialData;
+    } satisfies SearchQueryFilterData;
 
     // Filter가 수정된 경우 Search Query에도 반영합니다.
     router.replace(

@@ -6,19 +6,17 @@ import { Settings } from "@/ui/settings";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import SearchIcon from "@/ui/icons/search";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
-import { TAG_EDITOR } from "@/features/filter/utils/editor";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
 import createSearchFilter from "@/features/search/utils/filter/initial";
 import Button from "@/ui/button";
 import AddIcon from "@/ui/icons/add";
 import DeleteIcon from "@/ui/icons/delete";
+import { toPreset } from "@/features/filter/utils/converter/preset";
 import { FilterStore } from "@/features/filter/types/store";
 import useSearchQueryFilter from "@/features/search/hooks/filter/use-search-query-filter";
-import {
-  markSearchFilterPreset,
-  TAG_SEARCH_FILTER_PRESET,
-} from "@/features/search/utils/filter/preset";
 import { TAB_SEARCH_QUERY } from "@/features/search/types/tab";
+import { Tag } from "@/features/filter/types/tag";
+import { Search } from "@/features/search/types";
 import { SearchQueryFilterInfo } from "../filter-info/search-query";
 import { SearchQueryFilterPresetInfo } from "../filter-info/search-query-preset";
 
@@ -27,9 +25,9 @@ function AddPresetButton() {
 
   const onClick = useCallback(() => {
     dispatch(
-      markSearchFilterPreset(
-        createSearchFilter({ tags: {}, name: "Unnamed Preset" }),
-      ),
+      toPreset<Search.Type>({
+        data: createSearchFilter({ tags: {}, name: "Unnamed Preset" }),
+      }),
     );
   }, [dispatch]);
 
@@ -49,13 +47,13 @@ function RemoveAllButton() {
   // Persist Store에 저장된 Preset
   const { reset: removeInPersistentStore } = useSearchFilters({
     store: FilterStore.PERSIST,
-    track: { tag: [TAG_SEARCH_FILTER_PRESET] },
+    track: { tag: [Tag.PRESET] },
   });
 
   // Temporary Store에 저장된 Preset
   const { reset: removeInTemporaryStore } = useSearchFilters({
     store: FilterStore.TEMPORARY,
-    track: { tag: [TAG_SEARCH_FILTER_PRESET] },
+    track: { tag: [Tag.PRESET] },
   });
 
   const removeAll = useCallback(() => {
@@ -79,7 +77,7 @@ function RemoveAllButton() {
 function SearchFilterPresets() {
   const { filters } = useSearchFilters({
     store: FilterStore.PERSIST,
-    track: { tag: [TAG_SEARCH_FILTER_PRESET, [TAG_EDITOR]] },
+    track: { tag: [Tag.PRESET, [Tag.EDIT]] },
   });
 
   // 생성 날짜가 가까운 Preset부터 위에 위치합니다.
@@ -87,8 +85,8 @@ function SearchFilterPresets() {
     () =>
       Object.entries(filters).toSorted(
         ([, leftData], [, rightData]) =>
-          (rightData.tags[TAG_SEARCH_FILTER_PRESET].createdAt as number) -
-          (leftData.tags[TAG_SEARCH_FILTER_PRESET].createdAt as number),
+          (rightData.tags[Tag.PRESET].createdAt as number) -
+          (leftData.tags[Tag.PRESET].createdAt as number),
       ),
     [filters],
   );
