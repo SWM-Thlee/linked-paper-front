@@ -80,7 +80,7 @@ export default function SearchQueryFilterProvider({ children }: Props) {
     } satisfies SearchQueryFilterInitialData;
 
     // Filter가 수정된 경우 Search Query에도 반영합니다.
-    router.push(
+    router.replace(
       `/search?${Object.entries(queryToRefresh)
         .filter(([, value]) => value)
         .map(([key, value]) =>
