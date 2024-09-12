@@ -1,6 +1,7 @@
-import { tv, VariantProps } from "@/utils/tailwind-variants";
 import { forwardRef } from "react";
-import { MdSearch as SearchIcon } from "react-icons/md";
+import { tv, VariantProps } from "@/utils/tailwind-variants";
+
+import SearchIcon from "./icons/search";
 
 export const searchVariant = tv({
   slots: {
@@ -97,7 +98,7 @@ const Search = forwardRef<HTMLInputElement, Props>(
     const { container, input, icon } = searchVariant({ _color, _size });
 
     return (
-      <div key={key} className={container()}>
+      <div key={key} className={container({ className })}>
         <input
           ref={ref}
           type={type ?? "text"}

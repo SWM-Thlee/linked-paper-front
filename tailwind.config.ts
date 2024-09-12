@@ -1,5 +1,6 @@
 import { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
+import scrollbar from "tailwind-scrollbar";
 import { text, color } from "./material.theme";
 
 const config = {
@@ -104,25 +105,36 @@ const config = {
           from: { opacity: "0", transform: "translateX(2px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
+        slideDown: {
+          from: { height: "0px" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        slideUp: {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0px" },
+        },
+      },
+      animation: {
+        scaleIn: "scaleIn 200ms ease",
+        scaleOut: "scaleOut 200ms ease",
+        fadeIn: "fadeIn 200ms ease",
+        fadeOut: "fadeOut 200ms ease",
+        enterFromLeft: "enterFromLeft 250ms ease",
+        enterFromRight: "enterFromRight 250ms ease",
+        exitToLeft: "exitToLeft 250ms ease",
+        exitToRight: "exitToRight 250ms ease",
+        slideUpAndFade: "slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideRightAndFade:
+          "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideDownAndFade:
+          "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideLeftAndFade:
+          "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        slideDown: "slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1)",
+        slideUp: "slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1)",
       },
     },
-    animation: {
-      scaleIn: "scaleIn 200ms ease",
-      scaleOut: "scaleOut 200ms ease",
-      fadeIn: "fadeIn 200ms ease",
-      fadeOut: "fadeOut 200ms ease",
-      enterFromLeft: "enterFromLeft 250ms ease",
-      enterFromRight: "enterFromRight 250ms ease",
-      exitToLeft: "exitToLeft 250ms ease",
-      exitToRight: "exitToRight 250ms ease",
-      slideUpAndFade: "slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-      slideRightAndFade:
-        "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-      slideDownAndFade: "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-      slideLeftAndFade: "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
-    },
   },
-  safelist: [{ pattern: /bg-/ }],
   plugins: [
     plugin(({ matchUtilities }) => {
       matchUtilities({
@@ -131,6 +143,7 @@ const config = {
         }),
       });
     }),
+    scrollbar,
   ],
 } satisfies Config;
 

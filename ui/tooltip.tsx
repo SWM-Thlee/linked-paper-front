@@ -14,8 +14,9 @@ const tooltipVariant = tv({
       "py-1.5",
       "leading-none",
       "will-change-[transform,opacity]",
+      "z-50",
     ],
-    arrow: [],
+    arrow: ["z-50"],
   },
   variants: {
     _color: {

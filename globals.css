@@ -7,6 +7,10 @@
     font-family: var(--font-urbanist);
   }
 
+  [class*="scrollbar"] {
+    @apply scrollbar-track-transparent scrollbar-thumb-light-tertiaryContainer dark:scrollbar-thumb-dark-tertiaryContainer;
+  }
+
   [class*="-display-"],
   [class*="-headline-"] {
     font-family: var(--font-playfair) !important;

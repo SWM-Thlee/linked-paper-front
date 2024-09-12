@@ -13,10 +13,12 @@ const popoverVariant = tv({
       "shadow-2xl",
       "bg-light-surfaceContainerLowest",
       "dark:bg-dark-surfaceContainerLowest",
+      "z-50",
     ],
     arrow: [
       "fill-light-surfaceContainerLowest",
       "dark:fill-dark-surfaceContainerLowest",
+      "z-50",
     ],
   },
   variants: {
@@ -39,6 +41,7 @@ type Props = {
 
 export default function Popover({ children, trigger, _size, ...props }: Props) {
   const { content, arrow } = popoverVariant({ _size });
+
   return (
     <UiPopover.Root {...props}>
       <UiPopover.Trigger asChild>{trigger}</UiPopover.Trigger>
