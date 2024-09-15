@@ -39,12 +39,12 @@ export const settingsVariant = tv({
       .build(),
     container: sem()
       .layout([
-        "grid grid-cols-[minmax(15rem,_1fr)_4fr]",
+        "grid grid-cols-[minmax(20rem,_1fr)_3fr]",
         "fixed",
         "overflow-hidden",
         "rounded-6",
         "top-[50%] left-[50%]",
-        "min-w-[50vw] max-w-[75vw]",
+        "w-[1024px]",
         "translate-x-[-50%] translate-y-[-50%]",
         "z-dialog",
       ])

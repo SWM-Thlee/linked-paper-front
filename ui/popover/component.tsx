@@ -40,7 +40,19 @@ export function Root({ children, ...props }: PopoverRootProps) {
   return <Primitive.Root {...props}>{children}</Primitive.Root>;
 }
 
-export const Trigger = Primitive.PopoverTrigger;
+export interface PopoverTriggerProps extends Primitive.PopoverTriggerProps {}
+
+export function Trigger({
+  children,
+  asChild = true,
+  ...props
+}: PopoverTriggerProps) {
+  return (
+    <Primitive.Trigger asChild={asChild} {...props}>
+      {children}
+    </Primitive.Trigger>
+  );
+}
 
 export interface PopoverContentProps
   extends VariantProps<typeof popoverVariant>,
