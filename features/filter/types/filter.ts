@@ -1,5 +1,5 @@
 import { Search } from "@/features/search/types";
-import { Sample } from ".";
+import { Sample } from "./sample";
 
 // 현재 등록된 모든 Filter를 나타냅니다.
 export interface Filter {

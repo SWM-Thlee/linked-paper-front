@@ -40,9 +40,8 @@ export function SearchQueryToPresetOption() {
 
   return query?.filter ? (
     <Button
-      ui_size="small"
       ui_color="tertiary"
-      className="flex items-center justify-between gap-2 text-nowrap text-label-large"
+      className="flex items-center justify-between gap-2 text-nowrap"
       onClick={onClick}
     >
       <AddIcon />

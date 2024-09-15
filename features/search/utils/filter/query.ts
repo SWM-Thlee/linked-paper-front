@@ -22,15 +22,30 @@ function isNotEmpty<T extends object>(obj?: T): obj is T {
   return obj !== undefined && Object.keys(obj).length > 0;
 }
 
-export function fromSearchFilterToQuery({
+export function convertToQueryString(data: RawSearchQueryInfo) {
+  return Object.entries(data)
+    .filter(([, value]) => value)
+    .map(([key, value]) =>
+      Array.isArray(value)
+        ? value.map((elem) => `${key}=${elem}`).join("&")
+        : `${key}=${value}`,
+    )
+    .join("&");
+}
+
+export function convertSearchFilterToQuery({
   attributes: { journal, category, date },
 }: FilterData<Search.Type>): SearchQueryFilterData {
   return {
     filter_journal: isNotEmpty(journal.value)
-      ? Object.values(journal.value).map(({ info: [id] }) => id)
+      ? Object.values(journal.value).map(
+          ({ itemValue: { nameOfJournal } }) => nameOfJournal,
+        )
       : undefined,
     filter_category: isNotEmpty(category.value)
-      ? Object.values(category.value).map(({ info: [id] }) => id)
+      ? Object.values(category.value).map(
+          ({ itemValue: { categoryID } }) => categoryID,
+        )
       : undefined,
     filter_start_date: date.value?.min,
     filter_end_date: date.value?.max,
@@ -44,7 +59,7 @@ export type ConvertingSearchQueryToFilterProps = SearchQueryFilterData & {
 /**
  * Search Query를 기반으로 Filter 정보를 생성합니다.
  */
-export function fromSearchQueryToFilter({
+export function convertSearchQueryToFilter({
   filter_start_date: _startDate,
   filter_end_date: _endDate,
   filter_category: _category,
@@ -62,38 +77,10 @@ export function fromSearchQueryToFilter({
 
   return produce(filter, (draft) => {
     // 1. Category
-    draft.attributes.category = produce(
-      draft.attributes.category,
-      (categoryDraft) => {
-        if (!categoryDraft.value) categoryDraft.value = {};
-
-        if (_category) {
-          _category.forEach((categoryID) => {
-            categoryDraft.value![categoryID] = {
-              itemID: categoryID,
-              info: [categoryID],
-            };
-          });
-        }
-      },
-    );
+    draft.attributes.category = Search.Category(_category ?? []);
 
     // 2. Journal
-    draft.attributes.journal = produce(
-      draft.attributes.journal,
-      (journalDraft) => {
-        if (!journalDraft.value) journalDraft.value = {};
-
-        if (_journal) {
-          _journal.forEach((journal) => {
-            journalDraft.value![journal] = {
-              itemID: journal,
-              info: [journal],
-            };
-          });
-        }
-      },
-    );
+    draft.attributes.journal = Search.Journal(_journal ?? []);
 
     // 3. Date
     draft.attributes.date = produce(draft.attributes.date, (dateDraft) => {

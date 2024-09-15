@@ -33,9 +33,8 @@ export default function RemoveFilterOption({ dataID, store }: Props) {
 
   return status === EditStatus.NOT_EDITING ? (
     <Button
-      ui_size="small"
       ui_color="tertiary"
-      className="flex items-center justify-between gap-2 text-nowrap text-label-large"
+      className="flex items-center justify-between gap-2 text-nowrap"
       onClick={onClick}
     >
       <DeleteIcon /> Remove This Filter

@@ -31,12 +31,9 @@ const filterInfoVariant = tv({
     header: sem()
       .layout([
         "col-span-2",
-        "flex",
-        "items-center",
-        "gap-2",
+        "flex items-center gap-2",
         "border-none",
-        "px-6",
-        "py-4",
+        "px-6 py-4",
       ])
       .color([
         "bg-light-surfaceContainerHighest",
@@ -56,12 +53,10 @@ const filterInfoVariant = tv({
       .build(),
     attributeKey: sem()
       .layout([
-        "flex flex-col",
-        "justify-center",
+        "flex flex-col justify-center",
         "gap-4",
         "border-none",
-        "px-6",
-        "py-4",
+        "px-6 py-4",
         "text-label-large",
       ])
       .color([
@@ -72,7 +67,7 @@ const filterInfoVariant = tv({
       ])
       .build(),
     attributeContent: sem()
-      .layout(["flex flex-wrap", "gap-4", "border-none", "p-4"])
+      .layout(["flex flex-wrap gap-4", "border-none", "p-4"])
       .color([
         "bg-light-surfaceContainerLowest",
         "text-light-onSecondaryContainer",
@@ -166,24 +161,27 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
           {(description || attributes.options) && (
             <Popover.Root>
               <Popover.Trigger>
-                <IconButton>
+                <IconButton ui_size="large">
                   <MenuIcon ui_size="small" />
                 </IconButton>
               </Popover.Trigger>
-              <Popover.Content className="flex w-[30rem] flex-col gap-4">
+              <Popover.Content
+                side="right"
+                className="flex w-[20rem] flex-col gap-4"
+              >
                 {description && (
                   <FieldContainer
                     ui_size="medium"
                     ui_variant="bordered"
                     title="INFO"
-                    className="text-body-medium"
+                    className="text-body-large"
                   >
                     {description}
                   </FieldContainer>
                 )}
                 {attributes.options && (
                   <FieldContainer title="OPTIONS" ui_size="medium">
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex flex-col gap-2">
                       {attributes.options(data, store)}
                     </div>
                   </FieldContainer>

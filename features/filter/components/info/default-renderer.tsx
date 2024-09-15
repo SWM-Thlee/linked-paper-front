@@ -1,25 +1,26 @@
 import Button from "@/ui/button";
 import CheckBox from "@/ui/check-box";
-import { Attribute } from "../../types";
-import { Attributes } from "../../types/attribute";
+import { FilterAttribute } from "../../types/attribute";
 
-export function SelectDefaultRenderer({ value }: Attribute.Select) {
+export function SelectDefaultRenderer({ value }: FilterAttribute.Select) {
   return (
     <Button ui_variant="bordered" ui_size="small">
-      {value?.info[0] ?? "Unknown"}
+      {value?.itemID ?? "Unknown"}
     </Button>
   );
 }
 
-export function MultiSelectDefaultRenderer({ value }: Attribute.MultiSelect) {
+export function MultiSelectDefaultRenderer({
+  value,
+}: FilterAttribute.MultiSelect) {
   return Object.values(value ?? {}).map((content) => (
     <Button ui_variant="bordered" ui_size="small" key={content.itemID}>
-      {content?.info[0] ?? "Unknown"}
+      {content.itemID}
     </Button>
   ));
 }
 
-export function CategoryDefaultRenderer({ value }: Attribute.Category) {
+export function FieldDefaultRenderer({ value }: FilterAttribute.Field) {
   return (
     <Button ui_variant="bordered" ui_size="small">
       {value ?? "Unknown"}
@@ -27,11 +28,13 @@ export function CategoryDefaultRenderer({ value }: Attribute.Category) {
   );
 }
 
-export function CheckDefaultRenderer({ value }: Attribute.Check) {
+export function CheckDefaultRenderer({ value }: FilterAttribute.Check) {
   return <CheckBox defaultChecked={value} disabled ui_variant="bordered" />;
 }
 
-export function NumberRangeDefaultRenderer({ value }: Attribute.NumberRange) {
+export function NumberRangeDefaultRenderer({
+  value,
+}: FilterAttribute.NumberRange) {
   return (
     <Button ui_variant="bordered" ui_size="small">
       {value?.min ?? "-∞"} ~ {value?.max ?? "∞"}
@@ -39,7 +42,7 @@ export function NumberRangeDefaultRenderer({ value }: Attribute.NumberRange) {
   );
 }
 
-export function DataRangeDefaultRenderer({ value }: Attribute.DataRange) {
+export function DataRangeDefaultRenderer({ value }: FilterAttribute.DataRange) {
   return (
     <Button ui_variant="bordered" ui_size="small">
       {value?.min ?? "Unknown"} ~ {value?.max ?? "Unknown"}
@@ -48,19 +51,22 @@ export function DataRangeDefaultRenderer({ value }: Attribute.DataRange) {
 }
 
 // 각 Attribute에 대한 기본 렌더러(컴포넌트)입니다.
-export function AttributeDefaultRenderer({ type, value }: Attribute.Type) {
+export function AttributeDefaultRenderer({
+  type,
+  value,
+}: FilterAttribute.Type) {
   switch (type) {
-    case Attributes.SELECT:
+    case FilterAttribute.Select:
       return SelectDefaultRenderer({ type, value });
-    case "multi_select":
+    case FilterAttribute.MultiSelect:
       return MultiSelectDefaultRenderer({ type, value });
-    case "category":
-      return CategoryDefaultRenderer({ type, value });
-    case "check":
+    case FilterAttribute.Field:
+      return FieldDefaultRenderer({ type, value });
+    case FilterAttribute.Check:
       return CheckDefaultRenderer({ type, value });
-    case "num_range":
+    case FilterAttribute.NumberRange:
       return NumberRangeDefaultRenderer({ type, value });
-    case "data_range":
+    case FilterAttribute.DataRange:
       return DataRangeDefaultRenderer({ type, value });
     default:
       return null;

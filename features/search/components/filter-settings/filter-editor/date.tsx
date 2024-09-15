@@ -69,7 +69,7 @@ function StartDateEditor({
 
   return (
     <Popover.Root>
-      <Popover.Trigger asChild>
+      <Popover.Trigger>
         <Button
           ui_color="secondary"
           ui_variant="bordered"
@@ -170,7 +170,7 @@ function EndDateEditor({
 
   return (
     <Popover.Root>
-      <Popover.Trigger asChild>
+      <Popover.Trigger>
         <Button
           ui_color="secondary"
           ui_variant="bordered"

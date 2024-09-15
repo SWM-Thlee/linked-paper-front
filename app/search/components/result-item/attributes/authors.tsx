@@ -22,7 +22,7 @@ export default function SearchResultAttributeAuthors({ authors }: Props) {
 
   return (
     <Popover.Root>
-      <Popover.Trigger asChild>
+      <Popover.Trigger>
         <Button
           ui_color="secondary"
           ui_variant="light"

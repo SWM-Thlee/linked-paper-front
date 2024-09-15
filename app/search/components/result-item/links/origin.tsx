@@ -33,7 +33,7 @@ export default function SearchResultOriginLink({ origin_link }: Props) {
   ) : (
     // 링크가 두 개 이상 존재하는 경우
     <Popover.Root>
-      <Popover.Trigger asChild>
+      <Popover.Trigger>
         <Button
           ui_variant="light"
           className="flex items-center justify-between gap-4"

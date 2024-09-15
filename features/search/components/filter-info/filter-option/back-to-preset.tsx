@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { FilterDataID } from "@/features/filter/types/filter";
 import { FilterStore } from "@/features/filter/types/store";
 import { toPreset } from "@/features/filter/utils/converter/preset";
@@ -9,7 +10,6 @@ import { Search } from "@/features/search/types";
 import { EditStatus } from "@/features/search/types/edit";
 import Button from "@/ui/button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
-import { useCallback } from "react";
 
 type Props = {
   dataID: FilterDataID<Search.Type>;
@@ -30,9 +30,8 @@ export default function BackToPresetOption({ dataID }: Props) {
   return (
     status === EditStatus.NOT_EDITING && (
       <Button
-        ui_size="small"
         ui_color="secondary"
-        className="flex items-center justify-between gap-2 text-nowrap text-label-large"
+        className="flex items-center justify-between gap-2 text-nowrap"
         onClick={onClick}
       >
         <ArrowBackIcon />

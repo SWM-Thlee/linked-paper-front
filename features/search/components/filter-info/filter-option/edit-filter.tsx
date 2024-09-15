@@ -46,9 +46,8 @@ export default function EditFilterOption({
 
   return status !== EditStatus.UNSPECIFIED ? (
     <Button
-      ui_size="small"
       ui_color="secondary"
-      className="flex items-center justify-between gap-2 text-nowrap text-label-large"
+      className="flex items-center justify-between gap-2 text-nowrap"
       onClick={onClick}
     >
       <EditIcon />

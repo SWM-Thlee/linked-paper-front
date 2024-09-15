@@ -29,7 +29,7 @@ export default function SearchResultPdfLink({ pdf_link }: Props) {
   ) : (
     // 링크가 여러 개 존재
     <Popover.Root>
-      <Popover.Trigger asChild>
+      <Popover.Trigger>
         <Button
           ui_variant="light"
           className="flex items-center justify-between gap-4"

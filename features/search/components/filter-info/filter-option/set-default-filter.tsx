@@ -63,9 +63,8 @@ export default function SetDefaultFilterOption({ dataID }: Props) {
   return (
     available && (
       <Button
-        ui_size="small"
         ui_color="primary"
-        className="flex items-center justify-between gap-2 text-nowrap text-label-large"
+        className="flex items-center justify-between gap-2 text-nowrap"
         onClick={onClick}
       >
         <CheckIcon />

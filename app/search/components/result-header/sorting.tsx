@@ -1,7 +1,7 @@
 "use client";
 
 import Select from "@/ui/select";
-import { SearchSorting as Sorting } from "../../../../features/search/types/query";
+import { SearchSorting as Sorting } from "@/features/search/types/query";
 
 const items = Object.keys(Sorting).map((sorting) => ({
   value: sorting,
@@ -15,6 +15,7 @@ export default function SearchSorting() {
       ui_color="tertiary"
       ui_variant="bordered"
       defaultValue="recency"
+      ui_size="small"
       items={items}
     />
   );

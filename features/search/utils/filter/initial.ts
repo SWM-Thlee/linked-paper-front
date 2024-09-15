@@ -1,5 +1,5 @@
-import { Attributes } from "@/features/filter/types/attribute";
 import { generateFilterDataID } from "@/features/filter/utils/id";
+import { FilterAttribute } from "@/features/filter/types/attribute";
 import { Search } from "../../types";
 
 export default function createSearchFilter({
@@ -16,9 +16,9 @@ export default function createSearchFilter({
     dataID: generateFilterDataID(Search.Type),
     attributes: {
       // 초기 값은 모두 빈 값으로 초기화됩니다.
-      date: { type: Attributes.DATA_RANGE },
-      category: { type: Attributes.MULTI_SELECT },
-      journal: { type: Attributes.MULTI_SELECT },
+      date: { type: FilterAttribute.DataRange },
+      category: { type: FilterAttribute.MultiSelect },
+      journal: { type: FilterAttribute.MultiSelect },
     },
   };
 }

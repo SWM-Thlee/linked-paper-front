@@ -29,7 +29,7 @@ export default function SearchNavigationHistory() {
             >
               <div className="flex justify-between gap-2">
                 <Popover.Root>
-                  <Popover.Trigger asChild>
+                  <Popover.Trigger>
                     <Button ui_color="tertiary" ui_size="small">
                       Filters
                     </Button>

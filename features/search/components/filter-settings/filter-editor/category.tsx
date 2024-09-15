@@ -7,7 +7,7 @@ import RestoreIcon from "@/ui/icons/restore";
 import CategoryIcon from "@/ui/icons/category";
 import { Settings } from "@/ui/settings";
 import Button from "@/ui/button";
-import Search from "@/ui/search";
+import SearchField from "@/ui/search";
 import CheckBox from "@/ui/check-box";
 import LabelButton from "@/ui/label-button";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
@@ -15,8 +15,9 @@ import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useBidirectionalState from "@/hooks/use-bidirectional-state";
 import useCategories from "@/hooks/use-categories";
 import { Subject } from "@/utils/category";
-import { matches } from "@/features/search/utils/matcher";
+import { matcher } from "@/features/search/utils/matcher";
 import { TAB_CATEGORY } from "@/features/search/types/tab";
+import { Search } from "@/features/search/types";
 import { EditorContext } from "./context";
 
 function CategoryElement({
@@ -39,13 +40,13 @@ function CategoryElement({
             draft.attributes.category.value = {
               [categoryID]: {
                 itemID: categoryID,
-                info: [categoryID],
+                itemValue: { categoryID },
               },
             };
           } else {
             draft.attributes.category.value[categoryID] = {
               itemID: categoryID,
-              info: [categoryID],
+              itemValue: { categoryID },
             };
           }
         } else if (draft.attributes.category.value?.[categoryID]) {
@@ -71,7 +72,7 @@ function CategoryElement({
 
 export default function EditorCategory() {
   const tabID = useTabID(TAB_CATEGORY.ID);
-  const { subjects, categories } = useCategories();
+  const { getCategories, getSubjects } = useCategories();
 
   const [text, setText] = useState("");
   const [checkedOnly, setCheckedOnly] = useState(false);
@@ -79,37 +80,31 @@ export default function EditorCategory() {
   const edit = useContext(EditorContext);
   const settings = useSettings();
 
+  const search = useMemo(
+    () => matcher({ include: [text], ignoreCase: true, ignoreSpace: true }),
+    [text],
+  );
+
   const result = useMemo(
     () =>
-      subjects.reduce<Subject>((subjectResult, subject) => {
-        const filteredCategories = Object.entries(categories(subject)).reduce<
-          Subject[string]
-        >((categoryResult, [categoryID, description]) => {
-          // "Category의 고유 ID" 또는 "Category의 설명(이름)"과 매치시킵니다.
-          if (
-            matches({
-              target: categoryID,
-              include: [text],
-              ignoreCase: true,
-              ignoreSpace: true,
-            }) ||
-            matches({
-              target: description,
-              include: [text],
-              ignoreCase: true,
-              ignoreSpace: true,
-            })
-          )
-            return { ...categoryResult, [categoryID]: description };
+      getSubjects().reduce<Subject>((subjectResult, subject) => {
+        const filteredCategories = Object.entries(
+          getCategories(subject),
+        ).reduce<Subject[string]>(
+          (categoryResult, [categoryID, description]) => {
+            if (search(categoryID) || search(description) || search(subject))
+              return { ...categoryResult, [categoryID]: description };
 
-          return categoryResult;
-        }, {});
+            return categoryResult;
+          },
+          {},
+        );
 
         return Object.keys(filteredCategories).length
           ? { ...subjectResult, [subject]: filteredCategories }
           : subjectResult;
       }, {}),
-    [subjects, categories, text],
+    [getCategories, getSubjects, search],
   );
 
   const selection = useMemo(() => {
@@ -141,24 +136,15 @@ export default function EditorCategory() {
 
   const selectAll = useCallback(() => {
     edit?.patch((draft) => {
-      draft.attributes.category.value = subjects.reduce(
+      draft.attributes.category.value = getSubjects().reduce(
         (subjectResult, subject) => ({
           ...subjectResult,
-          ...Object.keys(categories(subject)).reduce(
-            (categoryResult, categoryID) => ({
-              ...categoryResult,
-              [categoryID]: {
-                itemID: categoryID,
-                info: [categoryID],
-              },
-            }),
-            {},
-          ),
+          ...Search.Category(Object.keys(getCategories(subject))),
         }),
         {},
       );
     });
-  }, [categories, subjects, edit]);
+  }, [edit, getCategories, getSubjects]);
 
   const unselectAll = useCallback(() => {
     edit?.patch((draft) => {
@@ -214,7 +200,7 @@ export default function EditorCategory() {
                 </Button>
               </div>
             </div>
-            <Search
+            <SearchField
               value={text}
               onChange={(e) => setText(e.target.value)}
               ui_color="tertiary"

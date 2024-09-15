@@ -6,7 +6,7 @@ export default function HeaderTitle({ title = "Linked Paper" }: Props) {
   return (
     <Link
       href="/"
-      className="text-nowrap text-headline-large text-light-onSurface dark:text-dark-onSurface"
+      className="z-header text-nowrap text-headline-large text-light-onSurface dark:text-dark-onSurface"
     >
       {title}
     </Link>

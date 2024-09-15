@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import { Search } from "@/features/search/types";
-import useCategories from "@/hooks/use-categories";
+import useCategories, { CategoryUnknown } from "@/hooks/use-categories";
 import Button from "@/ui/button";
 import CategoryIcon from "@/ui/icons/category";
 import { ContentContainer, KeyContainer } from "./common";
@@ -16,43 +16,42 @@ export function CategoryKey() {
   );
 }
 
-export function CategoryContent({
-  value,
-}: Search.Data["attributes"]["category"]) {
-  const { index } = useCategories();
+// TODO: Data 일관성 수정하기 (FilterData? Search.Data?)
+type Props = Search.Data["attributes"]["category"];
 
-  const info = useMemo(
+export function CategoryContent({ value }: Props) {
+  const { getInfo } = useCategories();
+
+  // TODO: getInfo()의 Default Value를 통일화하자.
+  const infoOfCategories = useMemo(
     () =>
-      Object.entries(value ?? []).map(
-        ([
-          itemID,
-          {
-            info: [id],
-          },
-        ]) => [itemID, id],
-      ),
-    [value],
+      Object.values(value ?? {}).map(({ itemValue: { categoryID } }) => ({
+        categoryID,
+        ...(getInfo(categoryID) ?? {
+          subject: CategoryUnknown,
+          description: "",
+        }),
+      })),
+    [getInfo, value],
   );
 
   return (
     <ContentContainer>
       {value && Object.keys(value).length ? (
-        info.map(([itemID, id]) => {
-          const journalInfo = index(id);
-
+        infoOfCategories.map(({ subject, categoryID, description }) => {
           return (
             <Button
               ui_variant="light"
-              ui_color={journalInfo ? "primary" : "secondary"}
+              ui_color={subject !== CategoryUnknown ? "primary" : "secondary"}
               ui_size="small"
-              key={itemID}
+              key={categoryID}
             >
               <div className="flex items-center justify-between gap-6">
                 <div className="break-keep text-left">
-                  {index(id)?.description ?? "Unspecified"}
+                  {description ?? "Unknown"}
                 </div>
                 <div className="text-nowrap text-right text-label-large">
-                  {id}
+                  {categoryID}
                 </div>
               </div>
             </Button>

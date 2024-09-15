@@ -1,19 +1,50 @@
-import { Attribute } from "@/features/filter/types";
+import { FilterAttribute } from "@/features/filter/types/attribute";
 import { BaseData, BaseFilter } from "@/features/filter/types/base";
 
 export const Type = "semantic-search";
 export type Type = typeof Type;
 
+export type Journal = {
+  /** Journal의 이름을 고유 값으로 지정합니다. */
+  nameOfJournal: string;
+};
+
+export function Journal(journals: string[]): Data["attributes"]["journal"] {
+  return {
+    type: FilterAttribute.MultiSelect,
+    value: journals.reduce<Record<string, FilterAttribute.Item<Journal>>>(
+      (result, journal) => ({
+        ...result,
+        [journal]: { itemID: journal, itemValue: { nameOfJournal: journal } },
+      }),
+      {},
+    ),
+  };
+}
+
+export type Category = {
+  /** Category의 고유 ID를 나타냅니다. */
+  categoryID: string;
+};
+
+export function Category(categories: string[]): Data["attributes"]["category"] {
+  return {
+    type: FilterAttribute.MultiSelect,
+    value: categories.reduce<Record<string, FilterAttribute.Item<Category>>>(
+      (result, category) => ({
+        ...result,
+        [category]: { itemID: category, itemValue: { categoryID: category } },
+      }),
+      {},
+    ),
+  };
+}
+
 export type Data = BaseData<Type> & {
   attributes: {
-    /** { JournalID: [Journal] } */
-    journal: Attribute.MultiSelect;
-
-    /** { CategoryID: [CategoryID] } */
-    category: Attribute.MultiSelect;
-
-    /** YYYY-MM-DD */
-    date: Attribute.DataRange;
+    journal: FilterAttribute.MultiSelect<Journal>;
+    category: FilterAttribute.MultiSelect<Category>;
+    date: FilterAttribute.DataRange;
   };
 };
 

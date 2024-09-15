@@ -38,13 +38,13 @@ function JournalElement({ journal }: { journal: string }) {
             draft.attributes.journal.value = {
               [journal]: {
                 itemID: journal,
-                info: [journal],
+                itemValue: { nameOfJournal: journal },
               },
             };
           } else {
             draft.attributes.journal.value[journal] = {
               itemID: journal,
-              info: [journal],
+              itemValue: { nameOfJournal: journal },
             };
           }
         } else if (draft.attributes.journal.value?.[journal]) {
@@ -101,7 +101,7 @@ export default function EditorJournal() {
           ...total,
           [journal]: {
             itemID: journal,
-            info: [journal],
+            itemValue: { nameOfJournal: journal },
           },
         }),
         {},

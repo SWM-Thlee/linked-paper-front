@@ -21,15 +21,10 @@ export function JournalContent({
 }: Search.Data["attributes"]["journal"]) {
   const { journals } = useJournals();
 
-  const info = useMemo(
+  const infoOfJournals = useMemo(
     () =>
-      Object.entries(value ?? []).map(
-        ([
-          itemID,
-          {
-            info: [name],
-          },
-        ]) => [itemID, name],
+      Object.values(value ?? []).map(
+        ({ itemValue: { nameOfJournal } }) => nameOfJournal,
       ),
     [value],
   );
@@ -37,17 +32,17 @@ export function JournalContent({
   return (
     <ContentContainer>
       {value && Object.keys(value).length ? (
-        info.map(([itemID, name]) => {
-          const available = journals.includes(name);
+        infoOfJournals.map((journal) => {
+          const available = journals.includes(journal);
 
           return (
             <Button
               ui_color={available ? "primary" : "secondary"}
               ui_variant="light"
               ui_size="small"
-              key={itemID}
+              key={journal}
             >
-              {name}
+              {journal}
             </Button>
           );
         })
