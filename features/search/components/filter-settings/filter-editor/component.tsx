@@ -5,8 +5,7 @@ import { VariantProps } from "@/utils/tailwind-variants";
 import { Settings } from "@/ui/settings";
 import { groupVariant } from "@/ui/settings/group";
 import { Search } from "@/features/search/types";
-import { FilterDataID } from "@/features/filter/types/filter";
-import { FilterStore } from "@/features/filter/types/store";
+import { Filter } from "@/features/filter/types";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import EditorPreview from "./preview";
 import { EditorContext } from "./context";
@@ -15,8 +14,8 @@ import EditorJournal from "./journal";
 import EditorDate from "./date";
 
 type Props = {
-  dataID: FilterDataID<Search.Type>;
-  store: FilterStore;
+  dataID: Search.Filter.DataID;
+  store: Filter.Store.Type;
 } & VariantProps<typeof groupVariant>;
 
 // 편집 대상인 검색 필터를 관리합니다.

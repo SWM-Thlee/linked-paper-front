@@ -16,8 +16,8 @@ export function CategoryKey() {
   );
 }
 
-// TODO: Data 일관성 수정하기 (FilterData? Search.Data?)
-type Props = Search.Data["attributes"]["category"];
+// TODO: Data 일관성 수정하기 (FilterData? Search.Filter.Data?)
+type Props = Search.Filter.Data["attributes"]["category"];
 
 export function CategoryContent({ value }: Props) {
   const { getInfo } = useCategories();

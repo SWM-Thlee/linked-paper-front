@@ -3,8 +3,7 @@
 import { Search } from "@/features/search/types";
 import { CustomizedFilterInfo } from "@/features/filter/components/info";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
-import { FilterAttributeKey, FilterData } from "@/features/filter/types/filter";
-import { FilterStore } from "@/features/filter/types/store";
+import { Filter } from "@/features/filter/types";
 import EditTitleOption from "./filter-option/edit-title";
 import { JournalContent } from "./filter-attribute/journal";
 import { CategoryContent } from "./filter-attribute/category";
@@ -16,9 +15,9 @@ function CustomAttributeContent({
   attrData,
   attrStore,
 }: {
-  attrKey: FilterAttributeKey<Search.Type>;
-  attrData: FilterData<Search.Type>;
-  attrStore: FilterStore;
+  attrKey: Search.Filter.Attribute;
+  attrData: Search.Filter.Data;
+  attrStore: Filter.Store.Type;
 }) {
   const { editor } = useSearchFilterEditor({
     store: attrStore,
@@ -43,8 +42,8 @@ function CustomTitleContent({
   attrData,
   attrStore,
 }: {
-  attrData: FilterData<Search.Type>;
-  attrStore: FilterStore;
+  attrData: Search.Filter.Data;
+  attrStore: Filter.Store.Type;
 }) {
   const { isTitleEditable } = useSearchFilterEditor({
     dataID: attrData.dataID,
@@ -58,7 +57,7 @@ function CustomTitleContent({
   );
 }
 
-export const EditSearchFilterInfo = CustomizedFilterInfo<Search.Type>({
+export const EditSearchFilterInfo = CustomizedFilterInfo<Search.Filter.Type>({
   extend: RawSearchFilterInfo,
   title(data, store) {
     return <CustomTitleContent attrData={data} attrStore={store} />;

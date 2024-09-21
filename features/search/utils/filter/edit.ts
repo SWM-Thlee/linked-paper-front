@@ -10,9 +10,10 @@ export interface SearchTagEdit {
   titleEditable: boolean;
 }
 
-export type ConvertingSearchEditProps = ConvertingEditProps<Search.Type> & {
-  titleEditable: boolean;
-};
+export type ConvertingSearchEditProps =
+  ConvertingEditProps<Search.Filter.Type> & {
+    titleEditable: boolean;
+  };
 
 export function toSearchEdit({
   data,
@@ -21,7 +22,7 @@ export function toSearchEdit({
   extra,
   titleEditable,
 }: ConvertingSearchEditProps) {
-  return toEdit<Search.Type>({
+  return toEdit<Search.Filter.Type>({
     data,
     store,
     branch,
@@ -29,8 +30,8 @@ export function toSearchEdit({
   });
 }
 
-export type RevertingSearchEditProps = RevertingEditProps<Search.Type>;
+export type RevertingSearchEditProps = RevertingEditProps<Search.Filter.Type>;
 
 export function revertSearchEdit({ data, branch }: RevertingSearchEditProps) {
-  return revertEdit<Search.Type>({ data, branch });
+  return revertEdit<Search.Filter.Type>({ data, branch });
 }

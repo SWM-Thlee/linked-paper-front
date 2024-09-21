@@ -9,13 +9,7 @@ import MenuIcon from "@/ui/icons/menu";
 import { Popover } from "@/ui/popover";
 import FieldContainer from "@/ui/container/field-container";
 import { AttributeDefaultRenderer } from "./default-renderer";
-import {
-  FilterAttributeEntry,
-  FilterAttributeKey,
-  FilterData,
-  FilterFeatureID,
-} from "../../types/filter";
-import { FilterStore } from "../../types/store";
+import { Filter } from "../../types";
 
 const filterInfoVariant = tv({
   slots: {
@@ -78,44 +72,50 @@ const filterInfoVariant = tv({
   },
 });
 
-type Props<T extends FilterFeatureID> = {
-  data: FilterData<T>;
-  store: FilterStore;
+type Props<T extends Filter.Build.FeatureID> = {
+  data: Filter.Build.Data<T>;
+  store: Filter.Store.Type;
   description?: string;
 } & VariantProps<typeof filterInfoVariant>;
 
 /** FilterInfo의 네 부분을 직접 Customize할 수 있습니다. */
-export type CustomizedFilterInfoProps<T extends FilterFeatureID> = {
+export type CustomizedFilterInfoProps<T extends Filter.Build.FeatureID> = {
   extend?: CustomizedFilterInfo<T>;
-  title?: (data: FilterData<T>, store: FilterStore) => React.ReactNode;
-  options?: (data: FilterData<T>, store: FilterStore) => React.ReactNode;
+  title?: (
+    data: Filter.Build.Data<T>,
+    store: Filter.Store.Type,
+  ) => React.ReactNode;
+  options?: (
+    data: Filter.Build.Data<T>,
+    store: Filter.Store.Type,
+  ) => React.ReactNode;
 
   // Case 1. 직렬화된 데이터만을 이용하여 순수 컴포넌트를 만듭니다.
-  attributeKey?: (key: FilterAttributeKey<T>) => React.ReactNode;
-  attributeContent?: (entry: FilterAttributeEntry<T>) => React.ReactNode;
+  attributeKey?: (key: Filter.Build.Attribute<T>) => React.ReactNode;
+  attributeContent?: (entry: Filter.Build.AttributeEntry<T>) => React.ReactNode;
 
   // Case 2. 직접 Filter 정보를 이용하여 컴포넌트를 만듭니다.
   attributeKeyCustom?: (
-    key: FilterAttributeKey<T>,
-    data: FilterData<T>,
-    store: FilterStore,
+    key: Filter.Build.Attribute<T>,
+    data: Filter.Build.Data<T>,
+    store: Filter.Store.Type,
   ) => React.ReactNode;
   attributeContentCustom?: (
-    key: FilterAttributeKey<T>,
-    data: FilterData<T>,
-    store: FilterStore,
+    key: Filter.Build.Attribute<T>,
+    data: Filter.Build.Data<T>,
+    store: Filter.Store.Type,
   ) => React.ReactNode;
 
   // 순서를 고정합니다.
-  order?: FilterAttributeKey<T>[];
+  order?: Filter.Build.Attribute<T>[];
 };
 
-type CustomizedFilterInfo<T extends FilterFeatureID> = {
+type CustomizedFilterInfo<T extends Filter.Build.FeatureID> = {
   attributes: Omit<CustomizedFilterInfoProps<T>, "extend">;
 } & ((props: Props<T>) => React.ReactNode);
 
 /** FilterInfo 컴포넌트의 틀은 유지하되, 각 Feature에 맞춰 컴포넌트를 Customize할 수 있도록 제공합니다. */
-export function CustomizedFilterInfo<T extends FilterFeatureID>({
+export function CustomizedFilterInfo<T extends Filter.Build.FeatureID>({
   extend,
   title: _title,
   options: _options,
@@ -147,10 +147,10 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
       attributes.order
         ? attributes.order.map((key) => [
             key,
-            (data.attributes as FilterData<T>["attributes"])[key],
+            (data.attributes as Filter.Build.Data<T>["attributes"])[key],
           ])
         : Object.entries(data.attributes)
-    ) as FilterAttributeEntry<T>[];
+    ) as Filter.Build.AttributeEntry<T>[];
 
     return (
       <div className={container()}>
@@ -194,23 +194,23 @@ export function CustomizedFilterInfo<T extends FilterFeatureID>({
           <React.Fragment key={key}>
             <div className={attributeKey()}>
               {attributes.attributeKeyCustom?.(
-                key as FilterAttributeKey<T>,
+                key as Filter.Build.Attribute<T>,
                 data,
                 store,
               ) ??
-                attributes.attributeKey?.(key as FilterAttributeKey<T>) ??
+                attributes.attributeKey?.(key as Filter.Build.Attribute<T>) ??
                 key}
             </div>
             <div className={attributeContent()}>
               {attributes.attributeContentCustom?.(
-                key as FilterAttributeKey<T>,
+                key as Filter.Build.Attribute<T>,
                 data,
                 store,
               ) ??
                 attributes.attributeContent?.([
                   key,
                   content,
-                ] as FilterAttributeEntry<T>) ??
+                ] as Filter.Build.AttributeEntry<T>) ??
                 AttributeDefaultRenderer(content)}
             </div>
           </React.Fragment>

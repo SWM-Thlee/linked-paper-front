@@ -4,20 +4,17 @@ import { useCallback } from "react";
 import { produce } from "immer";
 
 import { Search } from "@/features/search/types";
+import { Filter } from "@/features/filter/types";
 import Button from "@/ui/button";
-import { FilterDataID } from "@/features/filter/types/filter";
-import { FilterStore } from "@/features/filter/types/store";
-import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
-import { EditStatus } from "@/features/search/types/edit";
 import SearchIcon from "@/ui/icons/search";
+import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
 import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
-import { Tag } from "@/features/filter/types/tag";
 
 type Props = {
-  dataID: FilterDataID<Search.Type>;
-  store: FilterStore;
+  dataID: Search.Filter.DataID;
+  store: Filter.Store.Type;
 };
 
 export default function ApplyToSearchOption({ dataID, store }: Props) {
@@ -27,13 +24,13 @@ export default function ApplyToSearchOption({ dataID, store }: Props) {
   });
 
   const { filter: searchQueryEditor } = useSearchFilters({
-    store: FilterStore.TEMPORARY,
-    track: { tag: [Tag.QUERY, Tag.EDIT] },
+    store: Filter.Store.TEMPORARY,
+    track: { tag: [Filter.Identify.Tag.QUERY, Filter.Identify.Tag.EDIT] },
   });
 
   const query = useSearchQueryFilter();
   const dispatch = useSearchFilterDispatcher({
-    store: FilterStore.TEMPORARY,
+    store: Filter.Store.TEMPORARY,
   });
 
   const onClick = useCallback(() => {
@@ -46,7 +43,7 @@ export default function ApplyToSearchOption({ dataID, store }: Props) {
     );
   }, [dispatch, filter, query]);
 
-  return !searchQueryEditor && status === EditStatus.NOT_EDITING ? (
+  return !searchQueryEditor && status === Search.Edit.Status.NOT_EDITING ? (
     <Button
       className="flex items-center justify-between gap-2 text-nowrap"
       onClick={onClick}

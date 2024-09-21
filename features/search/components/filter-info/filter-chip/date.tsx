@@ -2,14 +2,13 @@
 
 import { useMemo } from "react";
 
-import { FilterData } from "@/features/filter/types/filter";
 import { Search } from "@/features/search/types";
 import LabelButton from "@/ui/label-button";
 import DateIcon from "@/ui/icons/date";
 import { convertStringToDate } from "@/utils/date";
 
 type Props = {
-  data: FilterData<Search.Type>["attributes"]["date"];
+  data: Search.Filter.Data["attributes"]["date"];
 };
 
 export function DateChip({ data: { value } }: Props) {

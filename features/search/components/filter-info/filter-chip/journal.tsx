@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 
 import { Search } from "@/features/search/types";
 import { matches } from "@/features/search/utils/matcher";
-import { FilterData } from "@/features/filter/types/filter";
 import Button from "@/ui/button";
 import SearchField from "@/ui/search-field";
 import JournalIcon from "@/ui/icons/journal";
@@ -13,7 +12,7 @@ import { Popover } from "@/ui/popover";
 import ArrowDownIcon from "@/ui/icons/arrow-down";
 
 type Props = {
-  data: FilterData<Search.Type>["attributes"]["journal"];
+  data: Search.Filter.Data["attributes"]["journal"];
 };
 
 /**

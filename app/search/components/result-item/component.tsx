@@ -1,4 +1,4 @@
-import { SearchResult } from "../../../../features/search/types/result";
+import { Search } from "@/features/search/types";
 import SearchResultAttributeAuthors from "./attributes/authors";
 import SearchResultAttributeCategories from "./attributes/categories";
 import SearchResultAttributeOthers from "./attributes/others";
@@ -15,7 +15,7 @@ export default function SearchResultItem({
   reference_count,
   citiation_count,
   link,
-}: SearchResult) {
+}: Search.Result.Data) {
   return (
     <div className="grid animate-scaleIn grid-cols-[auto_12rem] gap-8">
       <div className="flex flex-1 flex-col gap-8">

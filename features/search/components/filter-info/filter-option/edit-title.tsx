@@ -1,16 +1,15 @@
 "use client";
 
 import { Search } from "@/features/search/types";
-import { FilterDataID } from "@/features/filter/types/filter";
+import { Filter } from "@/features/filter/types";
 import TextField from "@/ui/text-field";
-import { FilterStore } from "@/features/filter/types/store";
 import useBidirectionalState from "@/hooks/use-bidirectional-state";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import FieldContainer from "@/ui/container/field-container";
 
 type Props = {
-  dataID: FilterDataID<Search.Type>;
-  store: FilterStore;
+  dataID: Search.Filter.DataID;
+  store: Filter.Store.Type;
 };
 
 export default function EditTitleOption({ dataID, store }: Props) {

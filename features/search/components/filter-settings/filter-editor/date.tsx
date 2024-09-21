@@ -14,7 +14,6 @@ import LabelButton from "@/ui/label-button";
 import FieldContainer from "@/ui/container/field-container";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
-import { TAB_DATE } from "@/features/search/types/tab";
 import { Search } from "@/features/search/types";
 import {
   convertDateToString as convertToString,
@@ -24,7 +23,9 @@ import { DateOptions } from "@/features/search/utils/date-option";
 import { EditorContext } from "./context";
 import "react-day-picker/style.css";
 
-type FilterDate = NonNullable<Search.Data["attributes"]["date"]["value"]>;
+type FilterDate = NonNullable<
+  Search.Filter.Data["attributes"]["date"]["value"]
+>;
 
 function StartDateEditor({
   date,
@@ -231,7 +232,7 @@ function EndDateEditor({
 
 // TODO: 논문 정보의 시간대 (Timezone)도 설정할 필요가 있다.
 export default function EditorDate() {
-  const tabID = useTabID(TAB_DATE.ID);
+  const tabID = useTabID(Search.Settings.DATE.ID);
   const edit = useContext(EditorContext);
   const settings = useSettings();
 
@@ -254,10 +255,10 @@ export default function EditorDate() {
 
   return (
     <Settings.Tab.Root
-      name={TAB_DATE.ID}
+      name={Search.Settings.DATE.ID}
       id={tabID}
-      title={TAB_DATE.TITLE}
-      description={TAB_DATE.DESCRIPTION}
+      title={Search.Settings.DATE.TITLE}
+      description={Search.Settings.DATE.DESCRIPTION}
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">

@@ -3,14 +3,15 @@ import { DefaultSearchFilterInfo } from "@/features/search/components/filter-inf
 import ApplyToSearchOption from "@/features/search/components/filter-info/filter-option/apply-to-search";
 import { Search } from "@/features/search/types";
 
-export const SearchQueryDefaultFilterInfo = CustomizedFilterInfo<Search.Type>({
-  extend: DefaultSearchFilterInfo,
-  options(filter, store) {
-    return (
-      <>
-        <ApplyToSearchOption dataID={filter.dataID} store={store} />
-        {DefaultSearchFilterInfo.attributes.options?.(filter, store)}
-      </>
-    );
-  },
-});
+export const SearchQueryDefaultFilterInfo =
+  CustomizedFilterInfo<Search.Filter.Type>({
+    extend: DefaultSearchFilterInfo,
+    options(filter, store) {
+      return (
+        <>
+          <ApplyToSearchOption dataID={filter.dataID} store={store} />
+          {DefaultSearchFilterInfo.attributes.options?.(filter, store)}
+        </>
+      );
+    },
+  });

@@ -18,7 +18,7 @@ export function JournalKey() {
 
 export function JournalContent({
   value,
-}: Search.Data["attributes"]["journal"]) {
+}: Search.Filter.Data["attributes"]["journal"]) {
   const { journals } = useJournals();
 
   const infoOfJournals = useMemo(

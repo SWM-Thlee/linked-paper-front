@@ -16,7 +16,6 @@ import useBidirectionalState from "@/hooks/use-bidirectional-state";
 import useCategories from "@/hooks/use-categories";
 import { Subject } from "@/utils/category";
 import { matcher } from "@/features/search/utils/matcher";
-import { TAB_CATEGORY } from "@/features/search/types/tab";
 import { Search } from "@/features/search/types";
 import { EditorContext } from "./context";
 
@@ -71,7 +70,7 @@ function CategoryElement({
 }
 
 export default function EditorCategory() {
-  const tabID = useTabID(TAB_CATEGORY.ID);
+  const tabID = useTabID(Search.Settings.CATEGORY.ID);
   const { getCategories, getSubjects } = useCategories();
 
   const [text, setText] = useState("");
@@ -139,7 +138,7 @@ export default function EditorCategory() {
       draft.attributes.category.value = getSubjects().reduce(
         (subjectResult, subject) => ({
           ...subjectResult,
-          ...Search.Category(Object.keys(getCategories(subject))),
+          ...Search.Filter.Category(Object.keys(getCategories(subject))),
         }),
         {},
       );
@@ -158,10 +157,10 @@ export default function EditorCategory() {
 
   return (
     <Settings.Tab.Root
-      name={TAB_CATEGORY.ID}
+      name={Search.Settings.CATEGORY.ID}
       id={tabID}
-      title={TAB_CATEGORY.TITLE}
-      description={TAB_CATEGORY.DESCRIPTION}
+      title={Search.Settings.CATEGORY.TITLE}
+      description={Search.Settings.CATEGORY.DESCRIPTION}
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">

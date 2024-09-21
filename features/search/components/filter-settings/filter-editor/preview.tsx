@@ -11,17 +11,21 @@ import RestoreIcon from "@/ui/icons/restore";
 import LabelButton from "@/ui/label-button";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useTabDirectionObserver from "@/ui/settings/hooks/use-tab-direction-observer";
-import { TAB_PREVIEW } from "@/features/search/types/tab";
+import { Search } from "@/features/search/types";
 import { EditorContext } from "./context";
 import { EditSearchFilterInfo } from "../../filter-info/edit-info";
 
 export default function EditorPreview() {
-  const tabID = useTabID(TAB_PREVIEW.ID);
+  const tabID = useTabID(Search.Settings.PREVIEW.ID);
   const settings = useSettings();
   const edit = useContext(EditorContext);
 
   // 이 Tab으로 이동하는 요청을 받습니다.
-  useTabDirectionObserver(TAB_PREVIEW.ID, tabID, edit?.filter?.dataID);
+  useTabDirectionObserver(
+    Search.Settings.PREVIEW.ID,
+    tabID,
+    edit?.filter?.dataID,
+  );
 
   const backToPreview = useCallback(() => {
     settings.setTabID(null);
@@ -29,7 +33,7 @@ export default function EditorPreview() {
 
   return edit?.editor && edit.filter ? (
     <Settings.Tab.Root
-      name={TAB_PREVIEW.ID}
+      name={Search.Settings.PREVIEW.ID}
       id={tabID}
       title={`Edit: ${edit.editor.name ?? "Unknown"}`}
       description={`Edit the filter "${edit.editor.name ?? "Unknown"}" in this group.`}

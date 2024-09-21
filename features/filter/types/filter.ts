@@ -1,43 +1,44 @@
-import { Search } from "@/features/search/types";
-import { Sample } from "./sample";
+import * as Search from "@/features/search/types/filter";
+import * as Sample from "./sample";
 
 // 현재 등록된 모든 Filter를 나타냅니다.
-export interface Filter {
-  [Search.Type]: Search.Filter;
-  [Sample.Type]: Sample.Filter;
+export interface Filters {
+  [Search.Type]: Search.Filters;
+  [Sample.Type]: Sample.Filters;
 }
 
-export type FilterFeatureID = keyof Filter & string;
+export type FeatureID = keyof Filters & string;
 
-export type FilterDataID<T extends FilterFeatureID> = T extends FilterFeatureID
-  ? keyof Filter[T]
+export type DataID<T extends FeatureID> = T extends FeatureID
+  ? keyof Filters[T]
   : never;
 
-export type FilterData<T extends FilterFeatureID> = T extends FilterFeatureID
-  ? Filter[T][FilterDataID<T>]
+export type Data<T extends FeatureID> = T extends FeatureID
+  ? Filters[T][DataID<T>]
   : never;
 
-export type FilterAttributeKey<T extends FilterFeatureID> =
-  T extends FilterFeatureID ? keyof FilterData<T>["attributes"] : never;
+export type Attribute<T extends FeatureID> = T extends FeatureID
+  ? keyof Data<T>["attributes"]
+  : never;
 
 type FilterAttribute<
-  T extends FilterFeatureID,
-  U extends FilterAttributeKey<T>,
-> = T extends FilterFeatureID
-  ? U extends FilterAttributeKey<T>
-    ? [U, FilterData<T>["attributes"][U]]
+  T extends FeatureID,
+  U extends Attribute<T>,
+> = T extends FeatureID
+  ? U extends Attribute<T>
+    ? [U, Data<T>["attributes"][U]]
     : never
   : never;
 
-export type FilterAttributeEntry<T extends FilterFeatureID> = FilterAttribute<
+export type AttributeEntry<T extends FeatureID> = FilterAttribute<
   T,
-  FilterAttributeKey<T>
+  Attribute<T>
 >;
 
 /**
  * 초기화 시 사용되는 초기 값입니다.
  */
-export const InitialValue: Filter = {
+export const InitialValue: Filters = {
   [Search.Type]: {},
   [Sample.Type]: {},
 };

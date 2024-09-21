@@ -1,8 +1,8 @@
 import Button from "@/ui/button";
 import CheckBox from "@/ui/check-box";
-import { FilterAttribute } from "../../types/attribute";
+import { Filter } from "../../types";
 
-export function SelectDefaultRenderer({ value }: FilterAttribute.Select) {
+export function SelectDefaultRenderer({ value }: Filter.Attribute.Select) {
   return (
     <Button ui_variant="bordered" ui_size="small">
       {value?.itemID ?? "Unknown"}
@@ -12,7 +12,7 @@ export function SelectDefaultRenderer({ value }: FilterAttribute.Select) {
 
 export function MultiSelectDefaultRenderer({
   value,
-}: FilterAttribute.MultiSelect) {
+}: Filter.Attribute.MultiSelect) {
   return Object.values(value ?? {}).map((content) => (
     <Button ui_variant="bordered" ui_size="small" key={content.itemID}>
       {content.itemID}
@@ -20,7 +20,7 @@ export function MultiSelectDefaultRenderer({
   ));
 }
 
-export function FieldDefaultRenderer({ value }: FilterAttribute.Field) {
+export function FieldDefaultRenderer({ value }: Filter.Attribute.Field) {
   return (
     <Button ui_variant="bordered" ui_size="small">
       {value ?? "Unknown"}
@@ -28,13 +28,13 @@ export function FieldDefaultRenderer({ value }: FilterAttribute.Field) {
   );
 }
 
-export function CheckDefaultRenderer({ value }: FilterAttribute.Check) {
+export function CheckDefaultRenderer({ value }: Filter.Attribute.Check) {
   return <CheckBox defaultChecked={value} disabled ui_variant="bordered" />;
 }
 
 export function NumberRangeDefaultRenderer({
   value,
-}: FilterAttribute.NumberRange) {
+}: Filter.Attribute.NumberRange) {
   return (
     <Button ui_variant="bordered" ui_size="small">
       {value?.min ?? "-∞"} ~ {value?.max ?? "∞"}
@@ -42,7 +42,9 @@ export function NumberRangeDefaultRenderer({
   );
 }
 
-export function DataRangeDefaultRenderer({ value }: FilterAttribute.DataRange) {
+export function DataRangeDefaultRenderer({
+  value,
+}: Filter.Attribute.DataRange) {
   return (
     <Button ui_variant="bordered" ui_size="small">
       {value?.min ?? "Unknown"} ~ {value?.max ?? "Unknown"}
@@ -54,19 +56,19 @@ export function DataRangeDefaultRenderer({ value }: FilterAttribute.DataRange) {
 export function AttributeDefaultRenderer({
   type,
   value,
-}: FilterAttribute.Type) {
+}: Filter.Attribute.Type) {
   switch (type) {
-    case FilterAttribute.Select:
+    case Filter.Attribute.Select:
       return SelectDefaultRenderer({ type, value });
-    case FilterAttribute.MultiSelect:
+    case Filter.Attribute.MultiSelect:
       return MultiSelectDefaultRenderer({ type, value });
-    case FilterAttribute.Field:
+    case Filter.Attribute.Field:
       return FieldDefaultRenderer({ type, value });
-    case FilterAttribute.Check:
+    case Filter.Attribute.Check:
       return CheckDefaultRenderer({ type, value });
-    case FilterAttribute.NumberRange:
+    case Filter.Attribute.NumberRange:
       return NumberRangeDefaultRenderer({ type, value });
-    case FilterAttribute.DataRange:
+    case Filter.Attribute.DataRange:
       return DataRangeDefaultRenderer({ type, value });
     default:
       return null;

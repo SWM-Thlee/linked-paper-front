@@ -8,11 +8,11 @@ import { useDeepCompareMemo } from "use-deep-compare";
 import equal from "fast-deep-equal";
 
 import { generateFilterDataID } from "@/features/filter/utils/id";
-import { FilterStore } from "@/features/filter/types/store";
+import { Filter } from "@/features/filter/types";
 import { convertSearchQueryToFilter } from "../utils/filter/query";
 import { queryAtom, queryFilterAtom, requiredQueryAtom } from "../stores/query";
 import { validate } from "../utils/validator";
-import { Search, SearchQuery } from "../types";
+import { Search } from "../types";
 import useSearchFilterDispatcher from "../hooks/filter/use-search-filter-dispatcher";
 import useSearchFilterEditor from "../hooks/filter/use-search-filter-editor";
 import useSearchRequest from "../hooks/query/use-search-request";
@@ -58,7 +58,7 @@ export default function SearchQueryResolver({
   const [query, setQuery] = useAtom(queryAtom);
 
   /* Filter Query */
-  const filterQuery = useDeepCompareMemo<SearchQuery.FilterInfo>(
+  const filterQuery = useDeepCompareMemo<Search.Query.FilterInfo>(
     () => ({
       filter_start_date: query.filter_start_date,
       filter_end_date: query.filter_end_date,
@@ -68,15 +68,15 @@ export default function SearchQueryResolver({
     [query],
   );
 
-  const searchFilterRef = useRef(generateFilterDataID(Search.Type));
+  const searchFilterRef = useRef(generateFilterDataID(Search.Filter.Type));
   const [, setQueryFilter] = useAtom(queryFilterAtom);
 
   const dispatcher = useSearchFilterDispatcher({
-    store: FilterStore.TEMPORARY,
+    store: Filter.Store.TEMPORARY,
   });
 
   const { filter, remove } = useSearchFilterEditor({
-    store: FilterStore.TEMPORARY,
+    store: Filter.Store.TEMPORARY,
     dataID: searchFilterRef.current,
   });
 
@@ -109,7 +109,7 @@ export default function SearchQueryResolver({
   }, [router, filter, dispatcher, filterQuery]);
 
   /* Required Query */
-  const requiredQuery = useDeepCompareMemo<SearchQuery.RequiredInfo>(
+  const requiredQuery = useDeepCompareMemo<Search.Query.RequiredInfo>(
     () => ({
       query: query.query,
       index: query.index,

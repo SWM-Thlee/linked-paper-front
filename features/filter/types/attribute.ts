@@ -1,4 +1,4 @@
-export type DefaultAttributeValue =
+export type DefaultValue =
   | string
   | number
   | boolean
@@ -6,9 +6,7 @@ export type DefaultAttributeValue =
   | number[]
   | boolean[];
 
-export type DefaultItemValue =
-  | DefaultAttributeValue
-  | { [key: string]: DefaultAttributeValue };
+export type DefaultItemValue = DefaultValue | { [key: string]: DefaultValue };
 
 export type Item<T extends DefaultItemValue = DefaultItemValue> = {
   itemID: string;
@@ -16,14 +14,14 @@ export type Item<T extends DefaultItemValue = DefaultItemValue> = {
 };
 
 export interface Scheme<
-  K extends (typeof FilterAttribute)[keyof typeof FilterAttribute],
+  K extends (typeof Attributes)[keyof typeof Attributes],
   T,
 > {
   type: K;
   value?: T;
 }
 
-const FilterAttribute = {
+const Attributes = {
   Field: "field",
   Check: "check",
   Select: "select",
@@ -33,9 +31,9 @@ const FilterAttribute = {
 } as const;
 
 export const { Field, Check, DataRange, MultiSelect, NumberRange, Select } =
-  FilterAttribute;
+  Attributes;
 
-export type Field = Scheme<typeof Field, DefaultAttributeValue>;
+export type Field = Scheme<typeof Field, DefaultValue>;
 export type Check = Scheme<typeof Check, boolean>;
 export type Select<T extends DefaultItemValue = DefaultItemValue> = Scheme<
   typeof Select,

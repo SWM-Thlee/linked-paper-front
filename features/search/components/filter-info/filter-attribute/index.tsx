@@ -4,7 +4,9 @@ import { JournalContent, JournalKey } from "./journal";
 import { CategoryContent, CategoryKey } from "./category";
 import { DateContent, DateKey } from "./date";
 
-type Keys = NonNullable<CustomizedFilterInfoProps<Search.Type>["attributeKey"]>;
+type Keys = NonNullable<
+  CustomizedFilterInfoProps<Search.Filter.Type>["attributeKey"]
+>;
 
 /* eslint-disable react/function-component-definition */
 export const SearchFilterAttributeKey: Keys = (key) => {
@@ -20,8 +22,9 @@ export const SearchFilterAttributeKey: Keys = (key) => {
   }
 };
 
-type Contents = CustomizedFilterInfoProps<Search.Type>["attributeContent"] &
-  NonNullable<unknown>;
+type Contents =
+  CustomizedFilterInfoProps<Search.Filter.Type>["attributeContent"] &
+    NonNullable<unknown>;
 
 /* eslint-disable react/function-component-definition */
 export const SearchFilterAttributeContent: Contents = ([key, content]) => {

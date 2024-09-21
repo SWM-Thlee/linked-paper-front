@@ -2,9 +2,8 @@ import { useCallback } from "react";
 import { useAtomValue } from "jotai";
 import { usePathname, useRouter } from "next/navigation";
 
-import { FilterStore } from "@/features/filter/types/store";
-import { Tag } from "@/features/filter/types/tag";
-import { Search, SearchQuery } from "../../types";
+import { Filter } from "@/features/filter/types";
+import { Search } from "../../types";
 import {
   convertSearchFilterToQuery,
   convertToQueryString,
@@ -17,12 +16,12 @@ export default function useSearchRequest() {
 
   /** Search Request on "Any Page" */
   const { filter: defaultFilter } = useSearchFilters({
-    store: FilterStore.PERSIST,
-    track: { tag: [Tag.DEFAULT] },
+    store: Filter.Store.PERSIST,
+    track: { tag: [Filter.Identify.Tag.DEFAULT] },
   });
 
   const request = useCallback(
-    (info: SearchQuery.RequiredInfo, filter?: Search.Data) => {
+    (info: Search.Query.RequiredInfo, filter?: Search.Filter.Data) => {
       if (!(defaultFilter || filter)) {
         throw new Error("Error from Requesting Search: Filter is not found.");
       }
@@ -34,7 +33,7 @@ export default function useSearchRequest() {
 
       router.push(`/search?${queryString}`);
     },
-    [router],
+    [router, defaultFilter],
   );
 
   /** Search Query Updating on "Search Page" */
@@ -52,9 +51,9 @@ export default function useSearchRequest() {
   const update = useCallback(
     (
       info?:
-        | SearchQuery.Info
-        | SearchQuery.RequiredInfo
-        | SearchQuery.FilterInfo,
+        | Search.Query.Info
+        | Search.Query.RequiredInfo
+        | Search.Query.FilterInfo,
     ) => {
       if (currentRoute !== "/search") {
         throw new Error(

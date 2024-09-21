@@ -6,7 +6,7 @@ import { SearchQueryToPresetOption } from "@/features/search/components/filter-i
 import EditFilterOption from "@/features/search/components/filter-info/filter-option/edit-filter";
 import { RawSearchFilterInfo } from "@/features/search/components/filter-info/raw-info";
 
-export const SearchQueryFilterInfo = CustomizedFilterInfo<Search.Type>({
+export const SearchQueryFilterInfo = CustomizedFilterInfo<Search.Filter.Type>({
   extend: RawSearchFilterInfo,
   title() {
     return "Current Settings";

@@ -6,7 +6,7 @@ import EditFilterOption from "./filter-option/edit-filter";
 import RemoveFilterOption from "./filter-option/remove-filter";
 import { RawSearchFilterInfo } from "./raw-info";
 
-export const PresetSearchFilterInfo = CustomizedFilterInfo<Search.Type>({
+export const PresetSearchFilterInfo = CustomizedFilterInfo<Search.Filter.Type>({
   extend: RawSearchFilterInfo,
   options(filter, store) {
     return (

@@ -1,5 +1,5 @@
 import { convertDateToString, convertStringToDate } from "@/utils/date";
-import { SearchQuery } from "../types";
+import { Search } from "../types";
 
 const INVALID_QUERY = Symbol.for("INVALID_SEARCH_QUERY");
 
@@ -8,15 +8,15 @@ const INVALID_QUERY = Symbol.for("INVALID_SEARCH_QUERY");
  */
 export const defaultInfo = {
   index: 0,
-  sorting: SearchQuery.Sorting.SIMILARITY,
+  sorting: Search.Query.Sorting.SIMILARITY,
   size: 20,
   similarity_limit: true,
-} satisfies { [key in keyof SearchQuery.Info]?: SearchQuery.Info[key] };
+} satisfies { [key in keyof Search.Query.Info]?: Search.Query.Info[key] };
 
 export const converter: {
-  [key in keyof SearchQuery.RawInfo]: (
-    value: SearchQuery.RawInfo[key],
-  ) => SearchQuery.Info[key] | typeof INVALID_QUERY;
+  [key in keyof Search.Query.RawInfo]: (
+    value: Search.Query.RawInfo[key],
+  ) => Search.Query.Info[key] | typeof INVALID_QUERY;
 } = {
   // Required
   query(query) {
@@ -48,24 +48,24 @@ export const converter: {
     const isSizeNumber = !Number.isNaN(sizeToNumber);
     if (!isSizeNumber) return INVALID_QUERY;
 
-    const isSizeValid = SearchQuery.Size.includes(
-      sizeToNumber as SearchQuery.Size,
+    const isSizeValid = Search.Query.Size.includes(
+      sizeToNumber as Search.Query.Size,
     );
     if (!isSizeValid) return INVALID_QUERY;
 
-    return sizeToNumber as SearchQuery.Size;
+    return sizeToNumber as Search.Query.Size;
   },
 
   sorting(sorting) {
     const sortingExists = sorting !== null;
     if (!sortingExists) return defaultInfo.sorting;
 
-    const isSortingValid = Object.values(SearchQuery.Sorting).includes(
-      sorting as SearchQuery.Sorting,
+    const isSortingValid = Object.values(Search.Query.Sorting).includes(
+      sorting as Search.Query.Sorting,
     );
     if (!isSortingValid) return INVALID_QUERY;
 
-    return sorting as SearchQuery.Sorting;
+    return sorting as Search.Query.Sorting;
   },
 
   similarity_limit(similarity_limit) {
@@ -103,7 +103,7 @@ export const converter: {
   },
 };
 
-function isValidInfo(result: object): result is SearchQuery.Info {
+function isValidInfo(result: object): result is Search.Query.Info {
   return !Object.values(result).includes(INVALID_QUERY);
 }
 
@@ -119,7 +119,9 @@ function isValidInfo(result: object): result is SearchQuery.Info {
  * - 필수 옵션인 경우 검증 오류가 발생합니다.
  * - 선택 옵션인 경우 무시됩니다.
  */
-export function validate(info: SearchQuery.RawInfo): SearchQuery.Info | false {
+export function validate(
+  info: Search.Query.RawInfo,
+): Search.Query.Info | false {
   const result = {
     // Required
     query: converter.query(info.query),

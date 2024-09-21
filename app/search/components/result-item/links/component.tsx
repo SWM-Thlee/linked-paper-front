@@ -4,11 +4,11 @@ import Link from "next/link";
 
 import Button from "@/ui/button";
 import BloomIcon from "@/ui/icons/bloom";
-import { SearchResult } from "@/features/search/types/result";
+import { Search } from "@/features/search/types";
 import SearchResultOriginLink from "./origin";
 import SearchResultPdfLink from "./pdf";
 
-type Props = Pick<SearchResult, "id" | "link">;
+type Props = Pick<Search.Result.Data, "id" | "link">;
 
 export default function SearchResultItemLinks({
   id,

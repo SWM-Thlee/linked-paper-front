@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 
 import { queryAtom, requiredQueryAtom } from "../../stores/query";
-import { SearchQuery } from "../../types";
+import { Search } from "../../types";
 
 /**
  * QueryString으로부터 검색 정보를 가져옵니다.
@@ -12,7 +12,7 @@ import { SearchQuery } from "../../types";
 export default function useSearchQueryInfo() {
   const info = useAtomValue(queryAtom);
 
-  const requiredQuery = useMemo<SearchQuery.RequiredInfo>(
+  const requiredQuery = useMemo<Search.Query.RequiredInfo>(
     () => ({
       query: info.query,
       index: info.index,

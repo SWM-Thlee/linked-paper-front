@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 
-import { FilterData } from "@/features/filter/types/filter";
 import { Search } from "@/features/search/types";
 import { matcher } from "@/features/search/utils/matcher";
 import useCategories, { CategoryGroup } from "@/hooks/use-categories";
@@ -16,7 +15,7 @@ import Button from "@/ui/button";
 import ArrowDownIcon from "@/ui/icons/arrow-down";
 
 type Props = {
-  data: FilterData<Search.Type>["attributes"]["category"];
+  data: Search.Filter.Data["attributes"]["category"];
 };
 
 /**

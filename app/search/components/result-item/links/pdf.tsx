@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 
-import { SearchResult } from "@/features/search/types/result";
 import Button from "@/ui/button";
 import PdfLinkIcon from "@/ui/icons/pdf-link";
 import { Popover } from "@/ui/popover";
+import { Search } from "@/features/search/types";
 
-type Props = { pdf_link: NonNullable<SearchResult["link"]["pdf_link"]> };
+type Props = { pdf_link: NonNullable<Search.Result.Data["link"]["pdf_link"]> };
 
 // 해당 논문의 PDF 링크를 새 탭으로 열도록 합니다.
 export default function SearchResultPdfLink({ pdf_link }: Props) {

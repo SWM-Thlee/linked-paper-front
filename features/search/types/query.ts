@@ -5,6 +5,7 @@ export const Sorting = {
   CITIATION: "citiation",
 } as const;
 
+/** 검색 결과의 크기를 나타냅니다. */
 export type Size = (typeof Size)[number];
 export const Size = [20, 40, 60, 80, 100] as const;
 
@@ -25,8 +26,9 @@ export type FilterInfo = {
 
 export type Info = RequiredInfo & FilterInfo;
 
+/** Query String에서 바로 가져온 값을 나타냅니다. */
 export type RawInfo = {
   readonly [key in keyof Info]-?:
-    | (NonNullable<Info[key]> extends string[] ? string[] : string)
+    | (NonNullable<Info[key]> extends unknown[] ? string[] : string)
     | null;
 };

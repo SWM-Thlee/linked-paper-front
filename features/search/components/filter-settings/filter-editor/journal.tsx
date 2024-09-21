@@ -15,14 +15,8 @@ import JournalIcon from "@/ui/icons/journal";
 import { matches } from "@/features/search/utils/matcher";
 import LabelButton from "@/ui/label-button";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
+import { Search } from "@/features/search/types";
 import { EditorContext } from "./context";
-
-const TAB_JOURNAL = {
-  TITLE: "Journal",
-  DESCRIPTION:
-    "Choose the journal of paper you want to narrow down when searching for papers.",
-  ID: "FilterJournalEditor",
-} as const;
 
 function JournalElement({ journal }: { journal: string }) {
   const edit = useContext(EditorContext);
@@ -67,7 +61,7 @@ function JournalElement({ journal }: { journal: string }) {
 }
 
 export default function EditorJournal() {
-  const tabID = useTabID(TAB_JOURNAL.ID);
+  const tabID = useTabID(Search.Settings.JOURNAL.ID);
   const edit = useContext(EditorContext);
   const settings = useSettings();
 
@@ -122,10 +116,10 @@ export default function EditorJournal() {
   // TODO: 이후에 각 Subject를 열고 닫을 수 있도록 (TreeView) 추가해보자.
   return (
     <Settings.Tab.Root
-      name={TAB_JOURNAL.ID}
+      name={Search.Settings.JOURNAL.ID}
       id={tabID}
-      title={TAB_JOURNAL.TITLE}
-      description={TAB_JOURNAL.DESCRIPTION}
+      title={Search.Settings.JOURNAL.TITLE}
+      description={Search.Settings.JOURNAL.DESCRIPTION}
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">

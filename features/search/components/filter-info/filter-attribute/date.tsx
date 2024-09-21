@@ -16,7 +16,9 @@ export function DateKey() {
   );
 }
 
-export function DateContent({ value }: Search.Data["attributes"]["date"]) {
+export function DateContent({
+  value,
+}: Search.Filter.Data["attributes"]["date"]) {
   const dateRange = useMemo(() => {
     const startDate = convertStringToDate(value?.min);
     const endDate = convertStringToDate(value?.max);

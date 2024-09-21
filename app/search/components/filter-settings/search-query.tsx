@@ -11,23 +11,21 @@ import createSearchFilter from "@/features/search/utils/filter/initial";
 import Button from "@/ui/button";
 import AddIcon from "@/ui/icons/add";
 import DeleteIcon from "@/ui/icons/delete";
-import { toPreset } from "@/features/filter/utils/converter/preset";
-import { FilterStore } from "@/features/filter/types/store";
-import { TAB_SEARCH_QUERY } from "@/features/search/types/tab";
-import { Tag } from "@/features/filter/types/tag";
-import { Search } from "@/features/search/types";
 import TipIcon from "@/ui/icons/tip";
+import { toPreset } from "@/features/filter/utils/converter/preset";
+import { Filter } from "@/features/filter/types";
+import { Search } from "@/features/search/types";
 import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import { SearchQueryPresetFilterInfo } from "../filter-info/search-query-preset-info";
 import { SearchQueryFilterInfo } from "../filter-info/search-query-info";
 import { SearchQueryDefaultFilterInfo } from "../filter-info/search-query-default-info";
 
 function AddPresetButton() {
-  const dispatch = useSearchFilterDispatcher({ store: FilterStore.PERSIST });
+  const dispatch = useSearchFilterDispatcher({ store: Filter.Store.PERSIST });
 
   const onClick = useCallback(() => {
     dispatch(
-      toPreset<Search.Type>({
+      toPreset<Search.Filter.Type>({
         data: createSearchFilter({ tags: {}, name: "Unnamed Preset" }),
       }),
     );
@@ -48,14 +46,14 @@ function AddPresetButton() {
 function RemoveAllButton() {
   // Persist Store에 저장된 Preset
   const { reset: removeInPersistentStore } = useSearchFilters({
-    store: FilterStore.PERSIST,
-    track: { tag: [Tag.PRESET] },
+    store: Filter.Store.PERSIST,
+    track: { tag: [Filter.Identify.Tag.PRESET] },
   });
 
   // Temporary Store에 저장된 Preset
   const { reset: removeInTemporaryStore } = useSearchFilters({
-    store: FilterStore.TEMPORARY,
-    track: { tag: [Tag.PRESET] },
+    store: Filter.Store.TEMPORARY,
+    track: { tag: [Filter.Identify.Tag.PRESET] },
   });
 
   const removeAll = useCallback(() => {
@@ -78,8 +76,8 @@ function RemoveAllButton() {
 
 function SearchFilterPresets() {
   const { filters } = useSearchFilters({
-    store: FilterStore.PERSIST,
-    track: { tag: [Tag.PRESET, [Tag.EDIT]] },
+    store: Filter.Store.PERSIST,
+    track: { tag: [Filter.Identify.Tag.PRESET, [Filter.Identify.Tag.EDIT]] },
   });
 
   // 생성 날짜가 가까운 Preset부터 위에 위치합니다.
@@ -87,8 +85,8 @@ function SearchFilterPresets() {
     () =>
       Object.entries(filters).toSorted(
         ([, leftData], [, rightData]) =>
-          (rightData.tags[Tag.PRESET].createdAt as number) -
-          (leftData.tags[Tag.PRESET].createdAt as number),
+          (rightData.tags[Filter.Identify.Tag.PRESET].createdAt as number) -
+          (leftData.tags[Filter.Identify.Tag.PRESET].createdAt as number),
       ),
     [filters],
   );
@@ -98,7 +96,7 @@ function SearchFilterPresets() {
       {sorted.map(([dataID, data]) => (
         <div key={dataID} className="animate-fadeIn">
           <SearchQueryPresetFilterInfo
-            store={FilterStore.PERSIST}
+            store={Filter.Store.PERSIST}
             data={data}
           />
         </div>
@@ -122,8 +120,8 @@ function DefaultFilterNotFound() {
 
 function DefaultFilterSection() {
   const { filter } = useSearchFilters({
-    store: FilterStore.PERSIST,
-    track: { tag: [Tag.DEFAULT] },
+    store: Filter.Store.PERSIST,
+    track: { tag: [Filter.Identify.Tag.DEFAULT] },
   });
 
   return (
@@ -133,7 +131,7 @@ function DefaultFilterSection() {
         {filter ? (
           <SearchQueryDefaultFilterInfo
             data={filter}
-            store={FilterStore.PERSIST}
+            store={Filter.Store.PERSIST}
           />
         ) : (
           <DefaultFilterNotFound />
@@ -144,27 +142,27 @@ function DefaultFilterSection() {
 }
 
 export default function SearchQuery() {
-  const tabID = useTabID(TAB_SEARCH_QUERY.ID);
+  const tabID = useTabID(Search.Settings.SEARCH_QUERY.ID);
   const query = useSearchQueryFilter();
 
   return (
     <Settings.Tab.Root
-      name={TAB_SEARCH_QUERY.ID}
+      name={Search.Settings.SEARCH_QUERY.ID}
       id={tabID}
-      title={TAB_SEARCH_QUERY.TITLE}
-      description={TAB_SEARCH_QUERY.DESCRIPTION}
+      title={Search.Settings.SEARCH_QUERY.TITLE}
+      description={Search.Settings.SEARCH_QUERY.DESCRIPTION}
       defaultTab
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">
-          <SearchIcon ui_size="small" /> {TAB_SEARCH_QUERY.TITLE}
+          <SearchIcon ui_size="small" /> {Search.Settings.SEARCH_QUERY.TITLE}
         </div>
       </Settings.Tab.Title>
       <Settings.Tab.Content>
         <div className="mt-8 flex flex-col gap-16">
           {query && (
             <SearchQueryFilterInfo
-              store={FilterStore.TEMPORARY}
+              store={Filter.Store.TEMPORARY}
               description="This filter was taken from a search query and has not been saved to the client."
               data={query}
             />

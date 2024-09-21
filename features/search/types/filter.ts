@@ -1,5 +1,5 @@
-import { FilterAttribute } from "@/features/filter/types/attribute";
-import { BaseData, BaseFilter } from "@/features/filter/types/base";
+import * as FilterAttribute from "@/features/filter/types/attribute";
+import * as FilterBase from "@/features/filter/types/base";
 
 export const Type = "semantic-search";
 export type Type = typeof Type;
@@ -40,7 +40,7 @@ export function Category(categories: string[]): Data["attributes"]["category"] {
   };
 }
 
-export type Data = BaseData<Type> & {
+export type Data = FilterBase.Data<Type> & {
   attributes: {
     journal: FilterAttribute.MultiSelect<Journal>;
     category: FilterAttribute.MultiSelect<Category>;
@@ -48,4 +48,8 @@ export type Data = BaseData<Type> & {
   };
 };
 
-export type Filter = BaseFilter<Type, Data>;
+export type DataID = Data["dataID"];
+
+export type Attribute = keyof Data["attributes"];
+
+export type Filters = FilterBase.Filters<Type, Data>;

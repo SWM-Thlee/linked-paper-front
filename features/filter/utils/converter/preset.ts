@@ -1,33 +1,32 @@
 import { produce } from "immer";
 
-import { FilterData, FilterFeatureID } from "@/features/filter/types/filter";
-import { FilterTag, Tag, TagGroup } from "@/features/filter/types/tag";
 import { generateFilterDataID } from "../id";
+import { Filter } from "../../types";
 
 export interface DefaultTagPreset {
   createdAt: number;
 }
 
-export type ConvertingPresetProps<T extends FilterFeatureID> = {
-  data: FilterData<T>;
+export type ConvertingPresetProps<T extends Filter.Build.FeatureID> = {
+  data: Filter.Build.Data<T>;
   branch?: boolean;
-  extra?: FilterTag[string];
+  extra?: Filter.Base.Tags[string];
 };
 
-export function toPreset<T extends FilterFeatureID>({
+export function toPreset<T extends Filter.Build.FeatureID>({
   data,
   branch,
   extra,
 }: ConvertingPresetProps<T>) {
-  if (data.tags[Tag.PRESET]) {
+  if (data.tags[Filter.Identify.Tag.PRESET]) {
     throw new Error(
       "Error from Converting Preset: Target filter is already a preset.",
     );
   }
 
   return produce(data, (draft) => {
-    TagGroup.ROLE.forEach((tag) => delete draft.tags[tag]);
-    draft.tags[Tag.PRESET] = {
+    Filter.Identify.TagGroup.ROLE.forEach((tag) => delete draft.tags[tag]);
+    draft.tags[Filter.Identify.Tag.PRESET] = {
       ...extra,
       createdAt: Date.now(),
     } satisfies DefaultTagPreset;
@@ -38,16 +37,16 @@ export function toPreset<T extends FilterFeatureID>({
   });
 }
 
-export type RevertingPresetProps<T extends FilterFeatureID> = {
-  data: FilterData<T>;
+export type RevertingPresetProps<T extends Filter.Build.FeatureID> = {
+  data: Filter.Build.Data<T>;
   branch?: boolean;
 };
 
-export function revertPreset<T extends FilterFeatureID>({
+export function revertPreset<T extends Filter.Build.FeatureID>({
   data,
   branch,
 }: RevertingPresetProps<T>) {
-  if (!data.tags[Tag.PRESET]) {
+  if (!data.tags[Filter.Identify.Tag.PRESET]) {
     throw new Error(
       "Error from Reverting Preset: Target filter is not a preset.",
     );
@@ -58,6 +57,6 @@ export function revertPreset<T extends FilterFeatureID>({
       draft.dataID = generateFilterDataID(draft.featureID);
     }
 
-    delete draft.tags[Tag.PRESET];
+    delete draft.tags[Filter.Identify.Tag.PRESET];
   });
 }

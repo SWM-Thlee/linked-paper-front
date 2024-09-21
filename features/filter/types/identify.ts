@@ -1,7 +1,24 @@
-import { FilterDataID, FilterFeatureID } from "./filter";
-import { FilterTag } from "./tag";
+import * as Base from "./base";
+import * as Builder from "./filter";
 
-export type FilterTrackingStrategy<T extends FilterFeatureID> = {
+export const Tag = {
+  EDIT: "EDIT",
+  SNAPSHOT: "SNAPSHOT",
+  PRESET: "PRESET",
+  QUERY: "QUERY",
+  DEFAULT: "DEFAULT",
+} as const;
+export type Tag = (typeof Tag)[keyof typeof Tag];
+
+export const TagGroup = {
+  STATUS: [Tag.EDIT, Tag.SNAPSHOT],
+  ROLE: [Tag.PRESET, Tag.QUERY, Tag.DEFAULT],
+} as const;
+export type TagGroup = {
+  [key in keyof typeof TagGroup]: (typeof TagGroup)[key][number];
+};
+
+export type Strategy<T extends Builder.FeatureID> = {
   /**
    * 특정 DataID의 매치 여부를 나타냅니다.
    *
@@ -9,7 +26,7 @@ export type FilterTrackingStrategy<T extends FilterFeatureID> = {
    * - 하나만 명시된 경우 해당 Filter만 통과하므로, **특정 Filter**를 불러오는 것과 같습니다.
    * - 여러 개가 명시된 경우 **그 중에 하나만 매치되어도** 통과합니다. (OR)
    */
-  dataID?: FilterDataID<T>[];
+  dataID?: Builder.DataID<T>[];
 
   /**
    * Filter에 별도로 명시된 Tag 정보의 매치 여부를 나타냅니다.
@@ -19,5 +36,5 @@ export type FilterTrackingStrategy<T extends FilterFeatureID> = {
    * - **[string]**: 해당 Tag가 존재하지 않아야 합니다. (EXCLUDE)
    * - **[string, FilterTag[string]]**: 특정 Tag 내 세부 정보와 **모두 일치**하여야 합니다. (INCLUDE)
    */
-  tag?: (string | [string] | [string, FilterTag[string]])[];
+  tag?: (string | [string] | [string, Base.Tags[string]])[];
 };

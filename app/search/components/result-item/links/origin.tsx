@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 
-import { SearchResult } from "@/features/search/types/result";
 import Button from "@/ui/button";
 import OriginLinkIcon from "@/ui/icons/origin-link";
 import { Popover } from "@/ui/popover";
+import { Search } from "@/features/search/types";
 
 type Props = {
-  origin_link: SearchResult["link"]["origin_link"] & NonNullable<unknown>;
+  origin_link: Search.Result.Data["link"]["origin_link"] & NonNullable<unknown>;
 };
 
 /**

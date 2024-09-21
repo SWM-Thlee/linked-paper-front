@@ -10,6 +10,7 @@ import * as Primitive from "@radix-ui/react-dialog";
 import useIsClient from "@/hooks/use-is-client";
 import { tv } from "@/utils/tailwind-variants";
 import { sem } from "@/utils/semantic-styles";
+import { Search } from "@/features/search/types";
 import {
   SettingsContainer,
   TabDirectionObserver,
@@ -125,11 +126,6 @@ export const settingsVariant = tv({
       .build(),
   },
 });
-
-export const EMPTY_TAB_INFO = {
-  title: "Empty Tab",
-  description: "Tab is not selected",
-};
 
 export interface SettingsRootProps extends Primitive.DialogProps {}
 
@@ -255,10 +251,10 @@ export function Content({
                     ) : (
                       <VisuallyHidden>
                         <Primitive.Title>
-                          {EMPTY_TAB_INFO.title}
+                          {Search.Settings.EMPTY.TITLE}
                         </Primitive.Title>
                         <Primitive.Description>
-                          {EMPTY_TAB_INFO.description}
+                          {Search.Settings.EMPTY.DESCRIPTION}
                         </Primitive.Description>
                       </VisuallyHidden>
                     )}

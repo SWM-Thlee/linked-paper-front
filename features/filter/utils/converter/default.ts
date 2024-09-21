@@ -1,34 +1,34 @@
 import { produce } from "immer";
-import { FilterData, FilterFeatureID } from "@/features/filter/types/filter";
-import { FilterTag, Tag, TagGroup } from "@/features/filter/types/tag";
+
 import { generateFilterDataID } from "../id";
+import { Filter } from "../../types";
 
 export interface DefaultTagDefault {
   createdAt: number;
 }
 
-export type ConvertingDefaultProps<T extends FilterFeatureID> = {
-  data: FilterData<T>;
+export type ConvertingDefaultProps<T extends Filter.Build.FeatureID> = {
+  data: Filter.Build.Data<T>;
   branch?: boolean;
   createdAt?: number;
-  extra?: FilterTag[string];
+  extra?: Filter.Base.Tags[string];
 };
 
-export function toDefault<T extends FilterFeatureID>({
+export function toDefault<T extends Filter.Build.FeatureID>({
   data,
   branch,
   createdAt = Date.now(),
   extra,
 }: ConvertingDefaultProps<T>) {
-  if (data.tags[Tag.DEFAULT]) {
+  if (data.tags[Filter.Identify.Tag.DEFAULT]) {
     throw new Error(
       "Error from Converting Default: Target filter is already a default.",
     );
   }
 
   return produce(data, (draft) => {
-    TagGroup.ROLE.forEach((tag) => delete draft.tags[tag]);
-    draft.tags[Tag.DEFAULT] = {
+    Filter.Identify.TagGroup.ROLE.forEach((tag) => delete draft.tags[tag]);
+    draft.tags[Filter.Identify.Tag.DEFAULT] = {
       ...extra,
       createdAt,
     } satisfies DefaultTagDefault;
@@ -39,16 +39,16 @@ export function toDefault<T extends FilterFeatureID>({
   });
 }
 
-export type RevertingDefaultProps<T extends FilterFeatureID> = {
-  data: FilterData<T>;
+export type RevertingDefaultProps<T extends Filter.Build.FeatureID> = {
+  data: Filter.Build.Data<T>;
   branch?: boolean;
 };
 
-export function revertDefault<T extends FilterFeatureID>({
+export function revertDefault<T extends Filter.Build.FeatureID>({
   data,
   branch,
 }: RevertingDefaultProps<T>) {
-  if (!data.tags[Tag.DEFAULT]) {
+  if (!data.tags[Filter.Identify.Tag.DEFAULT]) {
     throw new Error(
       "Error from Reverting Default: Target filter is not a default.",
     );
@@ -59,6 +59,6 @@ export function revertDefault<T extends FilterFeatureID>({
       draft.dataID = generateFilterDataID(draft.featureID);
     }
 
-    delete draft.tags[Tag.DEFAULT];
+    delete draft.tags[Filter.Identify.Tag.DEFAULT];
   });
 }

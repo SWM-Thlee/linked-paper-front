@@ -2,23 +2,16 @@ import { useCallback, useMemo } from "react";
 import { Draft, produce } from "immer";
 import equal from "fast-deep-equal";
 
-import { FilterStore } from "@/features/filter/types/store";
-import { Tag } from "@/features/filter/types/tag";
+import { Filter } from "@/features/filter/types";
+import { Search } from "@/features/search/types";
 import { revertEdit } from "@/features/filter/utils/converter/edit";
-import { Search } from "../../types";
-import {
-  FilterAttributeKey,
-  FilterData,
-  FilterDataID,
-} from "../../../filter/types/filter";
 import useSearchFilterDispatcher from "./use-search-filter-dispatcher";
 import useSearchFilters from "./use-search-filters";
-import { EditStatus } from "../../types/edit";
 import { toSearchEdit } from "../../utils/filter/edit";
 
 type Props = {
-  dataID: FilterDataID<Search.Type>;
-  store: FilterStore;
+  dataID: Search.Filter.DataID;
+  store: Filter.Store.Type;
 };
 
 export type SearchFilterEditorHook = ReturnType<typeof useSearchFilterEditor>;
@@ -28,7 +21,7 @@ export type SearchFilterEditorHook = ReturnType<typeof useSearchFilterEditor>;
  */
 export default function useSearchFilterEditor({ dataID, store }: Props) {
   const temp = useSearchFilterDispatcher({
-    store: FilterStore.TEMPORARY,
+    store: Filter.Store.TEMPORARY,
   });
 
   const dispatch = useSearchFilterDispatcher({
@@ -43,8 +36,8 @@ export default function useSearchFilterEditor({ dataID, store }: Props) {
 
   // 편집 중인 Filter를 나타냅니다.
   const { filter: editor, reset: removeEditor } = useSearchFilters({
-    track: { tag: [[Tag.EDIT, { target: dataID }]] },
-    store: FilterStore.TEMPORARY,
+    track: { tag: [[Filter.Identify.Tag.EDIT, { target: dataID }]] },
+    store: Filter.Store.TEMPORARY,
   });
 
   /** 편집을 시작합니다. */
@@ -69,10 +62,7 @@ export default function useSearchFilterEditor({ dataID, store }: Props) {
 
   /** 편집 내용을 초기화합니다. 일부만 초기화할 수도 있습니다. */
   const reset = useCallback(
-    (include?: {
-      name?: boolean;
-      attributes?: FilterAttributeKey<Search.Type>[];
-    }) => {
+    (include?: { name?: boolean; attributes?: Search.Filter.Attribute[] }) => {
       if (!editor) {
         throw new Error(
           "Error from ResetSearchFilterEditor: Filter is not on editing.",
@@ -111,7 +101,7 @@ export default function useSearchFilterEditor({ dataID, store }: Props) {
 
   /** Editor에 변경 사항을 적용합니다. */
   const patch = useCallback(
-    (patchFn: (draft: Draft<FilterData<Search.Type>>) => void) => {
+    (patchFn: (draft: Draft<Search.Filter.Data>) => void) => {
       if (!editor) {
         throw new Error(
           "Error from PatchSearchFilterEditor: Target filter is not found.",
@@ -141,14 +131,14 @@ export default function useSearchFilterEditor({ dataID, store }: Props) {
         );
       }
 
-      dispatch(revertEdit<Search.Type>({ data: editor }));
+      dispatch(revertEdit<Search.Filter.Type>({ data: editor }));
       if (afterRemove) removeEditor();
     },
     [dispatch, editor, removeEditor],
   );
 
   const isTitleEditable = useMemo(
-    () => !!editor?.tags[Tag.EDIT]?.titleEditable,
+    () => !!editor?.tags[Filter.Identify.Tag.EDIT]?.titleEditable,
     [editor],
   );
 
@@ -161,11 +151,11 @@ export default function useSearchFilterEditor({ dataID, store }: Props) {
   );
 
   /** 편집 상태를 확인합니다. */
-  const status = useMemo<EditStatus>(() => {
-    if (!filter) return EditStatus.UNSPECIFIED;
-    if (!editor) return EditStatus.NOT_EDITING;
+  const status = useMemo<Search.Edit.Status>(() => {
+    if (!filter) return Search.Edit.Status.UNSPECIFIED;
+    if (!editor) return Search.Edit.Status.NOT_EDITING;
 
-    return EditStatus.EDITING;
+    return Search.Edit.Status.EDITING;
   }, [filter, editor]);
 
   return {

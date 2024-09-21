@@ -1,38 +1,36 @@
 import { produce } from "immer";
 
-import { FilterData, FilterDataID, FilterFeatureID } from "../../types/filter";
 import { generateFilterDataID } from "../id";
-import { FilterStore } from "../../types/store";
-import { FilterTag, Tag, TagGroup } from "../../types/tag";
+import { Filter } from "../../types";
 
 export interface DefaultTagSnapshot {
   createdAt: number;
-  target: FilterDataID<FilterFeatureID>;
-  store: FilterStore;
+  target: Filter.Build.DataID<Filter.Build.FeatureID>;
+  store: Filter.Store.Type;
 }
 
-export type ConvertingSnapshotProps<T extends FilterFeatureID> = {
-  data: FilterData<T>;
-  store: FilterStore;
+export type ConvertingSnapshotProps<T extends Filter.Build.FeatureID> = {
+  data: Filter.Build.Data<T>;
+  store: Filter.Store.Type;
   branch?: boolean;
-  extra?: FilterTag[string];
+  extra?: Filter.Base.Tags[string];
 };
 
-export function toSnapshot<T extends FilterFeatureID>({
+export function toSnapshot<T extends Filter.Build.FeatureID>({
   data,
   store,
   branch = true,
   extra,
 }: ConvertingSnapshotProps<T>) {
-  if (data.tags[Tag.SNAPSHOT]) {
+  if (data.tags[Filter.Identify.Tag.SNAPSHOT]) {
     throw new Error(
       "Error from Converting Snapshot: Target filter is already a snapshot.",
     );
   }
 
   return produce(data, (draft) => {
-    TagGroup.STATUS.forEach((tag) => delete draft.tags[tag]);
-    draft.tags[Tag.SNAPSHOT] = {
+    Filter.Identify.TagGroup.STATUS.forEach((tag) => delete draft.tags[tag]);
+    draft.tags[Filter.Identify.Tag.SNAPSHOT] = {
       createdAt: Date.now(),
       target: draft.dataID,
       store,

@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { produce } from "immer";
 
-import { FilterStore } from "@/features/filter/types/store";
+import { Filter } from "@/features/filter/types";
 import Button from "@/ui/button";
 import AddIcon from "@/ui/icons/add";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
@@ -14,7 +14,7 @@ import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query
 
 export function SearchQueryToPresetOption() {
   // Preset은 Persistent Store에 저장되어야 합니다.
-  const dispatch = useSearchFilterDispatcher({ store: FilterStore.PERSIST });
+  const dispatch = useSearchFilterDispatcher({ store: Filter.Store.PERSIST });
 
   // Search Query Filter는 "/search" Page 내에서만 존재합니다.
   const query = useSearchQueryFilter();
@@ -26,8 +26,8 @@ export function SearchQueryToPresetOption() {
       );
 
     // Convert Query to Preset
-    const filter = toPreset<Search.Type>({
-      data: revertQuery<Search.Type>({ data: query }),
+    const filter = toPreset<Search.Filter.Type>({
+      data: revertQuery<Search.Filter.Type>({ data: query }),
     });
 
     dispatch(

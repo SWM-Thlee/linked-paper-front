@@ -9,8 +9,7 @@ import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import FilterIcon from "@/ui/icons/filter";
 import useIsClient from "@/hooks/use-is-client";
-import { FilterData } from "@/features/filter/types/filter";
-import { Search, SearchQuery } from "@/features/search/types";
+import { Search } from "@/features/search/types";
 import Select, { SelectComponentItem } from "@/ui/select";
 import CheckIcon from "@/ui/icons/check";
 import { Popover } from "@/ui/popover";
@@ -25,7 +24,7 @@ import { FilterSettings } from "./filter-settings";
 function Attributes({
   attributes: { category, journal, date },
 }: {
-  attributes: FilterData<Search.Type>["attributes"];
+  attributes: Search.Filter.Data["attributes"];
 }) {
   const isCategorySelected = Object.keys(category.value ?? {}).length > 0;
   const isJournalSelected = Object.keys(journal.value ?? {}).length > 0;
@@ -78,12 +77,12 @@ function Sorting({
   status,
   onStatusChange,
 }: {
-  status: SearchQuery.Sorting;
-  onStatusChange: (newStatus: SearchQuery.Sorting) => void;
+  status: Search.Query.Sorting;
+  onStatusChange: (newStatus: Search.Query.Sorting) => void;
 }) {
   const items = useMemo<SelectComponentItem[]>(
     () =>
-      Object.values(SearchQuery.Sorting).map((sorting) => ({
+      Object.values(Search.Query.Sorting).map((sorting) => ({
         id: sorting,
         value: sorting,
       })),
@@ -106,13 +105,13 @@ function ResultSize({
   status,
   onStatusChange,
 }: {
-  status: SearchQuery.Size;
-  onStatusChange: (newStatus: SearchQuery.Size) => void;
+  status: Search.Query.Size;
+  onStatusChange: (newStatus: Search.Query.Size) => void;
 }) {
   const [open, setOpen] = useState(false);
 
   const setStatus = useCallback(
-    (newStatus: SearchQuery.Size) => {
+    (newStatus: Search.Query.Size) => {
       setOpen(false);
       onStatusChange(newStatus);
     },
@@ -136,7 +135,7 @@ function ResultSize({
           take to import.
         </p>
         <div className="flex items-center gap-1">
-          {SearchQuery.Size.map((size) => (
+          {Search.Query.Size.map((size) => (
             <LabelButton
               ui_color={status === size ? "primary" : "secondary"}
               ui_size="small"
@@ -245,7 +244,7 @@ export default function SearchResultHeader() {
 
   // Search Result Size
   const setSize = useCallback(
-    (size: SearchQuery.Size) => {
+    (size: Search.Query.Size) => {
       if (info.size === size) return;
       setRequiredQuery({ ...requiredQuery, size });
     },
@@ -263,7 +262,7 @@ export default function SearchResultHeader() {
 
   // Search Sorting
   const setSorting = useCallback(
-    (sorting: SearchQuery.Sorting) => {
+    (sorting: Search.Query.Sorting) => {
       if (info.sorting === sorting) return;
       setRequiredQuery({ ...requiredQuery, sorting });
     },
