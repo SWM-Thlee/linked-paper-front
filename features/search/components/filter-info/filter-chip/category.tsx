@@ -6,7 +6,7 @@ import { FilterData } from "@/features/filter/types/filter";
 import { Search } from "@/features/search/types";
 import { matcher } from "@/features/search/utils/matcher";
 import useCategories, { CategoryGroup } from "@/hooks/use-categories";
-import SearchField from "@/ui/search";
+import SearchField from "@/ui/search-field";
 import CategoryIcon from "@/ui/icons/category";
 import LabelButton from "@/ui/label-button";
 import { Popover } from "@/ui/popover";

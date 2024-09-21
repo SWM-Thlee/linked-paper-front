@@ -6,7 +6,7 @@ import { Search } from "@/features/search/types";
 import { matches } from "@/features/search/utils/matcher";
 import { FilterData } from "@/features/filter/types/filter";
 import Button from "@/ui/button";
-import SearchField from "@/ui/search";
+import SearchField from "@/ui/search-field";
 import JournalIcon from "@/ui/icons/journal";
 import LabelButton from "@/ui/label-button";
 import { Popover } from "@/ui/popover";

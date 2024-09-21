@@ -2,16 +2,10 @@ import { produce } from "immer";
 
 import { FilterData, FilterDataID } from "@/features/filter/types/filter";
 import { toQuery } from "@/features/filter/utils/converter/query";
-import { RawSearchQueryInfo } from "../../types/query";
 import createSearchFilter from "./initial";
-import { Search } from "../../types";
+import { Search, SearchQuery } from "../../types";
 
 export const DEFAULT_FILTER_NAME = "Search Query";
-
-export type SearchQueryFilterData = Pick<
-  RawSearchQueryInfo,
-  "filter_category" | "filter_end_date" | "filter_start_date" | "filter_journal"
->;
 
 // yyyy-mm-dd 규격인지 확인합니다.
 function isDate(data: string) {
@@ -22,9 +16,9 @@ function isNotEmpty<T extends object>(obj?: T): obj is T {
   return obj !== undefined && Object.keys(obj).length > 0;
 }
 
-export function convertToQueryString(data: RawSearchQueryInfo) {
+export function convertToQueryString(data: SearchQuery.Info) {
   return Object.entries(data)
-    .filter(([, value]) => value)
+    .filter(([, value]) => value !== undefined && value !== null)
     .map(([key, value]) =>
       Array.isArray(value)
         ? value.map((elem) => `${key}=${elem}`).join("&")
@@ -35,7 +29,7 @@ export function convertToQueryString(data: RawSearchQueryInfo) {
 
 export function convertSearchFilterToQuery({
   attributes: { journal, category, date },
-}: FilterData<Search.Type>): SearchQueryFilterData {
+}: FilterData<Search.Type>): SearchQuery.FilterInfo {
   return {
     filter_journal: isNotEmpty(journal.value)
       ? Object.values(journal.value).map(
@@ -52,7 +46,7 @@ export function convertSearchFilterToQuery({
   };
 }
 
-export type ConvertingSearchQueryToFilterProps = SearchQueryFilterData & {
+export type ConvertingSearchQueryToFilterProps = SearchQuery.FilterInfo & {
   queryDataID: FilterDataID<Search.Type>;
 };
 

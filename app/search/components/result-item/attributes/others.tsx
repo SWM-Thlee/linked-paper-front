@@ -1,4 +1,3 @@
-import Button from "@/ui/button";
 import { Popover } from "@/ui/popover";
 import { PaperMetadata } from "@/types/paper";
 
@@ -7,6 +6,7 @@ import SpliterIcon from "@/ui/icons/spliter";
 import DateIcon from "@/ui/icons/date";
 import ReferenceIcon from "@/ui/icons/reference";
 import CitiationIcon from "@/ui/icons/citiation";
+import LabelButton from "@/ui/label-button";
 
 type Props = Pick<
   PaperMetadata,
@@ -22,17 +22,13 @@ export default function SearchResultAttributeOthers({
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Button
-          ui_color="secondary"
-          ui_variant="light"
-          className="flex items-center gap-4"
-        >
+        <LabelButton ui_color="secondary" ui_size="small" ui_variant="light">
           <JournalIcon ui_size="small" /> {journal}
           <SpliterIcon />
           <DateIcon ui_size="small" /> {date}
           <SpliterIcon />
           <ReferenceIcon ui_size="small" /> {reference_count}
-        </Button>
+        </LabelButton>
       </Popover.Trigger>
       <Popover.Content>
         <div className="flex flex-col gap-4 p-4">

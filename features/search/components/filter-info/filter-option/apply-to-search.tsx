@@ -11,8 +11,8 @@ import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-fil
 import { EditStatus } from "@/features/search/types/edit";
 import SearchIcon from "@/ui/icons/search";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
-import useSearchQueryFilter from "@/features/search/hooks/filter/use-search-query-filter";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
+import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import { Tag } from "@/features/filter/types/tag";
 
 type Props = {
@@ -37,14 +37,14 @@ export default function ApplyToSearchOption({ dataID, store }: Props) {
   });
 
   const onClick = useCallback(() => {
-    if (!(filter && query?.filter)) return;
+    if (!(filter && query)) return;
 
     dispatch(
-      produce(query.filter, (draft) => {
+      produce(query, (draft) => {
         draft.attributes = filter.attributes;
       }),
     );
-  }, [dispatch, filter, query?.filter]);
+  }, [dispatch, filter, query]);
 
   return !searchQueryEditor && status === EditStatus.NOT_EDITING ? (
     <Button

@@ -6,28 +6,28 @@ import { produce } from "immer";
 import { FilterStore } from "@/features/filter/types/store";
 import Button from "@/ui/button";
 import AddIcon from "@/ui/icons/add";
-import useSearchQueryFilter from "@/features/search/hooks/filter/use-search-query-filter";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
 import { Search } from "@/features/search/types";
 import { revertQuery } from "@/features/filter/utils/converter/query";
 import { toPreset } from "@/features/filter/utils/converter/preset";
+import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 
 export function SearchQueryToPresetOption() {
-  // Preset은 Persistent Store에 저장되어야 한다.
+  // Preset은 Persistent Store에 저장되어야 합니다.
   const dispatch = useSearchFilterDispatcher({ store: FilterStore.PERSIST });
 
   // Search Query Filter는 "/search" Page 내에서만 존재합니다.
   const query = useSearchQueryFilter();
 
   const onClick = useCallback(() => {
-    if (!query?.filter)
+    if (!query)
       throw new Error(
         "Error from Converting Search Query To Preset: Target filter is not found",
       );
 
     // Convert Query to Preset
     const filter = toPreset<Search.Type>({
-      data: revertQuery<Search.Type>({ data: query.filter }),
+      data: revertQuery<Search.Type>({ data: query }),
     });
 
     dispatch(
@@ -36,9 +36,9 @@ export function SearchQueryToPresetOption() {
         draft.name = "Preset From Search Query";
       }),
     );
-  }, [dispatch, query?.filter]);
+  }, [dispatch, query]);
 
-  return query?.filter ? (
+  return query ? (
     <Button
       ui_color="tertiary"
       className="flex items-center justify-between gap-2 text-nowrap"

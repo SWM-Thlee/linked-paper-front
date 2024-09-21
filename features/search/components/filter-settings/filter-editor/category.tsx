@@ -7,7 +7,7 @@ import RestoreIcon from "@/ui/icons/restore";
 import CategoryIcon from "@/ui/icons/category";
 import { Settings } from "@/ui/settings";
 import Button from "@/ui/button";
-import SearchField from "@/ui/search";
+import SearchField from "@/ui/search-field";
 import CheckBox from "@/ui/check-box";
 import LabelButton from "@/ui/label-button";
 import useTabID from "@/ui/settings/hooks/use-tab-id";

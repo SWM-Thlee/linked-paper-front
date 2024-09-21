@@ -6,6 +6,11 @@ import useSearchQuery from "@/features/search/hooks/query/use-search-query";
 import SearchSimilarityWarning from "./similarity-warning";
 import { SearchResultItem } from "../result-item";
 
+/**
+ * 검색 결과를 나타냅니다.
+ *
+ * Server에서 Search Query를 검증합니다.
+ */
 export default function SearchResultContents() {
   const { data } = useSearchQuery();
 

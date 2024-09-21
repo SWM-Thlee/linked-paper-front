@@ -3,9 +3,9 @@
 import { useMemo } from "react";
 
 import { PaperMetadata } from "@/types/paper";
-import Button from "@/ui/button";
 import { Popover } from "@/ui/popover";
 import AuthorIcon from "@/ui/icons/author";
+import LabelButton from "@/ui/label-button";
 
 type Props = Pick<PaperMetadata, "authors">;
 
@@ -23,14 +23,10 @@ export default function SearchResultAttributeAuthors({ authors }: Props) {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Button
-          ui_color="secondary"
-          ui_variant="light"
-          className="flex items-center gap-4"
-        >
+        <LabelButton ui_size="small" ui_color="secondary" ui_variant="light">
           <AuthorIcon ui_size="small" />
           {!authors.length ? "Unknown" : authors[0]}
-        </Button>
+        </LabelButton>
       </Popover.Trigger>
       <Popover.Content>
         <div className="flex flex-col gap-4 p-4">

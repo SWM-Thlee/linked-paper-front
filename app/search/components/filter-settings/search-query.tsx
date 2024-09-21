@@ -13,11 +13,11 @@ import AddIcon from "@/ui/icons/add";
 import DeleteIcon from "@/ui/icons/delete";
 import { toPreset } from "@/features/filter/utils/converter/preset";
 import { FilterStore } from "@/features/filter/types/store";
-import useSearchQueryFilter from "@/features/search/hooks/filter/use-search-query-filter";
 import { TAB_SEARCH_QUERY } from "@/features/search/types/tab";
 import { Tag } from "@/features/filter/types/tag";
 import { Search } from "@/features/search/types";
 import TipIcon from "@/ui/icons/tip";
+import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import { SearchQueryPresetFilterInfo } from "../filter-info/search-query-preset-info";
 import { SearchQueryFilterInfo } from "../filter-info/search-query-info";
 import { SearchQueryDefaultFilterInfo } from "../filter-info/search-query-default-info";
@@ -162,11 +162,11 @@ export default function SearchQuery() {
       </Settings.Tab.Title>
       <Settings.Tab.Content>
         <div className="mt-8 flex flex-col gap-16">
-          {query?.filter && (
+          {query && (
             <SearchQueryFilterInfo
               store={FilterStore.TEMPORARY}
               description="This filter was taken from a search query and has not been saved to the client."
-              data={query.filter}
+              data={query}
             />
           )}
           <DefaultFilterSection />

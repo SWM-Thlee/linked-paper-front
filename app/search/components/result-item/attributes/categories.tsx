@@ -3,11 +3,11 @@
 import { useMemo } from "react";
 
 import useCategories from "@/hooks/use-categories";
-import Button from "@/ui/button";
 import { Popover } from "@/ui/popover";
 import CategoryIcon from "@/ui/icons/category";
 import { PaperMetadata } from "@/types/paper";
 import FieldContainer from "@/ui/container/field-container";
+import LabelButton from "@/ui/label-button";
 
 type Props = Pick<PaperMetadata, "categories">;
 
@@ -39,13 +39,9 @@ export default function SearchResultAttributeCategories({ categories }: Props) {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Button
-          ui_color="secondary"
-          ui_variant="light"
-          className="flex items-center gap-4"
-        >
+        <LabelButton ui_color="secondary" ui_size="small" ui_variant="light">
           <CategoryIcon ui_size="small" /> {titleOfAttribute}
-        </Button>
+        </LabelButton>
       </Popover.Trigger>
       <Popover.Content>
         <div className="flex flex-col gap-4 p-4">

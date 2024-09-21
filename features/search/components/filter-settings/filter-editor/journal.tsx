@@ -6,7 +6,7 @@ import CheckIcon from "@/ui/icons/check";
 import RestoreIcon from "@/ui/icons/restore";
 import { Settings } from "@/ui/settings";
 import Button from "@/ui/button";
-import Search from "@/ui/search";
+import SearchField from "@/ui/search-field";
 import CheckBox from "@/ui/check-box";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useBidirectionalState from "@/hooks/use-bidirectional-state";
@@ -164,7 +164,7 @@ export default function EditorJournal() {
                 </Button>
               </div>
             </div>
-            <Search
+            <SearchField
               value={text}
               onChange={(e) => setText(e.target.value)}
               ui_color="tertiary"
