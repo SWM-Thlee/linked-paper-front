@@ -119,7 +119,7 @@ export interface SearchProps
   defaultPlaceholder?: string;
 }
 
-const Search = forwardRef<HTMLInputElement, SearchProps>(
+const SearchField = forwardRef<HTMLInputElement, SearchProps>(
   (
     {
       ui_color,
@@ -152,6 +152,6 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
   },
 );
 
-Search.displayName = "Search";
+SearchField.displayName = "SearchField";
 
-export default Search;
+export default SearchField;
