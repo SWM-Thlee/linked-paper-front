@@ -29,6 +29,7 @@ export default function ApplyToSearchOption({ dataID, store }: Props) {
   });
 
   const query = useSearchQueryFilter();
+
   const dispatch = useSearchFilterDispatcher({
     store: Filter.Store.TEMPORARY,
   });

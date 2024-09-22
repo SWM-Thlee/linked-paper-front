@@ -143,7 +143,7 @@ function DefaultFilterSection() {
 
 export default function SearchQuery() {
   const tabID = useTabID(Search.Settings.SEARCH_QUERY.ID);
-  const query = useSearchQueryFilter();
+  const filter = useSearchQueryFilter();
 
   return (
     <Settings.Tab.Root
@@ -160,11 +160,11 @@ export default function SearchQuery() {
       </Settings.Tab.Title>
       <Settings.Tab.Content>
         <div className="mt-8 flex flex-col gap-16">
-          {query && (
+          {filter && (
             <SearchQueryFilterInfo
               store={Filter.Store.TEMPORARY}
               description="This filter was taken from a search query and has not been saved to the client."
-              data={query}
+              data={filter}
             />
           )}
           <DefaultFilterSection />

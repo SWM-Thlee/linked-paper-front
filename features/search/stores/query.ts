@@ -1,5 +1,8 @@
 import { atom } from "jotai";
+import { selectAtom } from "jotai/utils";
+import equal from "fast-deep-equal";
 
+import { generateFilterDataID } from "@/features/filter/utils/id";
 import { Search } from "../types";
 
 export const defaultQueryValue: Search.Query.Info = {
@@ -10,11 +13,45 @@ export const defaultQueryValue: Search.Query.Info = {
   sorting: Search.Query.Sorting.SIMILARITY,
 };
 
-/** Query String에서 가져온 Read-Only 정보입니다. */
+/** Query String과 연동되는 정보입니다. */
 export const queryAtom = atom<Search.Query.Info>(defaultQueryValue);
+export const queryStaleAtom = atom(false);
+export const queryFilterIdAtom = atom<Search.Filter.DataID>(
+  generateFilterDataID(Search.Filter.Type),
+);
 
-/** Query String과 연동되는 Search Query Filter를 나타냅니다. */
-export const queryFilterAtom = atom<Search.Filter.Data | null>(null);
+/** 필수 정보를 나타냅니다. */
+export const requiredQueryAtom = selectAtom<
+  Search.Query.Info,
+  Search.Query.RequiredInfo
+>(
+  queryAtom,
+  ({ index, query, similarity_limit, size, sorting }) => ({
+    index,
+    query,
+    similarity_limit,
+    size,
+    sorting,
+  }),
+  equal,
+);
 
-/** 검색 정보 중 필수 정보를 나타냅니다. 변경 시 자동으로 인식하여 Query String에 반영됩니다. */
-export const requiredQueryAtom = atom<Search.Query.RequiredInfo | null>(null);
+/** Filter 정보를 나타냅니다. */
+export const filterQueryAtom = selectAtom<
+  Search.Query.Info,
+  Search.Query.FilterInfo
+>(
+  queryAtom,
+  ({
+    filter_category,
+    filter_end_date,
+    filter_journal,
+    filter_start_date,
+  }) => ({
+    filter_category,
+    filter_end_date,
+    filter_journal,
+    filter_start_date,
+  }),
+  equal,
+);

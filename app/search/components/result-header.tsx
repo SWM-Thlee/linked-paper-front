@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { CategoryChip } from "@/features/search/components/filter-info/filter-chip/category";
 import { JournalChip } from "@/features/search/components/filter-info/filter-chip/journal";
@@ -17,8 +17,9 @@ import InfoIcon from "@/ui/icons/info";
 import Button from "@/ui/button";
 import CloseIcon from "@/ui/icons/close";
 import WarningIcon from "@/ui/icons/warning";
-import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
+import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
 import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
+import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
 import { FilterSettings } from "./filter-settings";
 
 function Attributes({
@@ -40,7 +41,7 @@ function Attributes({
 }
 
 function FilterChips() {
-  const query = useSearchQueryFilter();
+  const filter = useSearchQueryFilter();
   const isClient = useIsClient();
 
   if (!isClient)
@@ -59,7 +60,7 @@ function FilterChips() {
 
   return (
     <div className="flex items-center gap-2">
-      {query && <Attributes attributes={query.attributes} />}
+      {filter && <Attributes attributes={filter.attributes} />}
       <FilterSettings>
         <LabelButton
           ui_color="secondary"
@@ -237,36 +238,46 @@ function SimilarityLimitation({
 }
 
 export default function SearchResultHeader() {
-  const { info, requiredQuery, setRequiredQuery } = useSearchQueryInfo();
+  const { update: updateQuery } = useSearchUpdate();
+  const { requiredQuery, stale } = useSearchQueryInfo();
 
   // Search Text
-  const [text, setText] = useState(info.query);
+  const [text, setText] = useState("");
 
-  // Search Result Size
-  const setSize = useCallback(
-    (size: Search.Query.Size) => {
-      if (info.size === size) return;
-      setRequiredQuery({ ...requiredQuery, size });
-    },
-    [info.size, requiredQuery, setRequiredQuery],
+  useEffect(() => {
+    if (stale) return;
+    setText(requiredQuery.query);
+  }, [stale, requiredQuery.query]);
+
+  // Search (Result) Size
+  const updateSize = useCallback(
+    (size: Search.Query.Size) => updateQuery({ ...requiredQuery, size }),
+    [updateQuery, requiredQuery],
   );
 
   // Similarity Limitation
-  const setLimit = useCallback(
-    (similarity_limit: boolean) => {
-      if (info.similarity_limit === similarity_limit) return;
-      setRequiredQuery({ ...requiredQuery, similarity_limit });
-    },
-    [info.similarity_limit, requiredQuery, setRequiredQuery],
+  const updateLimit = useCallback(
+    (similarity_limit: boolean) =>
+      updateQuery({ ...requiredQuery, similarity_limit }),
+    [updateQuery, requiredQuery],
   );
 
   // Search Sorting
-  const setSorting = useCallback(
-    (sorting: Search.Query.Sorting) => {
-      if (info.sorting === sorting) return;
-      setRequiredQuery({ ...requiredQuery, sorting });
+  const updateSorting = useCallback(
+    (sorting: Search.Query.Sorting) =>
+      updateQuery({ ...requiredQuery, sorting }),
+    [updateQuery, requiredQuery],
+  );
+
+  // Query Text
+  const updateQueryText = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!text) return;
+      if (e.key === "Enter") {
+        updateQuery({ ...requiredQuery, query: text });
+      }
     },
-    [info.sorting, requiredQuery, setRequiredQuery],
+    [updateQuery, requiredQuery, text],
   );
 
   return (
@@ -274,23 +285,21 @@ export default function SearchResultHeader() {
       <FilterChips />
       <SearchField
         value={text}
-        onKeyUp={(e) => {
-          if (!text) return;
-          if (e.key === "Enter") {
-            setRequiredQuery({ ...requiredQuery, query: text });
-          }
-        }}
+        onKeyUp={updateQueryText}
         onChange={(e) => setText(e.target.value)}
       />
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ResultSize status={info.size} onStatusChange={setSize} />
+          <ResultSize status={requiredQuery.size} onStatusChange={updateSize} />
           <SimilarityLimitation
-            status={info.similarity_limit}
-            onStatusChange={setLimit}
+            status={requiredQuery.similarity_limit}
+            onStatusChange={updateLimit}
           />
         </div>
-        <Sorting status={info.sorting} onStatusChange={setSorting} />
+        <Sorting
+          status={requiredQuery.sorting}
+          onStatusChange={updateSorting}
+        />
       </div>
     </div>
   );

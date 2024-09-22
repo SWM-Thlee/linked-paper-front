@@ -1,34 +1,40 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { redirect, useSearchParams } from "next/navigation";
-import { useAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
-import { useDeepCompareMemo } from "use-deep-compare";
 import equal from "fast-deep-equal";
 
-import { generateFilterDataID } from "@/features/filter/utils/id";
+import { Search } from "@/features/search/types";
 import { Filter } from "@/features/filter/types";
-import { convertSearchQueryToFilter } from "../utils/filter/query";
-import { queryAtom, queryFilterAtom, requiredQueryAtom } from "../stores/query";
+import { generateFilterDataID } from "@/features/filter/utils/id";
+import usePrevious from "@/hooks/use-previous";
+import {
+  convertSearchFilterToQuery,
+  convertSearchQueryToFilter,
+} from "../utils/filter/query";
+import {
+  queryAtom,
+  queryFilterIdAtom,
+  queryStaleAtom,
+  requiredQueryAtom,
+} from "../stores/query";
 import { validate } from "../utils/validator";
-import { Search } from "../types";
+
 import useSearchFilterDispatcher from "../hooks/filter/use-search-filter-dispatcher";
 import useSearchFilterEditor from "../hooks/filter/use-search-filter-editor";
-import useSearchRequest from "../hooks/query/use-search-request";
+import useSearchUpdate from "../hooks/query/use-search-update";
 
 /**
  * Query String으로부터 검색 정보를 불러옵니다.
- *
- * 1. Server 단에서 (Initial Render 과정에서) 다른 Component가 사용할 수 있습니다.
- * 2. 해당 Search Query의 유효성 검증을 수행합니다. 유효하지 않은 정보가 존재할 경우 Error Page로 이동합니다.
- * 3. Search Query를 수정할 수 있습니다. 이때, 수정되는 즉시 Query String에 반영됩니다.
  */
 export default function SearchQueryResolver({
   children,
 }: React.PropsWithChildren) {
+  // Query String이 Root 역할을 합니다.
   const searchParams = useSearchParams();
-  const router = useSearchRequest();
+  const router = useSearchUpdate();
 
   const validation = useMemo(
     () =>
@@ -54,22 +60,24 @@ export default function SearchQueryResolver({
     redirect("/search/error");
   }
 
-  useHydrateAtoms([[queryAtom, validation]]);
-  const [query, setQuery] = useAtom(queryAtom);
+  // Search Query를 Atom과 연동합니다.
+  useHydrateAtoms([
+    [queryAtom, validation],
+    [queryFilterIdAtom, generateFilterDataID(Search.Filter.Type)],
+  ]);
 
-  /* Filter Query */
-  const filterQuery = useDeepCompareMemo<Search.Query.FilterInfo>(
-    () => ({
-      filter_start_date: query.filter_start_date,
-      filter_end_date: query.filter_end_date,
-      filter_journal: query.filter_journal,
-      filter_category: query.filter_category,
-    }),
-    [query],
-  );
+  const setStale = useSetAtom(queryStaleAtom);
+  const setQueryInfo = useSetAtom(queryAtom);
 
-  const searchFilterRef = useRef(generateFilterDataID(Search.Filter.Type));
-  const [, setQueryFilter] = useAtom(queryFilterAtom);
+  useEffect(() => {
+    setQueryInfo(validation);
+    setStale(false);
+
+    return () => setStale(true);
+  }, [setQueryInfo, setStale, validation]);
+
+  // Filter System과 연동합니다.
+  const queryFilterID = useAtomValue(queryFilterIdAtom);
 
   const dispatcher = useSearchFilterDispatcher({
     store: Filter.Store.TEMPORARY,
@@ -77,25 +85,18 @@ export default function SearchQueryResolver({
 
   const { filter, remove } = useSearchFilterEditor({
     store: Filter.Store.TEMPORARY,
-    dataID: searchFilterRef.current,
+    dataID: queryFilterID,
   });
 
-  useEffect(() => {
-    setQuery(validation);
-  }, [setQuery, validation]);
-
+  // SearchQueryResolver가 Unmount되면 Filter는 자동으로 제거됩니다.
   useEffect(() => {
     return () => remove(true);
   }, [remove]);
 
   useEffect(() => {
-    setQueryFilter(filter);
-  }, [filter, setQueryFilter]);
-
-  useEffect(() => {
     const queryToFilter = convertSearchQueryToFilter({
-      ...filterQuery,
-      queryDataID: searchFilterRef.current,
+      ...validation,
+      queryDataID: queryFilterID,
     });
 
     if (!filter) {
@@ -103,39 +104,23 @@ export default function SearchQueryResolver({
       return;
     }
 
-    if (equal(queryToFilter.attributes, filter.attributes)) return;
+    if (!router.isInSearchPage()) return;
+    if (equal(filter, queryToFilter)) return;
 
-    router.update();
-  }, [router, filter, dispatcher, filterQuery]);
+    router.update(convertSearchFilterToQuery(filter));
+  }, [router, filter, validation, dispatcher, queryFilterID]);
 
-  /* Required Query */
-  const requiredQuery = useDeepCompareMemo<Search.Query.RequiredInfo>(
-    () => ({
-      query: query.query,
-      index: query.index,
-      size: query.size,
-      similarity_limit: query.similarity_limit,
-      sorting: query.sorting,
-    }),
-    [query],
-  );
-
-  const [currentRequiredQuery, initRequiredQuery] = useAtom(requiredQueryAtom);
+  // Required Query
+  const previousRequiredQuery = usePrevious<Search.Query.RequiredInfo>();
+  const currentRequiredQuery = useAtomValue(requiredQueryAtom);
 
   useEffect(() => {
-    if (!currentRequiredQuery) initRequiredQuery(requiredQuery);
-  }, [currentRequiredQuery, initRequiredQuery, requiredQuery]);
+    if (!router.isInSearchPage()) return;
+    if (previousRequiredQuery.isEqualTo(currentRequiredQuery)) return;
 
-  useEffect(() => {
-    return () => initRequiredQuery(null);
-  }, [initRequiredQuery]);
-
-  useEffect(() => {
-    if (!router.canUpdate() || equal(requiredQuery, currentRequiredQuery))
-      return;
-
-    router.update();
-  }, [router, currentRequiredQuery, requiredQuery]);
+    previousRequiredQuery.setPrevious(currentRequiredQuery);
+    router.update(currentRequiredQuery);
+  }, [router, previousRequiredQuery, currentRequiredQuery]);
 
   return children;
 }
