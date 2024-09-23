@@ -1,27 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 
-import { Search } from "@/features/search/types";
-import { matcher } from "@/features/search/utils/matcher";
 import useCategories, { CategoryGroup } from "@/hooks/use-categories";
-import SearchField from "@/ui/search-field";
+import { matcher } from "@/features/search/utils/matcher";
+import { Category } from "@/utils/category";
 import CategoryIcon from "@/ui/icons/category";
+import ArrowDownIcon from "@/ui/icons/arrow-down";
+import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import { Popover } from "@/ui/popover";
-import { Category } from "@/utils/category";
 import FieldContainer from "@/ui/container/field-container";
 import Button from "@/ui/button";
-import ArrowDownIcon from "@/ui/icons/arrow-down";
 
 type Props = {
-  data: Search.Filter.Data["attributes"]["category"];
+  categoryIDs: string[];
+  children?: (titleOfChip: string) => React.ReactNode;
 };
 
-/**
- * 특정 Search Filter의 Category 정보를 보여줍니다.
- */
-export function CategoryChip({ data: { value } }: Props) {
+export function CategoryChip({ categoryIDs, children }: Props) {
   const { getGroups, getRepresentative } = useCategories();
   const [matchText, setMatchText] = useState("");
 
@@ -31,17 +28,9 @@ export function CategoryChip({ data: { value } }: Props) {
     [matchText],
   );
 
-  const idOfCategories = useMemo(
-    () =>
-      Object.values(value ?? {}).map(
-        ({ itemValue: { categoryID } }) => categoryID,
-      ),
-    [value],
-  );
-
   const groupsOfCategories = useMemo(
-    () => getGroups(idOfCategories),
-    [idOfCategories, getGroups],
+    () => getGroups(categoryIDs),
+    [categoryIDs, getGroups],
   );
 
   const titleOfChip = useMemo(
@@ -54,16 +43,12 @@ export function CategoryChip({ data: { value } }: Props) {
       Object.entries(groupsOfCategories).reduce<CategoryGroup>(
         (result, [subject, categories]) => {
           const matchedCategories = Object.entries(categories).reduce<Category>(
-            (resultCategories, [categoryID, info]) => {
-              if (
-                search(categoryID) ||
-                search(info.subject) ||
-                search(info.description)
-              )
-                return { ...resultCategories, [categoryID]: info };
-
-              return resultCategories;
-            },
+            (resultCategories, [categoryID, info]) =>
+              search(categoryID) ||
+              search(info.subject) ||
+              search(info.description)
+                ? { ...resultCategories, [categoryID]: info }
+                : resultCategories,
             {},
           );
 
@@ -93,23 +78,22 @@ export function CategoryChip({ data: { value } }: Props) {
       : "Not Found";
 
   // Category의 개수가 10개를 초과할 경우 검색 필드를 보이게 합니다.
-  const visibleSearch = idOfCategories.length > 10;
+  const visibleSearch = categoryIDs.length > 10;
   const hasMatchedResult = matchedResultSize > 0;
 
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton ui_color="secondary" ui_size="medium">
-          <CategoryIcon ui_size="small" /> {titleOfChip}
-          <ArrowDownIcon ui_size="small" />
-        </LabelButton>
+        {children?.(titleOfChip) ?? (
+          <LabelButton>
+            <CategoryIcon ui_size="small" /> {titleOfChip}
+            <ArrowDownIcon ui_size="small" />
+          </LabelButton>
+        )}
       </Popover.Trigger>
-      <Popover.Content className="w-[25rem]" ui_size="large">
-        <div className="flex flex-col gap-4">
-          <div className="flex select-none flex-col gap-2 text-title-medium">
-            <CategoryIcon ui_size="medium" />
-            {titleOfDetails}
-          </div>
+      <Popover.Content ui_size="large">
+        <div className="flex flex-col gap-6">
+          <div className="select-none text-title-medium">{titleOfDetails}</div>
           {visibleSearch && (
             <SearchField
               value={matchText}
@@ -123,21 +107,27 @@ export function CategoryChip({ data: { value } }: Props) {
             <div className="flex max-h-[20rem] flex-col gap-4 overflow-y-auto scrollbar">
               {Object.entries(matchedResult).map(([subject, categories]) => (
                 <FieldContainer key={subject} title={subject} ui_size="medium">
-                  <div className="flex flex-col gap-2">
+                  <div className="grid grid-cols-[3fr_1fr] gap-y-2">
                     {Object.entries(categories).map(([categoryID, info]) => (
-                      <Button
-                        key={categoryID}
-                        ui_variant="light"
-                        ui_size="small"
-                        ui_color="secondary"
-                        className="flex justify-between gap-2"
-                      >
-                        <div className="text-left">{info.description}</div>
-
-                        <div className="text-nowrap text-label-large">
+                      <Fragment key={categoryID}>
+                        <Button
+                          ui_variant="light"
+                          ui_size="small"
+                          ui_color="secondary"
+                          className="flex items-center gap-2 text-nowrap rounded-r-0"
+                        >
+                          <CategoryIcon ui_size="small" />
+                          {info.description}
+                        </Button>
+                        <Button
+                          ui_variant="light"
+                          ui_size="small"
+                          ui_color="tertiary"
+                          className="text-nowrap rounded-l-0 text-left text-label-large"
+                        >
                           {categoryID}
-                        </div>
-                      </Button>
+                        </Button>
+                      </Fragment>
                     ))}
                   </div>
                 </FieldContainer>

@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 
-import Button from "@/ui/button";
-import BloomIcon from "@/ui/icons/bloom";
 import { Search } from "@/features/search/types";
+import BloomIcon from "@/ui/icons/bloom";
+import LabelButton from "@/ui/label-button";
 import SearchResultOriginLink from "./origin";
 import SearchResultPdfLink from "./pdf";
 
@@ -16,15 +16,15 @@ export default function SearchResultItemLinks({
 }: Props) {
   return (
     <div className="flex flex-col items-stretch justify-end gap-2">
-      <Button>
+      <LabelButton ui_size="medium" ui_variant="bordered">
         <Link
           href={{ pathname: "/flower", query: { id } }}
-          className="flex items-center justify-between gap-4"
+          className="flex w-full items-center justify-between gap-4"
         >
           <BloomIcon ui_size="small" />
-          <span className="text-label-large">Bloom</span>
+          <div>Bloom</div>
         </Link>
-      </Button>
+      </LabelButton>
       {origin_link && <SearchResultOriginLink origin_link={origin_link} />}
       {pdf_link && <SearchResultPdfLink pdf_link={pdf_link} />}
     </div>

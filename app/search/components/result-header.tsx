@@ -2,9 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { CategoryChip } from "@/features/search/components/filter-info/filter-chip/category";
-import { JournalChip } from "@/features/search/components/filter-info/filter-chip/journal";
-import { DateChip } from "@/features/search/components/filter-info/filter-chip/date";
 import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import FilterIcon from "@/ui/icons/filter";
@@ -20,6 +17,9 @@ import WarningIcon from "@/ui/icons/warning";
 import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
 import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
+import { CategoryChip } from "@/features/search/components/chip/category";
+import { JournalChip } from "@/features/search/components/chip/journal";
+import { DateChip } from "@/features/search/components/chip/date";
 import { FilterSettings } from "./filter-settings";
 
 function Attributes({
@@ -27,17 +27,39 @@ function Attributes({
 }: {
   attributes: Search.Filter.Data["attributes"];
 }) {
-  const isCategorySelected = Object.keys(category.value ?? {}).length > 0;
-  const isJournalSelected = Object.keys(journal.value ?? {}).length > 0;
-  const isDateSelected = date.value?.min || date.value?.max;
-
-  return (
-    <>
-      {isCategorySelected && <CategoryChip data={category} />}
-      {isJournalSelected && <JournalChip data={journal} />}
-      {isDateSelected && <DateChip data={date} />}
-    </>
+  const categoryIDs = useMemo(
+    () =>
+      Object.values(category.value ?? {}).map(
+        ({ itemValue }) => itemValue.categoryID,
+      ),
+    [category.value],
   );
+
+  const nameOfJournals = useMemo(
+    () =>
+      Object.values(journal.value ?? {}).map(
+        ({ itemValue }) => itemValue.nameOfJournal,
+      ),
+    [journal.value],
+  );
+
+  const dateRange = useMemo(
+    () => ({ min: date.value?.min, max: date.value?.max }),
+    [date.value],
+  );
+
+  const hasCategory = categoryIDs.length > 0;
+  const hasJournal = nameOfJournals.length > 0;
+  const hasDate = dateRange.min || dateRange.max;
+  const hasData = hasCategory || hasJournal || hasDate;
+
+  return hasData ? (
+    <div className="flex flex-wrap items-center gap-2">
+      {hasCategory && <CategoryChip categoryIDs={categoryIDs} />}
+      {hasJournal && <JournalChip nameOfJournals={nameOfJournals} />}
+      {hasDate && <DateChip dateRange={dateRange} />}
+    </div>
+  ) : null;
 }
 
 function FilterChips() {
@@ -46,32 +68,16 @@ function FilterChips() {
 
   if (!isClient)
     return (
-      <div className="flex items-center gap-4">
-        <LabelButton
-          ui_color="secondary"
-          ui_variant="light"
-          ui_size="medium"
-          className="animate-pulse"
-        >
-          <FilterIcon ui_size="small" /> Loading Filters...
-        </LabelButton>
-      </div>
+      <LabelButton
+        ui_color="secondary"
+        ui_variant="light"
+        className="animate-pulse self-start"
+      >
+        <FilterIcon ui_size="small" /> Loading Filters...
+      </LabelButton>
     );
 
-  return (
-    <div className="flex items-center gap-2">
-      {filter && <Attributes attributes={filter.attributes} />}
-      <FilterSettings>
-        <LabelButton
-          ui_color="secondary"
-          ui_variant="bordered"
-          ui_size="medium"
-        >
-          <FilterIcon ui_size="small" /> Configure Filter...
-        </LabelButton>
-      </FilterSettings>
-    </div>
-  );
+  return filter ? <Attributes attributes={filter.attributes} /> : null;
 }
 
 function Sorting({
@@ -281,25 +287,32 @@ export default function SearchResultHeader() {
   );
 
   return (
-    <div className="flex flex-col gap-8 rounded-t-6 bg-light-surfaceBright/15 p-8 dark:bg-dark-surfaceBright/15">
+    <div className="flex flex-col gap-6 rounded-t-6 bg-light-surfaceBright/15 p-8 dark:bg-dark-surfaceBright/15">
       <FilterChips />
       <SearchField
         value={text}
         onKeyUp={updateQueryText}
         onChange={(e) => setText(e.target.value)}
       />
-      <div className="flex items-center justify-between">
+      <div className="grid grid-cols-[1fr_auto]">
         <div className="flex items-center gap-2">
           <ResultSize status={requiredQuery.size} onStatusChange={updateSize} />
           <SimilarityLimitation
             status={requiredQuery.similarity_limit}
             onStatusChange={updateLimit}
           />
+          <FilterSettings>
+            <LabelButton ui_color="secondary" ui_variant="bordered">
+              <FilterIcon ui_size="small" /> Configure Filter...
+            </LabelButton>
+          </FilterSettings>
         </div>
-        <Sorting
-          status={requiredQuery.sorting}
-          onStatusChange={updateSorting}
-        />
+        <div className="flex flex-col justify-end">
+          <Sorting
+            status={requiredQuery.sorting}
+            onStatusChange={updateSorting}
+          />
+        </div>
       </div>
     </div>
   );

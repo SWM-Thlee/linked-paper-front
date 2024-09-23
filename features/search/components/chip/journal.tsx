@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 
-import { Search } from "@/features/search/types";
 import { matches } from "@/features/search/utils/matcher";
 import Button from "@/ui/button";
 import SearchField from "@/ui/search-field";
@@ -12,22 +11,12 @@ import { Popover } from "@/ui/popover";
 import ArrowDownIcon from "@/ui/icons/arrow-down";
 
 type Props = {
-  data: Search.Filter.Data["attributes"]["journal"];
+  nameOfJournals: string[];
+  children?: (titleOfChip: string) => React.ReactNode;
 };
 
-/**
- * 특정 Search Filter의 Journal 정보를 보여줍니다.
- */
-export function JournalChip({ data: { value: journals } }: Props) {
+export function JournalChip({ nameOfJournals, children }: Props) {
   const [matchText, setMatchText] = useState("");
-
-  const nameOfJournals = useMemo(
-    () =>
-      Object.values(journals ?? {}).map(
-        ({ itemValue }) => itemValue.nameOfJournal,
-      ),
-    [journals],
-  );
 
   const matchedResult = useMemo(
     () =>
@@ -55,17 +44,16 @@ export function JournalChip({ data: { value: journals } }: Props) {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton ui_color="secondary" ui_size="medium">
-          <JournalIcon ui_size="small" /> {titleOfChip}
-          <ArrowDownIcon ui_size="small" />
-        </LabelButton>
+        {children?.(titleOfChip) ?? (
+          <LabelButton>
+            <JournalIcon ui_size="small" /> {titleOfChip}
+            <ArrowDownIcon ui_size="small" />
+          </LabelButton>
+        )}
       </Popover.Trigger>
       <Popover.Content className="w-[25rem]" ui_size="large">
         <div className="flex flex-col gap-4">
-          <div className="flex select-none flex-col gap-2 text-title-medium">
-            <JournalIcon ui_size="medium" />
-            {titleOfDetails}
-          </div>
+          <div className="select-none text-title-medium">{titleOfDetails}</div>
           {visibleSearch && (
             <SearchField
               value={matchText}
@@ -83,8 +71,9 @@ export function JournalChip({ data: { value: journals } }: Props) {
                   ui_variant="light"
                   ui_size="small"
                   ui_color="secondary"
-                  className="text-left"
+                  className="flex items-center gap-2 text-left"
                 >
+                  <JournalIcon ui_size="small" />
                   {journal}
                 </Button>
               ))}

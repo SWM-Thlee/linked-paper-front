@@ -6,6 +6,8 @@ import Button from "@/ui/button";
 import PdfLinkIcon from "@/ui/icons/pdf-link";
 import { Popover } from "@/ui/popover";
 import { Search } from "@/features/search/types";
+import Badge from "@/ui/badge";
+import LabelButton from "@/ui/label-button";
 
 type Props = { pdf_link: NonNullable<Search.Result.Data["link"]["pdf_link"]> };
 
@@ -16,37 +18,47 @@ export default function SearchResultPdfLink({ pdf_link }: Props) {
 
   return hasSingleLink ? (
     // 링크가 하나만 존재
-    <Button ui_variant="light">
+    <LabelButton ui_color="secondary" ui_variant="bordered" ui_size="medium">
       <Link
         href={linksToArray[0]}
         target="_blank"
-        className="flex items-center justify-between gap-4"
+        className="flex w-full items-center justify-between gap-4"
       >
         <PdfLinkIcon ui_size="small" />
-        <span className="text-label-large">Open PDF</span>
+        <div>PDF</div>
       </Link>
-    </Button>
+    </LabelButton>
   ) : (
     // 링크가 여러 개 존재
     <Popover.Root>
       <Popover.Trigger>
-        <Button
-          ui_variant="light"
-          className="flex items-center justify-between gap-4"
+        <LabelButton
+          ui_color="secondary"
+          ui_variant="bordered"
+          ui_size="medium"
+          className="relative flex items-center justify-between gap-4"
         >
           <PdfLinkIcon ui_size="small" />
-          <span className="text-label-large">
-            PDF Links ({pdf_link.length})
-          </span>
-        </Button>
+          <div>PDF</div>
+          <Badge ui_color="secondary" ui_variant="topRight">
+            {pdf_link.length}
+          </Badge>
+        </LabelButton>
       </Popover.Trigger>
       <Popover.Content ui_size="large">
         <div className="flex flex-col gap-4">
-          <div className="text-title-large">{pdf_link.length} Links</div>
+          <div className="select-none text-title-medium">
+            {pdf_link.length} PDF Links
+          </div>
           <div className="flex flex-col gap-2">
             {linksToArray.map((link) => (
-              <Button key={link} ui_variant="bordered" className="text-left">
-                <Link href={link} target="_blank">
+              <Button key={link} ui_color="secondary" ui_variant="light">
+                <Link
+                  href={link}
+                  target="_blank"
+                  className="flex w-full items-center gap-6"
+                >
+                  <PdfLinkIcon ui_size="small" />
                   <div className="max-w-[20rem] overflow-hidden text-ellipsis text-nowrap text-label-large">
                     {link}
                   </div>
