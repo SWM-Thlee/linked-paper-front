@@ -7,13 +7,14 @@ const config = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./features/**/*.{js,ts,jsx,tsx,mdx}",
+    "./features/**/*.{js,ts,jssx,tsx,mdx}",
     "./ui/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: "class",
   theme: {
     borderRadius: {
       circle: "999px",
+      0: "0rem",
       1: "0.25rem",
       2: "0.5rem",
       3: "0.75rem",
@@ -99,19 +100,19 @@ const config = {
           to: { opacity: "0" },
         },
         slideUpAndFade: {
-          from: { opacity: "0", transform: "translateY(2px)" },
+          from: { opacity: "0", transform: "translateY(4px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         slideRightAndFade: {
-          from: { opacity: "0", transform: "translateX(-2px)" },
+          from: { opacity: "0", transform: "translateX(-4px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
         slideDownAndFade: {
-          from: { opacity: "0", transform: "translateY(-2px)" },
+          from: { opacity: "0", transform: "translateY(-4px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         slideLeftAndFade: {
-          from: { opacity: "0", transform: "translateX(2px)" },
+          from: { opacity: "0", transform: "translateX(4px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
         slideDown: {
