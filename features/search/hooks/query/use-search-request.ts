@@ -20,12 +20,10 @@ export default function useSearchRequest() {
 
   const request = useCallback(
     (info: Search.Query.RequiredInfo, filter?: Search.Filter.Data) => {
-      if (!(defaultFilter || filter)) {
-        throw new Error("Error from Requesting Search: Filter is not found.");
-      }
+      const targetFilter = filter ?? defaultFilter;
 
       const queryString = convertToQueryString({
-        ...convertSearchFilterToQuery((filter ?? defaultFilter)!),
+        ...(targetFilter ? convertSearchFilterToQuery(targetFilter) : null),
         ...info,
       });
 

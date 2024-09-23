@@ -138,7 +138,7 @@ export default function EditorCategory() {
       draft.attributes.category.value = getSubjects().reduce(
         (subjectResult, subject) => ({
           ...subjectResult,
-          ...Search.Filter.Category(Object.keys(getCategories(subject))),
+          ...Search.Filter.Category(Object.keys(getCategories(subject))).value,
         }),
         {},
       );
