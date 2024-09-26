@@ -2,11 +2,17 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import useIsClient from "@/hooks/use-is-client";
+import { Search } from "@/features/search/types";
+import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
+import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
+import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
+import { CategoryChip } from "@/features/search/components/chip/category";
+import { JournalChip } from "@/features/search/components/chip/journal";
+import { DateChip } from "@/features/search/components/chip/date";
 import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import FilterIcon from "@/ui/icons/filter";
-import useIsClient from "@/hooks/use-is-client";
-import { Search } from "@/features/search/types";
 import Select, { SelectComponentItem } from "@/ui/select";
 import CheckIcon from "@/ui/icons/check";
 import { Popover } from "@/ui/popover";
@@ -14,12 +20,6 @@ import InfoIcon from "@/ui/icons/info";
 import Button from "@/ui/button";
 import CloseIcon from "@/ui/icons/close";
 import WarningIcon from "@/ui/icons/warning";
-import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
-import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
-import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
-import { CategoryChip } from "@/features/search/components/chip/category";
-import { JournalChip } from "@/features/search/components/chip/journal";
-import { DateChip } from "@/features/search/components/chip/date";
 import { FilterSettings } from "./filter-settings";
 
 function Attributes({
@@ -66,16 +66,7 @@ function FilterChips() {
   const filter = useSearchQueryFilter();
   const isClient = useIsClient();
 
-  if (!isClient)
-    return (
-      <LabelButton
-        ui_color="secondary"
-        ui_variant="light"
-        className="animate-pulse self-start"
-      >
-        <FilterIcon ui_size="small" /> Loading Filters...
-      </LabelButton>
-    );
+  if (!isClient) return null;
 
   return filter ? <Attributes attributes={filter.attributes} /> : null;
 }

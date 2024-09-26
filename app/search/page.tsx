@@ -1,23 +1,33 @@
-import React from "react";
+import { Suspense } from "react";
 
-import SearchQueryResolver from "@/features/search/components/query-resolver";
-import SearchResultHeader from "./components/result-header";
+import ScrollToTop from "@/components/scroll-to-top";
+import PageContainer from "@/components/page-container";
+import InitialScrollLock from "@/components/initial-scroll-lock";
+import QueryResolver from "@/features/search/components/query-resolver";
+import Header from "./components/result-header";
+import Contents from "./components/result-contents";
 import {
-  SearchResultContents,
-  SearchResultSkeleton,
-} from "./components/result-contents";
-import { ScrollToTop } from "./components/scroll-to-top";
+  EndlessFooter,
+  InitialLoading,
+} from "./components/result-skeleton/defaults";
 
 export default function Page() {
   return (
-    <SearchQueryResolver>
-      <main className="flex min-h-[1440px] w-[1024px] flex-col">
-        <SearchResultHeader />
-        <React.Suspense fallback={<SearchResultSkeleton />}>
-          <SearchResultContents />
-        </React.Suspense>
+    <QueryResolver>
+      <PageContainer>
+        <Header />
+        <Suspense
+          fallback={
+            <InitialScrollLock>
+              <InitialLoading />
+              <EndlessFooter />
+            </InitialScrollLock>
+          }
+        >
+          <Contents />
+        </Suspense>
         <ScrollToTop />
-      </main>
-    </SearchQueryResolver>
+      </PageContainer>
+    </QueryResolver>
   );
 }

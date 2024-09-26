@@ -16,8 +16,16 @@ function isNotEmpty<T extends object>(obj?: T): obj is T {
 }
 
 export function convertToQueryString(data: Search.Query.Info) {
-  return Object.entries(data)
-    .filter(([, value]) => value !== undefined && value !== null)
+  // (실질적) 빈 값들을 제외합니다.
+  const entries = Object.entries(data).filter(([, value]) => {
+    const isEmptyValue = value === undefined || value === null;
+    const isEmptyArray =
+      !isEmptyValue && Array.isArray(value) && value.length === 0;
+
+    return !isEmptyValue && !isEmptyArray;
+  });
+
+  return entries
     .map(([key, value]) =>
       Array.isArray(value)
         ? value.map((elem) => `${key}=${elem}`).join("&")
