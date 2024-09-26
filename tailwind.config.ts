@@ -11,16 +11,25 @@ const config = {
     "./ui/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: "class",
-  // Theme Properties를 Tailwind에 적용합니다.
   theme: {
+    borderRadius: {
+      circle: "999px",
+      1: "0.25rem",
+      2: "0.5rem",
+      3: "0.75rem",
+      4: "1rem",
+      5: "1.25rem",
+      6: "1.5rem",
+    },
     extend: {
-      borderRadius: {
-        "ex-large": "2rem",
-        large: "1.5rem",
-        medium: "1rem",
-        small: "0.5rem",
+      zIndex: {
+        header: "10",
+        popover: "90",
+        overlay: "30",
+        dialog: "40",
+        tooltip: "50",
       },
-      // Tailwind에서 "text-{semantic}-{size}"로 Text Style을 적용할 수 있습니다.
+      // text-{semantic}-{size}
       fontSize: ({ theme }) =>
         Object.entries(text).reduce(
           (props, [semantic, sizes]) => ({
@@ -42,7 +51,7 @@ const config = {
           }),
           {},
         ),
-      // Tailwind에서 "{any}-{theme}-{semantic}"로 Color Style을 적용할 수 있습니다.
+      // "{any}-{theme}-{semantic}
       colors: Object.entries(color).reduce(
         (props, [theme, colors]) => ({
           ...props,
@@ -113,6 +122,38 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0px" },
         },
+        overlayShow: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        contentShow: {
+          from: {
+            opacity: "0",
+            transform: "translate(-50%, -48%) scale(0.96)",
+          },
+          to: { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
+        },
+        contentHide: {
+          from: {
+            opacity: "1",
+            transform: "translate(-50%, -50%) scale(1)",
+          },
+          to: { opacity: "0", transform: "translate(-50%, -48%) scale(0.96)" },
+        },
+        hide: {
+          from: { opacity: "1" },
+          to: { opacity: "0" },
+        },
+        slideIn: {
+          from: {
+            transform: "translateX(calc(100% + var(--viewport-padding)))",
+          },
+          to: { transform: "translateX(0)" },
+        },
+        swipeOut: {
+          from: { transform: "translateX(var(--radix-toast-swipe-end-x))" },
+          to: { transform: "translateX(calc(100% + var(--viewport-padding)))" },
+        },
       },
       animation: {
         scaleIn: "scaleIn 200ms ease",
@@ -132,6 +173,12 @@ const config = {
           "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideDown: "slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1)",
         slideUp: "slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1)",
+        overlayShow: "overlayShow 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+        contentShow: "contentShow 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+        contentHide: "contentHide 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+        hide: "hide 100ms ease-in",
+        slideIn: "slideIn 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+        swipeOut: "swipeOut 100ms ease-out",
       },
     },
   },

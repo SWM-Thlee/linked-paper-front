@@ -1,39 +1,42 @@
+"use client";
+
+import * as Primitive from "@radix-ui/react-radio-group";
+
 import { tv, VariantProps } from "@/utils/tailwind-variants";
-import * as UiRadioGroup from "@radix-ui/react-radio-group";
 
 export const selectVariant = tv({
   slots: {
-    container: ["inline-flex", "p-1", "gap-1", "rounded-full"],
-    button: ["rounded-full", "transition-colors", "select-none"],
+    container: ["inline-flex", "p-1", "gap-1", "rounded-circle"],
+    button: ["rounded-circle", "transition-colors", "select-none"],
   },
   variants: {
-    _color: {
+    ui_color: {
       primary: [],
       secondary: [],
       tertiary: [],
     },
-    _variant: {
+    ui_variant: {
       default: [],
       bordered: {
         container: ["ring-inset", "ring-2"],
       },
     },
-    _size: {
+    ui_size: {
       large: {
-        button: ["px-6", "py-2", "text-label-large"],
+        button: ["px-6", "py-2", "text-body-large"],
       },
       medium: {
-        button: ["px-4", "py-1.5", "text-label-large"],
+        button: ["px-4", "py-1.5", "text-body-large"],
       },
       small: {
-        button: ["px-3", "py-1", "text-label-medium"],
+        button: ["px-3", "py-1", "text-body-medium"],
       },
     },
   },
   compoundVariants: [
     {
-      _color: "primary",
-      _variant: "default",
+      ui_color: "primary",
+      ui_variant: "default",
       className: {
         button: [
           "data-[state=unchecked]:text-light-onPrimaryContainer",
@@ -50,8 +53,8 @@ export const selectVariant = tv({
       },
     },
     {
-      _color: "primary",
-      _variant: "bordered",
+      ui_color: "primary",
+      ui_variant: "bordered",
       className: {
         button: [
           "data-[state=unchecked]:text-light-onPrimaryContainer",
@@ -65,8 +68,8 @@ export const selectVariant = tv({
       },
     },
     {
-      _color: "secondary",
-      _variant: "default",
+      ui_color: "secondary",
+      ui_variant: "default",
       className: {
         button: [
           "data-[state=unchecked]:text-light-onSecondaryContainer",
@@ -83,8 +86,8 @@ export const selectVariant = tv({
       },
     },
     {
-      _color: "secondary",
-      _variant: "bordered",
+      ui_color: "secondary",
+      ui_variant: "bordered",
       className: {
         button: [
           "data-[state=unchecked]:text-light-onSecondaryContainer",
@@ -98,8 +101,8 @@ export const selectVariant = tv({
       },
     },
     {
-      _color: "tertiary",
-      _variant: "default",
+      ui_color: "tertiary",
+      ui_variant: "default",
       className: {
         button: [
           "data-[state=unchecked]:text-light-onTertiaryContainer",
@@ -116,8 +119,8 @@ export const selectVariant = tv({
       },
     },
     {
-      _color: "tertiary",
-      _variant: "bordered",
+      ui_color: "tertiary",
+      ui_variant: "bordered",
       className: {
         button: [
           "data-[state=unchecked]:text-light-onTertiaryContainer",
@@ -132,34 +135,45 @@ export const selectVariant = tv({
     },
   ],
   defaultVariants: {
-    _color: "primary",
-    _variant: "default",
-    _size: "medium",
+    ui_color: "primary",
+    ui_variant: "default",
+    ui_size: "medium",
   },
 });
 
-type Item = { value: string; id: string; content?: React.ReactNode };
-type Props = { items: Item[] } & VariantProps<typeof selectVariant> &
-  UiRadioGroup.RadioGroupProps;
+export type SelectComponentItem = {
+  value: string;
+  id: string;
+  content?: React.ReactNode;
+};
 
-// TODO: form input 대응
+export interface SelectProps
+  extends VariantProps<typeof selectVariant>,
+    Primitive.RadioGroupProps {
+  items: SelectComponentItem[];
+}
+
 export default function Select({
-  _color,
-  _size,
-  _variant,
+  ui_color,
+  ui_size,
+  ui_variant,
   items,
   className,
   ...props
-}: Props) {
-  const { button, container } = selectVariant({ _color, _size, _variant });
+}: SelectProps) {
+  const { button, container } = selectVariant({
+    ui_color,
+    ui_size,
+    ui_variant,
+  });
 
   return (
-    <UiRadioGroup.Root className={container()} {...props}>
+    <Primitive.Root className={container({ className })} {...props}>
       {items.map(({ id, value }) => (
-        <UiRadioGroup.Item key={id} value={value} id={id} className={button()}>
-          <div>{value}</div>
-        </UiRadioGroup.Item>
+        <Primitive.Item key={id} value={value} id={id} className={button()}>
+          {value}
+        </Primitive.Item>
       ))}
-    </UiRadioGroup.Root>
+    </Primitive.Root>
   );
 }

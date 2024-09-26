@@ -1,1 +1,1 @@
-export { default as SearchResultHeader } from "./result-header";
+export { default as SearchResultHeader } from "./header";

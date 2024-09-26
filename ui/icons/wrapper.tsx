@@ -3,7 +3,7 @@ import { tv, VariantProps } from "@/utils/tailwind-variants";
 
 export const iconVariant = tv({
   variants: {
-    _size: {
+    ui_size: {
       small: 16,
       medium: 20,
       large: 32,
@@ -11,7 +11,7 @@ export const iconVariant = tv({
     },
   },
   defaultVariants: {
-    _size: "medium",
+    ui_size: "medium",
   },
 });
 
@@ -31,9 +31,11 @@ export default function IconWrapper({
   defaultProps,
 }: ReactIconsProfile) {
   return function IconWithVariant({
-    _size,
+    ui_size,
     ...props
   }: NonNullable<typeof defaultProps>) {
-    return <Icon size={iconVariant({ _size })} {...defaultProps} {...props} />;
+    return (
+      <Icon size={iconVariant({ ui_size })} {...defaultProps} {...props} />
+    );
   };
 }

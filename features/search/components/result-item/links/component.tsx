@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import Button from "@/ui/button";
 import BloomIcon from "@/ui/icons/bloom";
-import { SearchResult } from "../../../types/result";
+import { SearchResult } from "@/features/search/types/result";
 import SearchResultOriginLink from "./origin";
 import SearchResultPdfLink from "./pdf";
 
@@ -21,7 +21,7 @@ export default function SearchResultItemLinks({
           href={{ pathname: "/flower", query: { id } }}
           className="flex items-center justify-between gap-4"
         >
-          <BloomIcon _size="small" />
+          <BloomIcon ui_size="small" />
           <span className="text-label-large">Bloom</span>
         </Link>
       </Button>

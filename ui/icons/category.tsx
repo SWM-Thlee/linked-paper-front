@@ -1,9 +1,9 @@
 import { MdSubject } from "react-icons/md";
 import IconWrapper from "./wrapper";
 
-const FieldIcon = IconWrapper({
+const CategoryIcon = IconWrapper({
   type: "react-icons",
   baseComponent: MdSubject,
 });
 
-export default FieldIcon;
+export default CategoryIcon;
