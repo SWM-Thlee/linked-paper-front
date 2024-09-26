@@ -20,8 +20,8 @@ const IS_MOCKING = false;
 export async function SearchResult(info: Search.Query.Info) {
   if (IS_MOCKING) {
     const result = await delay(2000, () => repeat(info.size, searchResult))();
-    const status = random(1, 10) >= 5 ? "OK" : "LAST_PAGE"; // 60%
-    const randomSuccess = random(1, 10) >= 6; // 50%
+    const status = random(1, 10) >= 3 ? "OK" : "LAST_PAGE"; // 80%
+    const randomSuccess = random(1, 10) >= 3; // 80%
 
     return (
       randomSuccess

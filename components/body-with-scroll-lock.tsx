@@ -5,17 +5,17 @@ import { useEffect, useRef, useState } from "react";
 
 type Props = React.PropsWithChildren;
 
-export const scrollLockAtom = atom(false);
+export const scrollLockAtom = atom<string[]>([]);
 
 export default function BodyWithScrollLock({ children }: Props) {
   const [enabled, setEnabled] = useState(false);
-  const isLocked = useAtomValue(scrollLockAtom);
+  const deps = useAtomValue(scrollLockAtom);
   const bodyRef = useRef<HTMLBodyElement | null>(null);
 
   useEffect(() => {
     if (!bodyRef.current || !enabled) return;
-    bodyRef.current.style.overflow = isLocked ? "hidden" : "auto";
-  }, [enabled, isLocked]);
+    bodyRef.current.style.overflow = deps.length > 0 ? "hidden" : "auto";
+  }, [enabled, deps]);
 
   return (
     <body

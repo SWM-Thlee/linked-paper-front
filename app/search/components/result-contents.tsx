@@ -68,7 +68,7 @@ export default function SearchResultContents() {
     isFetchingNextPage,
     fetchNextPage,
   } = useSuspenseInfiniteQuery(queryOptions.result(query));
-  const [, setScrollLock] = useScrollLock();
+  const setScrollLock = useScrollLock("SearchResult");
 
   // 쿼리 상태
   const isInitial = pages.length === 0;
@@ -86,6 +86,10 @@ export default function SearchResultContents() {
   useEffect(() => {
     setScrollLock(isInitial);
   }, [isInitial, setScrollLock]);
+
+  useEffect(() => {
+    return () => setScrollLock(false);
+  }, [setScrollLock]);
 
   return (
     <>
