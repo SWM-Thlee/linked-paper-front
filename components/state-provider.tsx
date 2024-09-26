@@ -2,8 +2,6 @@
 
 import * as React from "react";
 import { Provider as JotaiProvider } from "jotai";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ThemeProviderProps } from "next-themes/dist/types";
 import {
   isServer,
   QueryClient,
@@ -28,15 +26,13 @@ function getQueryClient() {
   return browserQueryClient ?? (browserQueryClient = createQueryClient());
 }
 
-export default function Providers({ children, ...props }: ThemeProviderProps) {
+export default function StateProvider({ children }: React.PropsWithChildren) {
   const queryClient = getQueryClient();
 
   return (
     <JotaiProvider>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryStreamedHydration>
-          <NextThemesProvider {...props}>{children}</NextThemesProvider>
-        </ReactQueryStreamedHydration>
+        <ReactQueryStreamedHydration>{children}</ReactQueryStreamedHydration>
       </QueryClientProvider>
     </JotaiProvider>
   );
