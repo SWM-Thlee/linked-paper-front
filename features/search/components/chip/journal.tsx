@@ -32,10 +32,6 @@ export function JournalChip({ nameOfJournals, children }: Props) {
   );
 
   const titleOfChip = nameOfJournals[0] ?? "Not Selected";
-  const titleOfDetails =
-    matchedResult.length > 0
-      ? `${matchedResult.length} Journal${matchedResult.length > 1 ? "s" : ""}`
-      : "Not Found";
 
   // Journal의 개수가 10개를 초과할 경우 검색 필드를 보이게 합니다.
   const visibleSearch = nameOfJournals.length > 10;
@@ -51,9 +47,8 @@ export function JournalChip({ nameOfJournals, children }: Props) {
           </LabelButton>
         )}
       </Popover.Trigger>
-      <Popover.Content className="w-[25rem]" ui_size="large">
+      <Popover.Content className="w-[25rem]">
         <div className="flex flex-col gap-4">
-          <div className="select-none text-title-medium">{titleOfDetails}</div>
           {visibleSearch && (
             <SearchField
               value={matchText}
@@ -64,20 +59,19 @@ export function JournalChip({ nameOfJournals, children }: Props) {
             />
           )}
           {hasMatchedResult && (
-            <div className="flex max-h-[20rem] flex-col gap-2 overflow-y-auto scrollbar">
+            <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
               {matchedResult.map((journal) => (
                 <Button
                   key={journal}
-                  ui_variant="light"
+                  ui_variant="ghost"
                   ui_size="small"
                   ui_color="secondary"
-                  className="flex items-center gap-2 text-left"
+                  className="text-left text-label-large"
                 >
-                  <JournalIcon ui_size="small" />
-                  {journal}
+                  <li className="ml-2">{journal}</li>
                 </Button>
               ))}
-            </div>
+            </ul>
           )}
         </div>
       </Popover.Content>

@@ -49,28 +49,23 @@ export default function SearchResultOriginLink({ origin_link }: Props) {
           </Badge>
         </LabelButton>
       </Popover.Trigger>
-      <Popover.Content ui_size="large">
-        <div className="flex flex-col gap-4">
-          <div className="select-none text-title-medium">
-            {origin_link.length} Origin Links
-          </div>
-          <div className="flex flex-col gap-2">
-            {linksToArray.map((link) => (
-              <Button key={link} ui_color="secondary" ui_variant="light">
-                <Link
-                  href={link}
-                  target="_blank"
-                  className="flex w-full items-center gap-6"
-                >
-                  <OriginLinkIcon ui_size="small" />
-                  <div className="max-w-[20rem] overflow-hidden text-ellipsis text-nowrap text-label-large">
-                    {link}
-                  </div>
+      <Popover.Content>
+        <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
+          {linksToArray.map((link) => (
+            <Button
+              key={link}
+              ui_color="secondary"
+              ui_variant="ghost"
+              ui_size="small"
+            >
+              <li className="ml-2 text-left text-label-large">
+                <Link href={link} target="_blank" className="w-full">
+                  {link}
                 </Link>
-              </Button>
-            ))}
-          </div>
-        </div>
+              </li>
+            </Button>
+          ))}
+        </ul>
       </Popover.Content>
     </Popover.Root>
   );

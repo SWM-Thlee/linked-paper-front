@@ -35,7 +35,7 @@ export const settingsVariant = tv({
   slots: {
     overlay: sem()
       .layout(["fixed", "inset-0", "z-overlay"])
-      .color(["bg-light-shadow/15", "dark:bg-dark-shadow/50"])
+      .color(["bg-light-shadow/15", "dark:bg-dark-shadow/15", "backdrop-blur"])
       .transition(["data-[state=open]:animate-overlayShow"])
       .build(),
     container: sem()
@@ -51,7 +51,7 @@ export const settingsVariant = tv({
       ])
       .color([
         "focus:outline-none",
-        "shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]",
+        "shadow-lg",
         "bg-light-surfaceContainerLowest",
         "text-light-onSurface",
         "dark:bg-dark-surfaceContainerLowest",

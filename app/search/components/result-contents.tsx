@@ -60,6 +60,7 @@ function FooterSection({
 }
 
 // TODO: Z-Index 수정
+// TODO: 동일한 검색 결과가 존재할 시 Duplicate 처리를 어떻게 할까?
 export default function SearchResultContents() {
   const { query } = useSearchQueryInfo();
   const {

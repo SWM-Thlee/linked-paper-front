@@ -34,18 +34,7 @@ export default function AuthorChip({ authors, children }: Props) {
   // Author가 10명을 초과할 경우 검색 필드를 보이게 합니다.
   const visibleSearch = authors.length > 10;
   const hasAuthors = useMemo(() => matchedResult.length > 0, [matchedResult]);
-  const hasSingleAuthor = useMemo(
-    () => matchedResult.length === 1,
-    [matchedResult],
-  );
-
   const titleOfChip = hasAuthors ? authors[0] : "Unknown";
-  const titleOfDetails = useMemo(() => {
-    if (!hasAuthors) return "Not Found";
-    if (hasSingleAuthor) return "Author";
-
-    return `${matchedResult.length} Authors`;
-  }, [matchedResult, hasAuthors, hasSingleAuthor]);
 
   return (
     <Popover.Root>
@@ -57,9 +46,8 @@ export default function AuthorChip({ authors, children }: Props) {
           </LabelButton>
         )}
       </Popover.Trigger>
-      <Popover.Content ui_size="large">
+      <Popover.Content>
         <div className="flex flex-col gap-6">
-          <div className="select-none text-title-medium">{titleOfDetails}</div>
           {visibleSearch && (
             <SearchField
               value={matchText}
@@ -70,20 +58,19 @@ export default function AuthorChip({ authors, children }: Props) {
             />
           )}
           {hasAuthors && (
-            <div className="flex max-h-[25vh] flex-col gap-2 overflow-y-auto scrollbar">
+            <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
               {matchedResult.map((author) => (
                 <Button
                   ui_color="secondary"
                   ui_size="small"
-                  ui_variant="light"
-                  className="flex min-w-[20rem] items-center gap-2 text-left"
+                  ui_variant="ghost"
+                  className="min-w-[20rem] text-nowrap text-left text-label-large"
                   key={author}
                 >
-                  <AuthorIcon ui_size="small" />
-                  {author}
+                  <li className="ml-2">{author}</li>
                 </Button>
               ))}
-            </div>
+            </ul>
           )}
         </div>
       </Popover.Content>

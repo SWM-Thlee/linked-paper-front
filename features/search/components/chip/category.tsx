@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import useCategories, { CategoryGroup } from "@/hooks/use-categories";
 import { matcher } from "@/features/search/utils/matcher";
@@ -72,11 +72,6 @@ export function CategoryChip({ categoryIDs, children }: Props) {
     [matchedResult],
   );
 
-  const titleOfDetails =
-    matchedResultSize > 0
-      ? `${matchedResultSize} Categor${matchedResultSize > 1 ? "ies" : "y"}`
-      : "Not Found";
-
   // Category의 개수가 10개를 초과할 경우 검색 필드를 보이게 합니다.
   const visibleSearch = categoryIDs.length > 10;
   const hasMatchedResult = matchedResultSize > 0;
@@ -91,9 +86,8 @@ export function CategoryChip({ categoryIDs, children }: Props) {
           </LabelButton>
         )}
       </Popover.Trigger>
-      <Popover.Content ui_size="large">
+      <Popover.Content>
         <div className="flex flex-col gap-6">
-          <div className="select-none text-title-medium">{titleOfDetails}</div>
           {visibleSearch && (
             <SearchField
               value={matchText}
@@ -104,32 +98,31 @@ export function CategoryChip({ categoryIDs, children }: Props) {
             />
           )}
           {hasMatchedResult && (
-            <div className="flex max-h-[20rem] flex-col gap-4 overflow-y-auto scrollbar">
+            <div className="flex max-h-[20rem] flex-col gap-6 overflow-y-auto scrollbar">
               {Object.entries(matchedResult).map(([subject, categories]) => (
                 <FieldContainer key={subject} title={subject} ui_size="medium">
-                  <div className="grid grid-cols-[3fr_1fr] gap-y-2">
+                  <ul className="flex list-disc flex-col">
                     {Object.entries(categories).map(([categoryID, info]) => (
-                      <Fragment key={categoryID}>
+                      <div key={categoryID} className="flex items-center">
                         <Button
-                          ui_variant="light"
+                          ui_variant="ghost"
                           ui_size="small"
                           ui_color="secondary"
-                          className="flex items-center gap-2 text-nowrap rounded-r-0"
+                          className="flex-1 text-nowrap text-left"
                         >
-                          <CategoryIcon ui_size="small" />
-                          {info.description}
+                          <li className="ml-2">{info.description}</li>
                         </Button>
                         <Button
-                          ui_variant="light"
+                          ui_variant="ghost"
                           ui_size="small"
                           ui_color="tertiary"
-                          className="text-nowrap rounded-l-0 text-left text-label-large"
+                          className="text-nowrap text-label-large"
                         >
                           {categoryID}
                         </Button>
-                      </Fragment>
+                      </div>
                     ))}
-                  </div>
+                  </ul>
                 </FieldContainer>
               ))}
             </div>

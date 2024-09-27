@@ -6,6 +6,7 @@ import useIsClient from "@/hooks/use-is-client";
 
 import DarkModeIcon from "@/ui/icons/dark-mode";
 import LightModeIcon from "@/ui/icons/light-mode";
+import IconButton from "@/ui/icon-button";
 
 // 테마와 해당 테마를 표현하는 아이콘 매핑입니다.
 const themes = {
@@ -35,8 +36,8 @@ export default function ThemeSwitcher() {
     return themes.default;
 
   return (
-    <button type="button" onClick={toggle}>
+    <IconButton aria-label="Theme Switcher" onClick={toggle}>
       {resolvedTheme === "light" ? themes.light : themes.dark}
-    </button>
+    </IconButton>
   );
 }
