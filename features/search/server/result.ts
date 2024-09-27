@@ -13,30 +13,31 @@ export interface SearchResultScheme extends Search.Query.Info {
 // 임시 API 링크
 const API_LINK = "https://api.linked-paper.com";
 
-// MOCKING 여부
 // Mocking Server를 별도로 구현 예정
-const IS_MOCKING = false;
+const IS_MOCKING = true;
+
+async function MockResult(info: Search.Query.Info) {
+  const result = await delay(2000, () => repeat(info.size, searchResult))();
+  const status = random(1, 10) >= 3 ? "OK" : "LAST_PAGE"; // 80%
+  const randomSuccess = random(1, 10) >= 3; // 80%
+
+  return (
+    randomSuccess
+      ? {
+          status: "OK",
+          data: {
+            ...info,
+            status,
+            count: info.size,
+            data: result,
+          },
+        }
+      : { status: "ERROR", errorCode: 500 }
+  ) satisfies UniversalResponse<SearchResultScheme>;
+}
 
 export async function SearchResult(info: Search.Query.Info) {
-  if (IS_MOCKING) {
-    const result = await delay(2000, () => repeat(info.size, searchResult))();
-    const status = random(1, 10) >= 3 ? "OK" : "LAST_PAGE"; // 80%
-    const randomSuccess = random(1, 10) >= 3; // 80%
-
-    return (
-      randomSuccess
-        ? {
-            status: "OK",
-            data: {
-              ...info,
-              status,
-              count: info.size,
-              data: result,
-            },
-          }
-        : { status: "ERROR", errorCode: 500 }
-    ) satisfies UniversalResponse<SearchResultScheme>;
-  }
+  if (IS_MOCKING) return MockResult(info);
 
   return fetchUniversally<SearchResultScheme>(
     `${API_LINK}/search?${convertToQueryString(info)}`,
