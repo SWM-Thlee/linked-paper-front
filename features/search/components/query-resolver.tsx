@@ -56,8 +56,7 @@ export default function SearchQueryResolver({
   );
 
   if (!validation) {
-    // TODO: Error
-    redirect("/search/error");
+    redirect("/search/error/400?reason=Invalid Queries");
   }
 
   // Search Query를 Atom과 연동합니다.
