@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import toast from "react-hot-toast";
 
 import Button from "@/ui/button";
 import SearchField from "@/ui/search-field";
@@ -34,7 +35,11 @@ export default function SearchFields() {
         <Button ui_size="large" onClick={requestSearch}>
           Search
         </Button>
-        <Button ui_size="large" ui_color="secondary">
+        <Button
+          ui_size="large"
+          ui_color="secondary"
+          onClick={() => toast("Not Implemented")}
+        >
           Send Feedback
         </Button>
       </div>

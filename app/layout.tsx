@@ -1,4 +1,6 @@
 import { Metadata, Viewport } from "next";
+import { Toaster } from "react-hot-toast";
+
 import { siteConfig } from "@/config/site";
 import { playfair, urbanist } from "@/config/fonts";
 
@@ -57,6 +59,7 @@ export default function RootLayout({
               <div className="col-[1_/_4] row-[3_/_4]">{footer}</div>
             </div>
             <CheckDevelopment />
+            <Toaster toastOptions={{ position: "bottom-right" }} />
           </ThemeProvider>
         </BodyWithScrollLock>
       </StateProvider>
