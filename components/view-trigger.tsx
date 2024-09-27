@@ -29,5 +29,5 @@ export default function ViewTrigger({ trigger, restore, onTrigger }: Props) {
     setLoading(false);
   }, [inView, loading, restore]);
 
-  return !loading ? <div ref={ref} /> : null;
+  return <div ref={ref} />;
 }
