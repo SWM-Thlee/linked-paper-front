@@ -15,7 +15,7 @@ export default function CheckDevelopment() {
       ui_color="tertiary"
       ui_size="large"
       ui_variant="light"
-      className="fixed left-[2rem] top-[2rem] flex items-center gap-4 text-title-medium"
+      className="fixed left-[2rem] top-[2rem] z-dialog flex items-center gap-4 text-title-medium"
     >
       IN DEVELOPMENT
     </Button>

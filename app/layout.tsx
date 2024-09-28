@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { playfair, urbanist } from "@/config/fonts";
 
 import "@/globals.css";
+import Header from "@/components/header";
 import CheckDevelopment from "@/components/check-development";
 import ThemeProvider from "@/components/theme-provider";
 import StateProvider from "@/components/state-provider";
@@ -31,15 +32,9 @@ export const viewport: Viewport = {
 
 // Header, Main, Footer 컴포넌트가 독립적으로 구성된다.
 export default function RootLayout({
-  header,
   children,
-  aside,
-  footer,
 }: {
-  header: React.ReactNode;
   children: React.ReactNode;
-  aside: React.ReactNode;
-  footer: React.ReactNode;
 }) {
   return (
     <html
@@ -50,14 +45,8 @@ export default function RootLayout({
       <StateProvider>
         <BodyWithScrollLock>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="grid auto-rows-auto grid-cols-[1fr_auto_1fr] gap-16">
-              <div className="sticky top-0 col-[2_/_3] row-[1_/_2]">
-                {header}
-              </div>
-              <div className="col-[2_/_3] row-[2_/_3]">{children}</div>
-              <div className="col-[3_/_4] row-[1_/_3]">{aside}</div>
-              <div className="col-[1_/_4] row-[3_/_4]">{footer}</div>
-            </div>
+            <Header />
+            {children}
             <CheckDevelopment />
             <Toaster toastOptions={{ position: "bottom-right" }} />
           </ThemeProvider>

@@ -25,10 +25,10 @@ const config = {
     extend: {
       zIndex: {
         header: "10",
-        popover: "90",
-        overlay: "30",
-        dialog: "40",
-        tooltip: "50",
+        overlay: "20",
+        dialog: "30",
+        popover: "30",
+        tooltip: "40",
       },
       // text-{semantic}-{size}
       fontSize: ({ theme }) =>
