@@ -2,8 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import InitialScrollLock from "@/components/initial-scroll-lock";
 import PageContainer from "@/components/page-container";
+import ScrollLockOnce from "@/components/page-only/scroll-lock-once";
 import Button from "@/ui/button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
 import WarningIcon from "@/ui/icons/warning";
@@ -16,7 +16,7 @@ export default function Page() {
   const errorReason = searchParams.get("reason");
 
   return (
-    <InitialScrollLock>
+    <ScrollLockOnce>
       <PageContainer>
         <div className="mt-48 flex flex-col gap-12 text-light-onSurface dark:text-dark-onSurface">
           <div className="flex flex-col gap-8">
@@ -47,6 +47,6 @@ export default function Page() {
           </div>
         </div>
       </PageContainer>
-    </InitialScrollLock>
+    </ScrollLockOnce>
   );
 }
