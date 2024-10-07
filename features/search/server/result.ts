@@ -1,48 +1,46 @@
-import { fetchUniversally, UniversalResponse } from "@/utils/fetch-universally";
-import { delay, random, repeat } from "@/utils/sample";
+import { ErrorResponse, fetchUniversally } from "@/utils/fetch-universally";
+
 import { Search } from "../types";
 import { convertToQueryString } from "../utils/filter/query";
-import { searchResult } from "../utils/sample";
 
-export interface SearchResultScheme extends Search.Query.Info {
-  count: number;
-  status: "OK" | "LAST_PAGE";
-  data: Search.Result.Data[];
-}
+// TODO: 예외 처리
+const endpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
-// 임시 API 링크
-const API_LINK = "https://api.linked-paper.com";
-
-// Mocking Server를 별도로 구현 예정
-const IS_MOCKING = true;
-
-async function MockResult(info: Search.Query.Info) {
-  const result = await delay(2000, () => repeat(info.size, searchResult))();
-  const status = random(1, 10) >= 3 ? "OK" : "LAST_PAGE"; // 80%
-  const randomSuccess = random(1, 10) >= 3; // 80%
-
-  return (
-    randomSuccess
-      ? {
-          status: "OK",
-          data: {
-            ...info,
-            status,
-            count: info.size,
-            data: result,
-          },
-        }
-      : { status: "ERROR", errorCode: 500 }
-  ) satisfies UniversalResponse<SearchResultScheme>;
-}
-
-export async function SearchResult(info: Search.Query.Info) {
-  if (IS_MOCKING) return MockResult(info);
-
-  return fetchUniversally<SearchResultScheme>(
-    `${API_LINK}/search?${convertToQueryString(info)}`,
-    {
-      cache: "no-store",
-    },
+export async function SearchResult(
+  info: Search.Query.Info,
+): Promise<Search.Api.Result | ErrorResponse> {
+  // Server Response
+  const response = await fetchUniversally<Search.Api.Response>(
+    `${endpoint}/search?${convertToQueryString(info)}`,
+    Search.Api.NoStore,
   );
+
+  if (response.status === "ERROR") return response;
+
+  // Convert Response to Result
+  const { count, data, status } = response.data;
+
+  // TODO: 검증 과정이 필요합니다.
+  return {
+    ...info,
+    count,
+    data: data.map((res) => ({
+      id: res.id,
+      title: res.title,
+      abstraction: res.abstraction,
+      journal: res.journal,
+      authors: res.authors,
+      categories: res.categories,
+      reference_count: res.reference_count,
+      citiation_count: res.citiation_count,
+      link: {
+        origin_link: res.origin_link,
+        pdf_link: res.pdf_link,
+      },
+      date: res.date,
+      similarity: res.weight,
+      version: "v1",
+    })),
+    status: Search.Api.ResponseToResult[status],
+  };
 }

@@ -1,9 +1,9 @@
-type SuccessResponse<T> = {
+export type SuccessResponse<T> = {
   status: "OK";
   data: T;
 };
 
-type ErrorResponse = {
+export type ErrorResponse = {
   status: "ERROR";
   errorCode?: number;
 };

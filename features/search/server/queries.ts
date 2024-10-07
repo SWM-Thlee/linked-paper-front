@@ -26,8 +26,8 @@ export const queryOptions = {
         // ERROR만 존재하는 경우 Initial Index가 Next Page입니다.
         if (!success) return info.index;
 
-        return success.data.status !== "LAST_PAGE"
-          ? success.data.index + success.data.count
+        return success.status !== "LAST_PAGE"
+          ? success.index + success.count
           : null;
       },
 
