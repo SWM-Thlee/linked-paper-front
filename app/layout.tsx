@@ -7,9 +7,9 @@ import { playfair, urbanist } from "@/config/fonts";
 import "@/globals.css";
 import Header from "@/components/header";
 import CheckDevelopment from "@/components/check-development";
-import ThemeProvider from "@/components/theme-provider";
 import StateProvider from "@/components/state-provider";
 import BodyWithScrollLock from "@/components/body-with-scroll-lock";
+import ThemeProvider from "@/features/theme/components/theme-provider";
 
 // 웹 페이지의 기본 메타데이터이다.
 export const metadata: Metadata = {
@@ -44,7 +44,7 @@ export default function RootLayout({
     >
       <StateProvider>
         <BodyWithScrollLock>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider>
             <Header />
             {children}
             <CheckDevelopment />

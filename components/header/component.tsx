@@ -21,14 +21,13 @@ export const headerVariant = tv({
     ],
     container: [
       "flex items-center justify-between",
-      "transition-[box-shadow,_padding,_border-radius] duration-300",
+      "transition-[border,_box-shadow,_padding,_border-radius] duration-300",
       "w-full",
       "p-6",
-      "ring-inset ring-2",
       "ring-light-surfaceContainer/90",
-      "dark:ring-dark-surfaceContainer/90",
       "bg-light-surfaceContainer/90",
-      "dark:bg-dark-surfaceContainer/90",
+      "dark:ring-dark-surfaceContainer/50",
+      "dark:bg-dark-surfaceContainer/50",
     ],
     header: [
       "text-nowrap",
@@ -56,6 +55,7 @@ export const headerVariant = tv({
         container: [
           "rounded-4",
           "py-4",
+          "ring-inset ring-2",
           "ring-light-outlineVariant",
           "dark:ring-dark-outlineVariant",
         ],
