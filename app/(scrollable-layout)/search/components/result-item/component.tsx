@@ -1,5 +1,4 @@
 import { Search } from "@/features/search/types";
-import Badge from "@/ui/badge";
 import AuthorChip from "@/features/search/components/chip/author";
 import { CategoryChip } from "@/features/search/components/chip/category";
 import CategoryIcon from "@/ui/icons/category";
@@ -11,6 +10,7 @@ import SpliterIcon from "@/ui/icons/spliter";
 import DateIcon from "@/ui/icons/date";
 import ReferenceIcon from "@/ui/icons/reference";
 import SearchResultItemLinks from "./links/component";
+import Abstraction from "./abstraction";
 
 export default function SearchResultItem({
   id,
@@ -30,7 +30,7 @@ export default function SearchResultItem({
         <div className="text-headline-small text-light-onSurface dark:text-dark-onSurface">
           {title}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <AuthorChip authors={authors}>
             {(titleOfChip) => (
               <LabelButton
@@ -39,7 +39,9 @@ export default function SearchResultItem({
                 ui_variant="light"
               >
                 <AuthorIcon ui_size="small" />
-                {titleOfChip}
+                <div className="max-w-[10rem] overflow-hidden text-ellipsis">
+                  {titleOfChip}
+                </div>
               </LabelButton>
             )}
           </AuthorChip>
@@ -51,7 +53,9 @@ export default function SearchResultItem({
                 ui_variant="light"
               >
                 <CategoryIcon ui_size="small" />
-                {titleOfChip}
+                <div className="max-w-[15rem] overflow-hidden text-ellipsis">
+                  {titleOfChip}
+                </div>
               </LabelButton>
             )}
           </CategoryChip>
@@ -74,9 +78,7 @@ export default function SearchResultItem({
             </LabelButton>
           </OthersChip>
         </div>
-        <div className="line-clamp-3 align-middle text-body-large text-light-onSurface dark:text-dark-onSurface">
-          <Badge ui_color="secondary">ABSTR.</Badge> {abstraction}
-        </div>
+        <Abstraction>{abstraction}</Abstraction>
       </div>
       <SearchResultItemLinks id={id} link={link} />
     </div>
