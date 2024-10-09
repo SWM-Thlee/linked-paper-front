@@ -1,6 +1,5 @@
-export type AnnouncementType =
-  (typeof AnnouncementType)[keyof typeof AnnouncementType];
-export const AnnouncementType = {
+export type Type = (typeof Type)[keyof typeof Type];
+export const Type = {
   INFO: "info",
   TIP: "tip",
   QUESTION: "question",
@@ -12,8 +11,8 @@ export const AnnouncementType = {
   QUOTE: "quote",
 } as const;
 
-export interface AnnouncementData {
-  type: AnnouncementType;
+export interface Data {
+  type: Type;
   title: string;
   description: string;
 }

@@ -8,22 +8,22 @@ import BugIcon from "@/ui/icons/bug";
 import QuestionIcon from "@/ui/icons/question";
 import QuoteIcon from "@/ui/icons/quote";
 
-import { AnnouncementData, AnnouncementType } from "../types/announcement";
+import { Data, Type } from "../types/scheme";
 
-export const iconMappings: { [type in AnnouncementType]: React.ReactNode } = {
-  [AnnouncementType.INFO]: <InfoIcon ui_size="large" />,
-  [AnnouncementType.TIP]: <TipIcon ui_size="large" />,
-  [AnnouncementType.WARNING]: <WarningIcon />,
-  [AnnouncementType.FAILURE]: <DangerIcon />,
-  [AnnouncementType.SUCCESS]: <SuccessIcon />,
-  [AnnouncementType.SUGGESTION]: <ThumbUpIcon />,
-  [AnnouncementType.BUG]: <BugIcon />,
-  [AnnouncementType.QUESTION]: <QuestionIcon />,
-  [AnnouncementType.QUOTE]: <QuoteIcon />,
+export const iconMappings: { [type in Type]: React.ReactNode } = {
+  [Type.INFO]: <InfoIcon ui_size="large" />,
+  [Type.TIP]: <TipIcon ui_size="large" />,
+  [Type.WARNING]: <WarningIcon />,
+  [Type.FAILURE]: <DangerIcon />,
+  [Type.SUCCESS]: <SuccessIcon />,
+  [Type.SUGGESTION]: <ThumbUpIcon />,
+  [Type.BUG]: <BugIcon />,
+  [Type.QUESTION]: <QuestionIcon />,
+  [Type.QUOTE]: <QuoteIcon />,
 };
 
-export const DEFAULT_ANNOUNCEMENT: AnnouncementData = {
-  type: AnnouncementType.TIP,
+export const DEFAULT_ANNOUNCEMENT: Data = {
+  type: Type.TIP,
   title: "Are you new to Linked Paper?",
   description: `Don't look for specific keywords one by one to find the thesis you want,
         but if you enter the information you want directly, you will find the

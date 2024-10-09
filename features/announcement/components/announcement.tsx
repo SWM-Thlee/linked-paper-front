@@ -1,7 +1,7 @@
-import { AnnouncementData } from "../../types/announcement";
-import { iconMappings } from "../../utils/announcement";
+import { Data } from "../types/scheme";
+import { iconMappings } from "../utils/mappings";
 
-type Props = AnnouncementData;
+type Props = Data;
 
 export default function Announcement({ type, title, description }: Props) {
   return (

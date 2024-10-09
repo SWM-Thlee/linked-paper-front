@@ -1,5 +1,5 @@
 import PageContainer from "@/components/page-container";
-import AnnouncementProvider from "@/features/communication/components/announcement/provider";
+import AnnouncementProvider from "@/features/announcement/components/announcement-provider";
 import DefaultFilterInfo from "./components/default-filter-info";
 import SearchFields from "./components/search-fields";
 
