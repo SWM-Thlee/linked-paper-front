@@ -1,46 +1,32 @@
-import { forwardRef } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
+
 import { tv, VariantProps } from "@/utils/tailwind-variants";
 
 export const buttonVariant = tv({
   base: ["transition-colors", "duration-200"],
   variants: {
-    _color: {
+    ui_color: {
       primary: [],
       secondary: [],
       tertiary: [],
       error: [],
     },
-    _variant: {
+    ui_variant: {
       default: [],
       bordered: ["ring-inset", "ring-2"],
       ghost: [],
       light: [],
     },
-    _size: {
-      large: [
-        "px-[2rem]",
-        "py-[0.75rem]",
-        "text-label-large",
-        "rounded-[1.5rem]",
-      ],
-      medium: [
-        "px-[1.5rem]",
-        "py-[0.5rem]",
-        "text-label-large",
-        "rounded-[1rem]",
-      ],
-      small: [
-        "px-[1rem]",
-        "py-[0.375rem]",
-        "text-label-medium",
-        "rounded-[0.5rem]",
-      ],
+    ui_size: {
+      large: ["px-[2rem]", "py-[0.75rem]", "text-body-large", "rounded-4"],
+      medium: ["px-[1.5rem]", "py-[0.5rem]", "text-body-large", "rounded-2"],
+      small: ["px-[1rem]", "py-[0.375rem]", "text-body-medium", "rounded-2"],
     },
   },
   compoundVariants: [
     {
-      _color: "primary",
-      _variant: "default",
+      ui_color: "primary",
+      ui_variant: "default",
       className: [
         "bg-light-primary",
         "text-light-onPrimary",
@@ -53,8 +39,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "primary",
-      _variant: "bordered",
+      ui_color: "primary",
+      ui_variant: "bordered",
       className: [
         "ring-light-primary",
         "text-light-primary",
@@ -67,8 +53,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "primary",
-      _variant: "ghost",
+      ui_color: "primary",
+      ui_variant: "ghost",
       className: [
         [
           "text-light-primary",
@@ -81,8 +67,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "primary",
-      _variant: "light",
+      ui_color: "primary",
+      ui_variant: "light",
       className: [
         "bg-light-primaryContainer/50",
         "text-light-onPrimaryContainer",
@@ -95,8 +81,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "secondary",
-      _variant: "default",
+      ui_color: "secondary",
+      ui_variant: "default",
       className: [
         "bg-light-secondary",
         "text-light-onSecondary",
@@ -109,8 +95,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "secondary",
-      _variant: "bordered",
+      ui_color: "secondary",
+      ui_variant: "bordered",
       className: [
         "ring-light-secondary",
         "text-light-secondary",
@@ -123,8 +109,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "secondary",
-      _variant: "ghost",
+      ui_color: "secondary",
+      ui_variant: "ghost",
       className: [
         [
           "text-light-secondary",
@@ -137,8 +123,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "secondary",
-      _variant: "light",
+      ui_color: "secondary",
+      ui_variant: "light",
       className: [
         "bg-light-secondaryContainer/50",
         "text-light-onSecondaryContainer",
@@ -151,8 +137,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "tertiary",
-      _variant: "default",
+      ui_color: "tertiary",
+      ui_variant: "default",
       className: [
         "bg-light-tertiary",
         "text-light-onTertiary",
@@ -165,8 +151,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "tertiary",
-      _variant: "bordered",
+      ui_color: "tertiary",
+      ui_variant: "bordered",
       className: [
         "ring-light-tertiary",
         "text-light-tertiary",
@@ -179,8 +165,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "tertiary",
-      _variant: "ghost",
+      ui_color: "tertiary",
+      ui_variant: "ghost",
       className: [
         [
           "text-light-tertiary",
@@ -193,8 +179,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "tertiary",
-      _variant: "light",
+      ui_color: "tertiary",
+      ui_variant: "light",
       className: [
         "bg-light-tertiaryContainer/50",
         "text-light-onTertiaryContainer",
@@ -207,8 +193,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "error",
-      _variant: "default",
+      ui_color: "error",
+      ui_variant: "default",
       className: [
         "bg-light-error",
         "text-light-onError",
@@ -221,8 +207,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "error",
-      _variant: "bordered",
+      ui_color: "error",
+      ui_variant: "bordered",
       className: [
         "ring-light-error",
         "text-light-error",
@@ -235,8 +221,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "error",
-      _variant: "ghost",
+      ui_color: "error",
+      ui_variant: "ghost",
       className: [
         [
           "text-light-error",
@@ -249,8 +235,8 @@ export const buttonVariant = tv({
       ],
     },
     {
-      _color: "error",
-      _variant: "light",
+      ui_color: "error",
+      ui_variant: "light",
       className: [
         "bg-light-errorContainer/50",
         "text-light-onErrorContainer",
@@ -264,21 +250,22 @@ export const buttonVariant = tv({
     },
   ],
   defaultVariants: {
-    _color: "primary",
-    _variant: "default",
-    _size: "medium",
+    ui_color: "primary",
+    ui_variant: "default",
+    ui_size: "medium",
   },
 });
 
-type Props = React.ComponentPropsWithoutRef<"button"> &
-  VariantProps<typeof buttonVariant>;
+export interface ButtonProps
+  extends ComponentPropsWithoutRef<"button">,
+    VariantProps<typeof buttonVariant> {}
 
-const Button = forwardRef<HTMLButtonElement, Props>(
-  ({ children, className, _color, _variant, _size, ...props }, ref) => (
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, className, ui_color, ui_variant, ui_size, ...props }, ref) => (
     <button
       type="button"
       ref={ref}
-      className={buttonVariant({ _color, _size, _variant, className })}
+      className={buttonVariant({ ui_color, ui_size, ui_variant, className })}
       {...props}
     >
       {children}

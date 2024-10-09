@@ -25,6 +25,8 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "no-param-reassign": "off",
+    "@typescript-eslint/no-redeclare": "off",
     "import/prefer-default-export": "off",
     "import/no-anonymous-default-export": "off",
     "react/require-default-props": "off",
