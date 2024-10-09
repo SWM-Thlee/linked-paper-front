@@ -20,6 +20,7 @@ export const headerVariant = tv({
       "transition-[padding] duration-300",
     ],
     container: [
+      "pointer-events-auto",
       "flex items-center justify-between",
       "transition-[border,_box-shadow,_padding,_border-radius] duration-300",
       "w-full",
@@ -81,7 +82,7 @@ export default function Header() {
   }, [headerMode]);
 
   return (
-    <header className="fixed top-0 z-header flex w-full justify-center">
+    <header className="pointer-events-none fixed top-0 z-header flex w-full justify-center">
       <div className={wrapper()}>
         <div className={container()}>
           {/* Title */}

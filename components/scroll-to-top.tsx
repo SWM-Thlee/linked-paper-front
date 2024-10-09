@@ -5,10 +5,11 @@ import { useCallback } from "react";
 import { tv } from "@/utils/tailwind-variants";
 import useIsClient from "@/hooks/use-is-client";
 import ArrowUpIcon from "@/ui/icons/arrow-up";
+import { Tooltip, TooltipProvider } from "@/ui/tooltip";
 
 export const variant = tv({
   base: [
-    "fixed bottom-[3rem] right-[3rem]",
+    "fixed top-[50vh] right-[4rem]",
     "animate-fadeIn",
     "rounded-circle",
     "p-4",
@@ -34,13 +35,17 @@ export default function ScrollToTop() {
   if (!isClient) return null;
 
   return (
-    <button
-      aria-label="Scroll To Top"
-      type="button"
-      onClick={onClick}
-      className={variant()}
-    >
-      <ArrowUpIcon ui_size="large" />
-    </button>
+    <TooltipProvider>
+      <Tooltip title="Scroll To Top" side="left">
+        <button
+          aria-label="Scroll To Top"
+          type="button"
+          onClick={onClick}
+          className={variant()}
+        >
+          <ArrowUpIcon ui_size="large" />
+        </button>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
