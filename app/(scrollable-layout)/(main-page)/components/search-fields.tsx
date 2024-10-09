@@ -1,12 +1,15 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import toast from "react-hot-toast";
+import Link from "next/link";
 
-import Button from "@/ui/button";
 import SearchField from "@/ui/search-field";
 import { defaultQueryValue } from "@/features/search/stores/query";
 import useSearchRequest from "@/features/search/hooks/query/use-search-request";
+import LabelButton from "@/ui/label-button";
+import SearchIcon from "@/ui/icons/search";
+import FeedbackIcon from "@/ui/icons/feedback";
+import { generateMailFeedbackRequest } from "@/features/feedback/utils/mail";
 
 export default function SearchFields() {
   const [queryText, setQueryText] = useState("");
@@ -32,16 +35,16 @@ export default function SearchFields() {
         }}
       />
       <div className="flex items-center justify-center gap-4">
-        <Button ui_size="large" onClick={requestSearch}>
+        <LabelButton ui_size="large" onClick={requestSearch}>
+          <SearchIcon ui_size="small" />
           Search
-        </Button>
-        <Button
-          ui_size="large"
-          ui_color="secondary"
-          onClick={() => toast("Not Implemented")}
-        >
-          Send Feedback
-        </Button>
+        </LabelButton>
+        <Link href={generateMailFeedbackRequest()}>
+          <LabelButton ui_size="large" ui_color="secondary">
+            <FeedbackIcon ui_size="small" />
+            Send Feedback
+          </LabelButton>
+        </Link>
       </div>
     </>
   );
