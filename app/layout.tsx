@@ -1,9 +1,15 @@
 import { Metadata, Viewport } from "next";
+import { Toaster } from "react-hot-toast";
+
 import { siteConfig } from "@/config/site";
 import { playfair, urbanist } from "@/config/fonts";
-import Providers from "@/components/providers";
 
 import "@/globals.css";
+import Header from "@/components/header";
+import CheckDevelopment from "@/components/check-development";
+import StateProvider from "@/components/state-provider";
+import BodyWithScrollLock from "@/components/body-with-scroll-lock";
+import ThemeProvider from "@/features/theme/components/theme-provider";
 
 // 웹 페이지의 기본 메타데이터이다.
 export const metadata: Metadata = {
@@ -26,13 +32,9 @@ export const viewport: Viewport = {
 
 // Header, Main, Footer 컴포넌트가 독립적으로 구성된다.
 export default function RootLayout({
-  header,
   children,
-  footer,
 }: {
-  header: React.ReactNode;
   children: React.ReactNode;
-  footer: React.ReactNode;
 }) {
   return (
     <html
@@ -40,15 +42,16 @@ export default function RootLayout({
       lang="ko"
       className={`${playfair.variable} ${urbanist.variable}`}
     >
-      <body className="bg-light-surfaceContainer dark:bg-dark-surfaceContainer">
-        <Providers attribute="class" defaultTheme="system" enableSystem>
-          <div className="mx-auto flex min-h-dvh flex-col items-center justify-between gap-16">
-            {header}
+      <StateProvider>
+        <BodyWithScrollLock>
+          <ThemeProvider>
+            <Header />
             {children}
-            {footer}
-          </div>
-        </Providers>
-      </body>
+            <CheckDevelopment />
+            <Toaster toastOptions={{ position: "bottom-right" }} />
+          </ThemeProvider>
+        </BodyWithScrollLock>
+      </StateProvider>
     </html>
   );
 }

@@ -1,17 +1,52 @@
-import { delay, repeat } from "@/utils/sample";
-import { searchResult } from "../utils/sample";
+import { infiniteQueryOptions } from "@tanstack/react-query";
 
-// 실제 서버에서 데이터를 받는 대신 샘플 데이터를 가져옵니다.
-const SAMPLE_MODE = true;
+import { Search } from "../types";
+import { SearchResult } from "./result";
 
-// 검색 쿼리에 대한 세부 옵션을 나타냅니다.
+export const queryKeys = {
+  all: ["semantic-search"] as const,
+
+  /* 동일한 검색 쿼리는 Context가 유지되는 동안(새로고침을 하기 전까지는) Cache 됩니다. */
+  result: (info: Search.Query.Info) =>
+    [...queryKeys.all, "result", info] as const,
+};
+
 export const queryOptions = {
-  search: () => ({
-    queryKey: ["LP_SEARCH"],
-    queryFn: SAMPLE_MODE
-      ? // 1초 (로딩) 후 20개의 검색 결과 샘플 데이터가 반환됩니다.
-        delay(1000, () => repeat(20, searchResult))
-      : // 실제 검색을 수행하는 쿼리
-        async () => [searchResult()],
-  }),
+  result: (info: Search.Query.Info) =>
+    infiniteQueryOptions({
+      queryKey: queryKeys.result(info),
+      queryFn: ({ pageParam }) => SearchResult({ ...info, index: pageParam }),
+      staleTime: Infinity,
+      retry: false,
+
+      initialPageParam: info.index,
+      getNextPageParam: (_, allPages) => {
+        const success = allPages.findLast((value) => value.status !== "ERROR");
+
+        // ERROR만 존재하는 경우 Initial Index가 Next Page입니다.
+        if (!success) return info.index;
+
+        return success.status !== "LAST_PAGE"
+          ? success.index + success.count
+          : null;
+      },
+
+      select({ pages, pageParams }) {
+        const failIndex = pages.findLastIndex(
+          (value) => value.status === "ERROR",
+        );
+
+        const succeededPages = pages.filter(
+          (value) => value.status !== "ERROR",
+        );
+        const succeededParams = pageParams.filter(
+          (_, index) => pages[index].status !== "ERROR",
+        );
+        return {
+          pages: succeededPages,
+          pageParams: succeededParams,
+          fail: failIndex >= 0 && failIndex === pages.length - 1,
+        };
+      },
+    }),
 };

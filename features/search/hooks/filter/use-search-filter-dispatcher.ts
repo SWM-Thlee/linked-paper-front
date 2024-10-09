@@ -1,14 +1,14 @@
 import { Search } from "@/features/search/types";
+import { Filter } from "@/features/filter/types";
 import useFilterDispatcher from "@/features/filter/hooks/use-filter-dispatcher";
-import { FilterStore } from "@/features/filter/types/store";
 
 export default function useSearchFilterDispatcher({
-  store = FilterStore.PERSIST,
+  store = Filter.Store.PERSIST,
 }: {
-  store?: FilterStore;
+  store?: Filter.Store.Type;
 }) {
-  return useFilterDispatcher<Search.Type>({
-    featureID: Search.Type,
+  return useFilterDispatcher<Search.Filter.Type>({
+    featureID: Search.Filter.Type,
     store,
   });
 }

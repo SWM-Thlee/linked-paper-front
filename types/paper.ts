@@ -12,10 +12,16 @@ export type PaperMetadata = {
   categories: string[];
   journal: string;
   abstraction: string;
-  tldr?: string;
   reference_count: number;
   citiation_count: number;
-  link: PaperExternalLink;
   date: string;
+
+  // Original Link와 PDF Link 각각 하나씩만 존재합니다.
+  link: PaperExternalLink;
+
+  // TODO: 구현 예정. 빈 값으로 둡니다.
+  tldr?: string;
+
+  // TODO: 구현 예정. V1으로 통일합니다.
   version: string;
 };

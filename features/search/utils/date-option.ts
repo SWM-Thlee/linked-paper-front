@@ -17,7 +17,7 @@ export type DateOption = {
   resolve: (props: DateRange) => DateRange;
 };
 
-type DateRange = NonNullable<Search.Data["attributes"]["date"]["value"]>;
+type DateRange = NonNullable<Search.Filter.Data["attributes"]["date"]["value"]>;
 
 // 현재 시점을 기준으로 몇 년 전까지의 날짜 구간을 나타냅니다.
 function LastYearModule(target: number[]): DateOption[] {

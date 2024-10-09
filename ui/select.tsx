@@ -23,13 +23,13 @@ export const selectVariant = tv({
     },
     ui_size: {
       large: {
-        button: ["px-6", "py-2", "text-body-large"],
+        button: ["px-6", "py-2", "text-title-large"],
       },
       medium: {
-        button: ["px-4", "py-1.5", "text-body-large"],
+        button: ["px-4", "py-1.5", "text-title-medium"],
       },
       small: {
-        button: ["px-3", "py-1", "text-body-medium"],
+        button: ["px-3", "py-1", "text-title-small"],
       },
     },
   },

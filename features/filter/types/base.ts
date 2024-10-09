@@ -1,7 +1,18 @@
 import { Signature } from "@/utils/signature";
-import { FilterTag } from "./tag";
 
-export type BaseData<T extends string> = {
+/**
+ * 각 Tag는 용도에 따라 다음 그룹으로 나뉩니다.
+ * 서로 다른 그룹끼리는 공존이 가능하지만, 같은 그룹 내의 Tag와는 공존이 불가능합니다.
+ *
+ * - **TAG_GROUP_STATUS**: [EDIT, SNAPSHOT]
+ *
+ * - **TAG_GROUP_ROLE**: [PRESET, QUERY, DEFAULT]
+ */
+export interface Tags {
+  [tag: string]: { [extra: string]: string | number | boolean };
+}
+
+export type Data<T extends string> = {
   featureID: T;
   readonly dataID: `${T}-${Signature}`;
 
@@ -18,10 +29,10 @@ export type BaseData<T extends string> = {
    *
    * 2. Search Query에 명시된 Filter 정보는 해당 검색 페이지에 의존하므로, 임시 저장소에 위치하게 됩니다.
    */
-  tags: FilterTag;
+  tags: Tags;
 };
 
-export type BaseFilter<T extends string, U extends BaseData<T>> = Record<
+export type Filters<T extends string, U extends Data<T>> = Record<
   U["dataID"],
   U
 >;

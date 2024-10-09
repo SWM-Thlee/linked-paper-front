@@ -25,6 +25,7 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "@typescript-eslint/no-namespace": "off",
     "no-param-reassign": "off",
     "@typescript-eslint/no-redeclare": "off",
     "import/prefer-default-export": "off",

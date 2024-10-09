@@ -1,55 +1,61 @@
-export type SelectableItem = {
-  itemID: string;
+export type DefaultValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | number[]
+  | boolean[];
 
-  /**
-   * 각 아이템의 세부 정보를 배열로 담습니다.
-   * 이때, 특정 Feature의 각 Attribute에 따라 명세(약속)를 별도로 지정해야 합니다.
-   */
-  info: string[];
+export type DefaultItemValue = DefaultValue | { [key: string]: DefaultValue };
+
+export type Item<T extends DefaultItemValue = DefaultItemValue> = {
+  itemID: string;
+  itemValue: T;
 };
 
-export interface AttributeBase<K extends string, T> {
+export interface Scheme<
+  K extends (typeof Attributes)[keyof typeof Attributes],
+  T,
+> {
   type: K;
   value?: T;
 }
 
-export type Scheme<T extends Type> = NonNullable<T["value"]>;
-
-export const Attributes = {
-  CATEGORY: "category",
-  CHECK: "check",
-  SELECT: "select",
-  MULTI_SELECT: "multi_select",
-  NUMBER_RANGE: "num_range",
-  DATA_RANGE: "data_range",
+const Attributes = {
+  Field: "field",
+  Check: "check",
+  Select: "select",
+  MultiSelect: "multi_select",
+  NumberRange: "num_range",
+  DataRange: "data_range",
 } as const;
 
-export interface Category
-  extends AttributeBase<typeof Attributes.CATEGORY, string> {}
-export interface Check
-  extends AttributeBase<typeof Attributes.CHECK, boolean> {}
-export interface Select
-  extends AttributeBase<typeof Attributes.SELECT, SelectableItem> {}
-export interface MultiSelect
-  extends AttributeBase<
-    typeof Attributes.MULTI_SELECT,
-    Record<string, SelectableItem>
-  > {}
-export interface NumberRange
-  extends AttributeBase<
-    typeof Attributes.NUMBER_RANGE,
-    { min?: number; max?: number }
-  > {}
-export interface DataRange
-  extends AttributeBase<
-    typeof Attributes.DATA_RANGE,
-    { min?: string; max?: string }
-  > {}
+export const { Field, Check, DataRange, MultiSelect, NumberRange, Select } =
+  Attributes;
+
+export type Field = Scheme<typeof Field, DefaultValue>;
+export type Check = Scheme<typeof Check, boolean>;
+export type Select<T extends DefaultItemValue = DefaultItemValue> = Scheme<
+  typeof Select,
+  Item<T>
+>;
+export type MultiSelect<T extends DefaultItemValue = DefaultItemValue> = Scheme<
+  typeof MultiSelect,
+  Record<string, Item<T>>
+>;
+export type NumberRange = Scheme<
+  typeof NumberRange,
+  { min?: number; max?: number }
+>;
+export type DataRange<T extends string = string> = Scheme<
+  typeof DataRange,
+  { min?: T; max?: T }
+>;
 
 export type Type =
+  | Field
   | Select
   | MultiSelect
-  | Category
   | Check
   | NumberRange
   | DataRange;

@@ -1,8 +1,8 @@
 import { signature } from "@/utils/signature";
-import { FilterData, FilterFeatureID } from "../types/filter";
+import { Filter } from "../types";
 
-export function generateFilterDataID<T extends FilterFeatureID>(
+export function generateFilterDataID<T extends Filter.Build.FeatureID>(
   featureID: T,
-): FilterData<T>["dataID"] {
+): Filter.Build.Data<T>["dataID"] {
   return `${featureID}-${signature()}`;
 }
