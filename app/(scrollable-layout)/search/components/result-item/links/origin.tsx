@@ -22,16 +22,17 @@ export default function SearchResultOriginLink({ origin_link }: Props) {
 
   return hasSingleLink ? (
     // 링크가 하나만 존재하는 경우
-    <LabelButton ui_variant="bordered" ui_color="secondary" ui_size="medium">
-      <Link
-        href={linksToArray[0]}
-        target="_blank"
-        className="flex w-full items-center justify-between gap-4"
+    <Link href={linksToArray[0]} target="_blank">
+      <LabelButton
+        ui_variant="bordered"
+        ui_color="secondary"
+        ui_size="medium"
+        className="w-full"
       >
         <OriginLinkIcon ui_size="small" />
         <div>Origin</div>
-      </Link>
-    </LabelButton>
+      </LabelButton>
+    </Link>
   ) : (
     // 링크가 두 개 이상 존재하는 경우
     <Popover.Root>

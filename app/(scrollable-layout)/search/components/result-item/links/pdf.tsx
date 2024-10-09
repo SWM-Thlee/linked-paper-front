@@ -18,16 +18,17 @@ export default function SearchResultPdfLink({ pdf_link }: Props) {
 
   return hasSingleLink ? (
     // 링크가 하나만 존재
-    <LabelButton ui_color="secondary" ui_variant="bordered" ui_size="medium">
-      <Link
-        href={linksToArray[0]}
-        target="_blank"
-        className="flex w-full items-center justify-between gap-4"
+    <Link href={linksToArray[0]} target="_blank">
+      <LabelButton
+        ui_color="secondary"
+        ui_variant="bordered"
+        ui_size="medium"
+        className="flex w-full"
       >
         <PdfLinkIcon ui_size="small" />
         <div>PDF</div>
-      </Link>
-    </LabelButton>
+      </LabelButton>
+    </Link>
   ) : (
     // 링크가 여러 개 존재
     <Popover.Root>
