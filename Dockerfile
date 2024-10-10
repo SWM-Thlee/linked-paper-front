@@ -1,5 +1,5 @@
 # Use the smallest possible base image
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed in a separate stage
 FROM base AS deps
