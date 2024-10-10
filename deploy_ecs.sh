@@ -22,7 +22,6 @@ for SERVICE_ARN in $SERVICES; do
     --cluster "$CLUSTER_NAME" \
     --service "$SERVICE_NAME" \
     --force-new-deployment  \
-    --no-cli-pager
 
   if [ $? -eq 0 ]; then
     echo "서비스 '$SERVICE_NAME'에 새 배포가 성공적으로 적용되었습니다."

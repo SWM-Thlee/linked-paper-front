@@ -36,6 +36,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
       - name: Configure AWS Credentials
         id: aws-creds
         uses: aws-actions/configure-aws-credentials@v4
@@ -73,4 +78,5 @@ jobs:
       - name: Deploy to ECS
         id: deploy
         run: |
-          /github/workspace/deploy.sh
+          chmod +x ./deploy_ecs.sh
+          ./deploy_ecs.sh
