@@ -15,14 +15,15 @@
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
-    "autoprefixer": "10.4.19",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-navigation-menu": "^1.2.0",
     "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-radio-group": "^1.2.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@sentry/nextjs": "^8",
     "@tanstack/react-query": "^5.51.1",
     "@tanstack/react-query-next-experimental": "^5.52.2",
+    "autoprefixer": "10.4.19",
     "intl-messageformat": "^10.5.0",
     "jotai": "^2.9.0",
     "next": "14.2.4",
@@ -59,5 +60,6 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "3.4.3",
     "typescript": "5.0.4"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
