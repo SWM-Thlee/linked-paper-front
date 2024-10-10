@@ -14,6 +14,8 @@
     "*.{ts,tsx}": "eslint -c .eslintrc.json --fix"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "autoprefixer": "10.4.19",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-navigation-menu": "^1.2.0",
     "@radix-ui/react-popover": "^1.1.1",
