@@ -16,7 +16,7 @@ export default function SearchResultItemLinks({
 }: Props) {
   return (
     <div className="flex flex-col justify-end gap-2">
-      <Link href={{ pathname: "/flower", query: { id } }}>
+      <Link href={{ pathname: "/flower", query: { id } }} prefetch={false}>
         <LabelButton ui_size="medium" ui_variant="bordered" className="w-full">
           <BloomIcon ui_size="small" />
           <div>Bloom</div>
