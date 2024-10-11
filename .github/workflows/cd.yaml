@@ -34,12 +34,6 @@ jobs:
         id: prepare
         run: echo "version=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Generate Environment Variables for Production
-        run: |
-          touch .env
-          echo "NEXT_PUBLIC_API_ENDPOINT=$NEXT_PUBLIC_API_ENDPOINT" >> .env
-          echo "NEXT_PUBLIC_FEEDBACK_MAIL=$NEXT_PUBLIC_FEEDBACK_MAIL" >> .env
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -60,7 +54,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{env.AWS_REGION}}.amazonaws.com/${{ env.REPOSITORY }}
+          images: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.REPOSITORY }}
           tags: |
             ${{ steps.prepare.outputs.version }}
             latest
@@ -72,6 +66,9 @@ jobs:
           context: .
           file: Dockerfile
           push: true
+          build-args: |
+            NEXT_PUBLIC_API_ENDPOINT=${{ env.NEXT_PUBLIC_API_ENDPOINT }}
+            NEXT_PUBLIC_FEEDBACK_MAIL=${{ env.NEXT_PUBLIC_FEEDBACK_MAIL }}
           platforms: |
             linux/amd64
           tags: ${{ steps.meta.outputs.tags }}

@@ -27,6 +27,13 @@ COPY --from=deps /app/node_modules /app/node_modules
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the Next.js application with standalone output
+ARG NEXT_PUBLIC_API_ENDPOINT
+ARG NEXT_PUBLIC_FEEDBACK_MAIL
+RUN touch .env.production
+RUN echo "NEXT_PUBLIC_API_ENDPOINT=$NEXT_PUBLIC_API_ENDPOINT" >> .env.production
+RUN echo "NEXT_PUBLIC_FEEDBACK_MAIL=$NEXT_PUBLIC_FEEDBACK_MAIL" >> .env.production
+RUN cat .env.production
+
 RUN yarn build; 
 
 # Final stage for the production image
