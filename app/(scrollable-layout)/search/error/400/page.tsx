@@ -1,19 +1,18 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import PageContainer from "@/components/page-container";
 import ScrollLockOnce from "@/components/page-only/scroll-lock-once";
 import Button from "@/ui/button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
 import WarningIcon from "@/ui/icons/warning";
+import { Suspense } from "react";
+import ErrorReason from "../error-reason";
 
 // .../error/400?reason={reason}
 export default function Page() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-
-  const errorReason = searchParams.get("reason");
 
   return (
     <ScrollLockOnce>
@@ -27,11 +26,9 @@ export default function Page() {
             <div className="select-none text-display-small">
               From - <i className="select-text">Semantic Search</i>
             </div>
-            {errorReason && (
-              <div className="select-none text-display-small">
-                Because of - <i className="select-text">{errorReason}</i>
-              </div>
-            )}
+            <Suspense>
+              <ErrorReason />
+            </Suspense>
           </div>
           <hr className="border-light-outline dark:border-dark-outline" />
           <div className="flex gap-2">

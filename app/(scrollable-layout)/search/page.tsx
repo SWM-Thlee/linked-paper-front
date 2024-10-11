@@ -13,21 +13,23 @@ import {
 
 export default function Page() {
   return (
-    <QueryResolver>
-      <PageContainer>
-        <Header />
-        <Suspense
-          fallback={
-            <ScrollLockOnce>
-              <InitialLoading />
-              <EndlessFooter />
-            </ScrollLockOnce>
-          }
-        >
-          <Contents />
-        </Suspense>
-        <ScrollToTop />
-      </PageContainer>
-    </QueryResolver>
+    <PageContainer>
+      <Suspense>
+        <QueryResolver>
+          <Header />
+          <Suspense
+            fallback={
+              <ScrollLockOnce>
+                <InitialLoading />
+                <EndlessFooter />
+              </ScrollLockOnce>
+            }
+          >
+            <Contents />
+          </Suspense>
+          <ScrollToTop />
+        </QueryResolver>
+      </Suspense>
+    </PageContainer>
   );
 }
