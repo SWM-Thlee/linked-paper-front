@@ -1,12 +1,10 @@
 name: Deploy to ECS
 
 on:
-  # main 브랜치에 PR이 머지될 때 트리거
   push:
     branches:
       - main
 
-  # 수동으로 워크플로를 트리거할 때
   workflow_dispatch:
 
 env:
@@ -15,7 +13,8 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   REPOSITORY: next_production_image
-  #NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
   deploy:
@@ -35,11 +34,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Install AWS CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
 
       - name: Configure AWS Credentials
         id: aws-creds
