@@ -1,23 +1,22 @@
 import { useCallback } from "react";
 import { useSetAtom } from "jotai";
 
-import { FilterData, FilterFeatureID } from "../types/filter";
-import { FilterStore } from "../types/store";
-import { Dispatcher } from "../stores";
+import { AtomDispatcher } from "../stores";
+import { Filter } from "../types";
 
-type Props<T extends FilterFeatureID> = {
+type Props<T extends Filter.Build.FeatureID> = {
   featureID: T;
-  store?: FilterStore;
+  store?: Filter.Store.Type;
 };
 
-export default function useFilterDispatcher<T extends FilterFeatureID>({
+export default function useFilterDispatcher<T extends Filter.Build.FeatureID>({
   featureID,
-  store = FilterStore.PERSIST,
+  store = Filter.Store.PERSIST,
 }: Props<T>) {
-  const dispatcher = useSetAtom(Dispatcher[store](featureID));
+  const dispatcher = useSetAtom(AtomDispatcher[store](featureID));
 
   return useCallback(
-    (data: FilterData<T>) => {
+    (data: Filter.Build.Data<T>) => {
       if (data.featureID !== featureID)
         throw new Error("Error from FilterDispather: Feature missmatched.");
       dispatcher(data);

@@ -46,3 +46,7 @@ export function matches({
 
   return checkInclusion && checkExclusion;
 }
+
+export function matcher(props: Omit<KeywordMatchOption, "target">) {
+  return (target: string) => matches({ ...props, target });
+}

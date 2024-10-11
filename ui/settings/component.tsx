@@ -10,6 +10,7 @@ import * as Primitive from "@radix-ui/react-dialog";
 import useIsClient from "@/hooks/use-is-client";
 import { tv } from "@/utils/tailwind-variants";
 import { sem } from "@/utils/semantic-styles";
+import { Search } from "@/features/search/types";
 import {
   SettingsContainer,
   TabDirectionObserver,
@@ -34,23 +35,23 @@ export const settingsVariant = tv({
   slots: {
     overlay: sem()
       .layout(["fixed", "inset-0", "z-overlay"])
-      .color(["bg-light-shadow/15", "dark:bg-dark-shadow/50"])
+      .color(["bg-light-shadow/15", "dark:bg-dark-shadow/15", "backdrop-blur"])
       .transition(["data-[state=open]:animate-overlayShow"])
       .build(),
     container: sem()
       .layout([
-        "grid grid-cols-[minmax(15rem,_1fr)_4fr]",
+        "grid grid-cols-[minmax(20rem,_1fr)_3fr]",
         "fixed",
         "overflow-hidden",
         "rounded-6",
         "top-[50%] left-[50%]",
-        "min-w-[50vw] max-w-[75vw]",
+        "w-[1024px]",
         "translate-x-[-50%] translate-y-[-50%]",
         "z-dialog",
       ])
       .color([
         "focus:outline-none",
-        "shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]",
+        "shadow-lg",
         "bg-light-surfaceContainerLowest",
         "text-light-onSurface",
         "dark:bg-dark-surfaceContainerLowest",
@@ -125,11 +126,6 @@ export const settingsVariant = tv({
       .build(),
   },
 });
-
-export const EMPTY_TAB_INFO = {
-  title: "Empty Tab",
-  description: "Tab is not selected",
-};
 
 export interface SettingsRootProps extends Primitive.DialogProps {}
 
@@ -255,10 +251,10 @@ export function Content({
                     ) : (
                       <VisuallyHidden>
                         <Primitive.Title>
-                          {EMPTY_TAB_INFO.title}
+                          {Search.Settings.EMPTY.TITLE}
                         </Primitive.Title>
                         <Primitive.Description>
-                          {EMPTY_TAB_INFO.description}
+                          {Search.Settings.EMPTY.DESCRIPTION}
                         </Primitive.Description>
                       </VisuallyHidden>
                     )}

@@ -14,6 +14,10 @@ export function repeat<T>(size: number, func: () => T) {
   return range(size).map(func);
 }
 
+export function selectOne<T>(arr: T[]) {
+  return faker.helpers.arrayElement(arr);
+}
+
 export function select<T>(arr: T[], min: number, max: number) {
   return faker.helpers.arrayElements(arr, { min, max });
 }

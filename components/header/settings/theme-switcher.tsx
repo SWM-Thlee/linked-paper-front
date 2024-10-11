@@ -35,7 +35,7 @@ export default function ThemeSwitcher() {
     return themes.default;
 
   return (
-    <button type="button" onClick={toggle}>
+    <button type="button" aria-label="Theme Switcher" onClick={toggle}>
       {resolvedTheme === "light" ? themes.light : themes.dark}
     </button>
   );

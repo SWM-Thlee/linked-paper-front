@@ -10,7 +10,7 @@ import { NavigationModule } from "./types";
 
 export const navigationVariant = tv({
   slots: {
-    root: ["flex", "w-screen", "justify-center"],
+    root: ["flex", "justify-center"],
     list: sem()
       .layout(["flex", "p-1", "gap-1", "list-none", "rounded-circle"])
       .color(["bg-light-surfaceDim", "dark:bg-dark-surfaceDim"])
