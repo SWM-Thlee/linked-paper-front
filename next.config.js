@@ -11,6 +11,7 @@ const nextConfig = {
     };
     return config;
   },
+  // Client-Side Request
   async rewrites() {
     return [
       {
@@ -33,6 +34,7 @@ module.exports = withSentryConfig(module.exports, {
 
   org: "software-maestro-9s",
   project: "javascript-nextjs",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,

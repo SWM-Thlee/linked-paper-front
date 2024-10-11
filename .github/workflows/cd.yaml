@@ -17,7 +17,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   # Sentry Config
-  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
   # Firebase Config
@@ -81,7 +81,11 @@ jobs:
           context: .
           file: Dockerfile
           push: true
+          # NEXT_PUBLIC* : APPEARED PUBLIC
+          # OTHERS : MUST KEEP IN SECRET
           build-args: |
+            SENTRY_AUTH_TOKEN: ${{ env.SENTRY_AUTH_TOKEN }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ env.NEXT_PUBLIC_SENTRY_DSN }}
             NEXT_PUBLIC_API_ENDPOINT=${{ env.NEXT_PUBLIC_API_ENDPOINT }}
             NEXT_PUBLIC_FEEDBACK_MAIL=${{ env.NEXT_PUBLIC_FEEDBACK_MAIL }}
             NEXT_PUBLIC_FIREBASE_API_KEY: ${{ env.NEXT_PUBLIC_FIREBASE_API_KEY }}
