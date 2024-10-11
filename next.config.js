@@ -1,6 +1,6 @@
-/** @type {import('next').NextConfig} */
-
 const path = require("path");
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
   // Webpack production configure with path alias
@@ -10,6 +10,14 @@ const nextConfig = {
       "@": path.resolve(__dirname, "./"),
     };
     return config;
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_ENDPOINT}/:path*`,
+      },
+    ];
   },
 };
 

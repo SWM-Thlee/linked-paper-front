@@ -1,17 +1,13 @@
 import { ErrorResponse, fetchUniversally } from "@/utils/fetch-universally";
-
 import { Search } from "../types";
 import { convertToQueryString } from "../utils/filter/query";
-
-// TODO: 예외 처리
-const endpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
 export async function SearchResult(
   info: Search.Query.Info,
 ): Promise<Search.Api.Result | ErrorResponse> {
   // Server Response
   const response = await fetchUniversally<Search.Api.Response>(
-    `${endpoint}/search?${convertToQueryString(info)}`,
+    `/api/search?${convertToQueryString(info)}`,
     Search.Api.NoStore,
   );
 
