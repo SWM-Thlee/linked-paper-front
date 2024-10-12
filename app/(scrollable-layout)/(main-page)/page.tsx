@@ -1,7 +1,7 @@
 import PageContainer from "@/components/page-container";
 import AnnouncementProvider from "@/features/announcement/components/announcement-provider";
 import DefaultFilterInfo from "./components/default-filter-info";
-import SearchFields from "./components/search-fields";
+import SearchForm from "./components/search-form";
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
         <AnnouncementProvider />
         <div className="mt-16 flex flex-col gap-8">
           <DefaultFilterInfo />
-          <SearchFields />
+          <SearchForm />
         </div>
       </div>
     </PageContainer>

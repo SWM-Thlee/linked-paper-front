@@ -7,16 +7,17 @@ import {
   useMemo,
   useState,
 } from "react";
+import Link from "next/link";
 
-import { NavigationModule } from "@/ui/navigation";
-import SearchField from "@/ui/search-field";
-import SearchIcon from "@/ui/icons/search";
-import FieldContainer from "@/ui/container/field-container";
 import useSearchRequest from "@/features/search/hooks/query/use-search-request";
+import { generateMailFeedbackRequest } from "@/features/feedback/utils/mail";
 import { defaultQueryValue } from "@/features/search/stores/query";
-import DefaultFilterInfo from "./default-filter-info";
+import SearchField from "@/ui/search-field";
+import LabelButton from "@/ui/label-button";
+import SearchIcon from "@/ui/icons/search";
+import FeedbackIcon from "@/ui/icons/feedback";
 
-function Content() {
+export default function SearchForm() {
   const [queryText, setQueryText] = useState("");
   const router = useSearchRequest();
 
@@ -45,30 +46,25 @@ function Content() {
   );
 
   return (
-    <div className="flex flex-col gap-8">
+    <>
       <SearchField
-        ui_size="medium"
         value={queryText}
-        autoFocus
         onChange={onChange}
         onKeyUp={onKeyUp}
         defaultPlaceholder={searchPlaceholder}
       />
-      <FieldContainer title="DEFAULT OPTIONS">
-        <DefaultFilterInfo />
-      </FieldContainer>
-    </div>
+      <div className="flex items-center justify-center gap-4">
+        <LabelButton ui_size="large" onClick={request}>
+          <SearchIcon ui_size="small" />
+          Search
+        </LabelButton>
+        <Link href={generateMailFeedbackRequest()}>
+          <LabelButton ui_size="large" ui_color="secondary">
+            <FeedbackIcon ui_size="small" />
+            Send Feedback
+          </LabelButton>
+        </Link>
+      </div>
+    </>
   );
 }
-
-export const SearchNavigation: NavigationModule = {
-  type: "dropdown",
-  key: "search",
-  content: <Content />,
-  title: (
-    <div className="flex items-center gap-2">
-      <SearchIcon ui_size="small" />
-      <div className="text-label-large">Search</div>
-    </div>
-  ),
-};
