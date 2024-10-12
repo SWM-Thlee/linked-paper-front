@@ -1,24 +1,27 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { Settings } from "@/ui/settings";
+import { Filter } from "@/features/filter/types";
+import { Search } from "@/features/search/types";
+import { DefaultSearchFilterInfo } from "@/features/search/components/filter-info/default-info";
+import { DefaultPresetSearchFilterInfo } from "@/features/search/components/filter-info/default-preset-info";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
 import createSearchFilter from "@/features/search/utils/filter/initial";
-import Button from "@/ui/button";
+import { toPreset } from "@/features/filter/utils/converter/preset";
 import AddIcon from "@/ui/icons/add";
 import DeleteIcon from "@/ui/icons/delete";
-import { Filter } from "@/features/filter/types";
 import FilterIcon from "@/ui/icons/filter";
-import { toPreset } from "@/features/filter/utils/converter/preset";
-import { Search } from "@/features/search/types";
 import TipIcon from "@/ui/icons/tip";
-import { DefaultSearchFilterInfo } from "@/features/search/components/filter-info/default-info";
-import { DefaultPresetSearchFilterInfo } from "@/features/search/components/filter-info/default-preset-info";
+import Button from "@/ui/button";
+import { Settings } from "@/ui/settings";
+import PresetIcon from "@/ui/icons/preset";
+import SearchField from "@/ui/search-field";
+import { matcher } from "@/features/search/utils/matcher";
 
-function AddPresetButton() {
+function AddPreset() {
   const dispatch = useSearchFilterDispatcher({ store: Filter.Store.PERSIST });
 
   const onClick = useCallback(
@@ -43,23 +46,21 @@ function AddPresetButton() {
   );
 }
 
-function RemoveAllButton() {
-  // Persist Store에 저장된 Preset
-  const { reset: removeInPersistentStore } = useSearchFilters({
+function RemoveAll() {
+  const { reset: resetPersist } = useSearchFilters({
     store: Filter.Store.PERSIST,
     track: { tag: [Filter.Identify.Tag.PRESET] },
   });
 
-  // Temporary Store에 저장된 Preset
-  const { reset: removeInTemporaryStore } = useSearchFilters({
+  const { reset: resetTemp } = useSearchFilters({
     store: Filter.Store.TEMPORARY,
     track: { tag: [Filter.Identify.Tag.PRESET] },
   });
 
   const removeAll = useCallback(() => {
-    removeInPersistentStore();
-    removeInTemporaryStore();
-  }, [removeInPersistentStore, removeInTemporaryStore]);
+    resetPersist();
+    resetTemp();
+  }, [resetPersist, resetTemp]);
 
   return (
     <Button
@@ -87,44 +88,77 @@ function DefaultFilterNotFound() {
   );
 }
 
-function SearchFilterPresets() {
-  const { filters } = useSearchFilters({
-    store: Filter.Store.PERSIST,
-    track: { tag: [Filter.Identify.Tag.PRESET, [Filter.Identify.Tag.EDIT]] },
-  });
+function PresetFilterNotFound() {
+  const dispatch = useSearchFilterDispatcher({ store: Filter.Store.PERSIST });
 
-  // 생성 날짜가 가까운 Preset부터 위에 위치합니다.
-  const sorted = useMemo(
+  const onClick = useCallback(
     () =>
-      Object.entries(filters).toSorted(
-        ([, leftData], [, rightData]) =>
-          (rightData.tags[Filter.Identify.Tag.PRESET].createdAt as number) -
-          (leftData.tags[Filter.Identify.Tag.PRESET].createdAt as number),
+      dispatch(
+        toPreset<Search.Filter.Type>({
+          data: createSearchFilter({ tags: {}, name: "Unnamed Preset" }),
+        }),
       ),
-    [filters],
+    [dispatch],
   );
 
   return (
-    <div className="flex flex-col gap-8">
-      {sorted.map(([dataID, data]) => (
-        <div key={dataID} className="animate-fadeIn">
-          <DefaultPresetSearchFilterInfo
-            store={Filter.Store.PERSIST}
-            data={data}
-          />
-        </div>
-      ))}
+    <div className="flex animate-fadeIn flex-col gap-6 py-6 text-body-large">
+      <PresetIcon ui_size="large" />
+      <div className="text-title-large">
+        Don&apos;t set filters every time you search.
+      </div>
+      <p>Save time by setting up a Preset for faster search experience.</p>
+      <Button
+        ui_size="large"
+        ui_variant="light"
+        className="flex items-center justify-center gap-4"
+        onClick={onClick}
+      >
+        <AddIcon />
+        Create New Preset
+      </Button>
     </div>
   );
 }
 
 export default function DefaultSearchFilter() {
+  /* Tab */
   const tabID = useTabID(Search.Settings.DEFAULT_SEARCH_FILTER.ID);
 
+  /* Default Filter */
   const { filter } = useSearchFilters({
     store: Filter.Store.PERSIST,
     track: { tag: [Filter.Identify.Tag.DEFAULT] },
   });
+
+  /* Presets */
+  const { filters, length } = useSearchFilters({
+    store: Filter.Store.PERSIST,
+    track: { tag: [Filter.Identify.Tag.PRESET, [Filter.Identify.Tag.EDIT]] },
+  });
+
+  const hasFilter = length > 0 || !!filter;
+
+  /* Search Presets */
+  const [text, setText] = useState("");
+
+  const search = useMemo(
+    () => matcher({ include: [text], ignoreCase: true, ignoreSpace: true }),
+    [text],
+  );
+
+  /* 생성 날짜가 가까운 Preset부터 위에 위치합니다. */
+  const presets = useMemo(
+    () =>
+      Object.entries(filters)
+        .filter(([, data]) => search(data.name))
+        .toSorted(
+          ([, leftData], [, rightData]) =>
+            (rightData.tags[Filter.Identify.Tag.PRESET].createdAt as number) -
+            (leftData.tags[Filter.Identify.Tag.PRESET].createdAt as number),
+        ),
+    [search, filters],
+  );
 
   return (
     <Settings.Tab.Root
@@ -142,26 +176,51 @@ export default function DefaultSearchFilter() {
       </Settings.Tab.Title>
       <Settings.Tab.Content>
         <div className="mt-8 flex flex-col gap-16">
-          <div className="animate-fadeIn">
-            {filter ? (
-              <DefaultSearchFilterInfo
-                data={filter}
-                store={Filter.Store.PERSIST}
-              />
-            ) : (
-              <DefaultFilterNotFound />
-            )}
-          </div>
-
-          <div className="flex flex-col gap-8">
-            <div className="flex items-center justify-between gap-6">
-              <div className="text-title-large">Presets</div>
-              <div className="flex gap-2">
-                <AddPresetButton />
-                <RemoveAllButton />
-              </div>
+          {hasFilter && (
+            <div className="animate-fadeIn">
+              {filter ? (
+                <DefaultSearchFilterInfo
+                  data={filter}
+                  store={Filter.Store.PERSIST}
+                />
+              ) : (
+                <DefaultFilterNotFound />
+              )}
             </div>
-            <SearchFilterPresets />
+          )}
+          <div className="flex flex-col gap-8">
+            {hasFilter && (
+              <div className="flex items-center justify-between gap-6">
+                <div className="select-none text-title-large">Presets</div>
+                <div className="flex items-center gap-2">
+                  <AddPreset />
+                  <RemoveAll />
+                </div>
+              </div>
+            )}
+            {hasFilter ? (
+              <div className="flex flex-col gap-4">
+                <SearchField
+                  ui_color="tertiary"
+                  ui_size="medium"
+                  defaultPlaceholder="find presets by name."
+                  value={text}
+                  onChange={(event) => setText(event.target.value)}
+                />
+                <div className="flex flex-col gap-8">
+                  {presets.map(([dataID, data]) => (
+                    <div key={dataID} className="animate-fadeIn">
+                      <DefaultPresetSearchFilterInfo
+                        store={Filter.Store.PERSIST}
+                        data={data}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <PresetFilterNotFound />
+            )}
           </div>
         </div>
       </Settings.Tab.Content>
