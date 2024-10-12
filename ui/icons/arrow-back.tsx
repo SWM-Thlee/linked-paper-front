@@ -1,9 +1,9 @@
-import { MdArrowBack } from "react-icons/md";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import IconWrapper from "./wrapper";
 
 const ArrowBackIcon = IconWrapper({
   type: "react-icons",
-  baseComponent: MdArrowBack,
+  baseComponent: MdOutlineKeyboardArrowLeft,
 });
 
 export default ArrowBackIcon;

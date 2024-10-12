@@ -1,9 +1,9 @@
-import { MdArrowForward } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import IconWrapper from "./wrapper";
 
 const ArrowForwardIcon = IconWrapper({
   type: "react-icons",
-  baseComponent: MdArrowForward,
+  baseComponent: MdOutlineKeyboardArrowRight,
 });
 
 export default ArrowForwardIcon;
