@@ -1,93 +1,94 @@
-import { tv, VariantProps } from "@/utils/tailwind-variants";
-import * as UiTooltip from "@radix-ui/react-tooltip";
+"use client";
 
-const tooltipVariant = tv({
+import * as Primitive from "@radix-ui/react-tooltip";
+
+import { sem } from "@/utils/semantic-styles";
+import { tv, VariantProps } from "@/utils/tailwind-variants";
+
+export const tooltipVariant = tv({
   slots: {
-    content: [
-      "data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade",
-      "data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade",
-      "data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade",
-      "data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade",
-      "select-none",
-      "rounded-[0.25rem]",
-      "px-3",
-      "py-1.5",
-      "leading-none",
-      "will-change-[transform,opacity]",
-      "z-50",
-    ],
-    arrow: ["z-50"],
+    content: sem()
+      .layout([
+        "select-none",
+        "rounded-1",
+        "px-3",
+        "py-1.5",
+        "leading-6",
+        "border-2",
+        "z-tooltip",
+        "break-keep",
+        "max-w-[40rem]",
+        "text-center",
+      ])
+      .color(["border-light-outline", "dark:border-dark-outline"])
+      .transition([
+        "will-change-[transform,opacity]",
+        "data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade",
+        "data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade",
+        "data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade",
+        "data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade",
+      ])
+      .build(),
+    arrow: sem()
+      .layout(["z-tooltip"])
+      .color(["fill-light-outline", "dark:fill-dark-outline"])
+      .build(),
   },
   variants: {
-    _color: {
-      primary: {
+    ui_color: {
+      default: {
         content: [
-          "bg-light-primaryContainer",
-          "text-light-onPrimaryContainer",
-          "dark:bg-dark-primaryContainer",
-          "dark:text-dark-onPrimaryContainer",
-        ],
-        arrow: [
-          "fill-light-primaryContainer",
-          "dark:fill-dark-primaryContainer",
-        ],
-      },
-      secondary: {
-        content: [
-          "bg-light-secondaryContainer",
-          "text-light-onSecondaryContainer",
-          "dark:bg-dark-secondaryContainer",
-          "dark:text-dark-onSecondaryContainer",
-        ],
-        arrow: [
-          "fill-light-secondaryContainer",
-          "dark:fill-dark-secondaryContainer",
-        ],
-      },
-      tertiary: {
-        content: [
-          "bg-light-tertiaryContainer",
-          "text-light-onTertiaryContainer",
-          "dark:bg-dark-tertiaryContainer",
-          "dark:text-dark-onTertiaryContainer",
-        ],
-        arrow: [
-          "fill-light-tertiaryContainer",
-          "dark:fill-dark-tertiaryContainer",
+          "bg-light-surfaceVariant/75",
+          "text-light-onSurface",
+          "dark:bg-dark-surfaceVariant/75",
+          "dark:text-dark-onSurface",
         ],
       },
       error: {
         content: [
-          "bg-light-errorContainer",
+          "bg-light-errorContainer/75",
           "text-light-onErrorContainer",
-          "dark:bg-dark-errorContainer",
+          "dark:bg-dark-errorContainer/75",
           "dark:text-dark-onErrorContainer",
         ],
-        arrow: ["fill-light-errorContainer", "dark:fill-dark-errorContainer"],
       },
     },
   },
   defaultVariants: {
-    _color: "primary",
+    ui_color: "default",
   },
 });
 
-type Props = { children: React.ReactNode; title: string } & VariantProps<
-  typeof tooltipVariant
->;
+export interface TooltipProps
+  extends VariantProps<typeof tooltipVariant>,
+    Primitive.TooltipContentProps {
+  title: string;
+}
 
-export default function Tooltip({ _color, children, title }: Props) {
-  const { content, arrow } = tooltipVariant({ _color });
+export const { TooltipProvider } = Primitive;
+
+export function Tooltip({
+  title,
+  ui_color,
+  children,
+  className,
+  ...props
+}: TooltipProps) {
+  const { content, arrow } = tooltipVariant({ ui_color });
 
   return (
-    <UiTooltip.Root delayDuration={100}>
-      <UiTooltip.Trigger asChild>{children}</UiTooltip.Trigger>
-      <UiTooltip.Portal>
-        <UiTooltip.Content className={content()} sideOffset={5}>
+    <Primitive.Root delayDuration={100}>
+      <Primitive.Trigger asChild>{children}</Primitive.Trigger>
+      <Primitive.Portal>
+        <Primitive.Content
+          sideOffset={5}
+          className={content({ className })}
+          {...props}
+        >
           {title}
-          <UiTooltip.Arrow className={arrow()} />
-        </UiTooltip.Content>
-      </UiTooltip.Portal>
-    </UiTooltip.Root>
+          <Primitive.Arrow className={arrow()} />
+        </Primitive.Content>
+      </Primitive.Portal>
+    </Primitive.Root>
   );
 }

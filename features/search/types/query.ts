@@ -1,17 +1,34 @@
-import { SearchFilterInfo } from "./filter";
+export type Sorting = (typeof Sorting)[keyof typeof Sorting];
+export const Sorting = {
+  RECENCY: "recency",
+  SIMILARITY: "similarity",
+  // *미구현* CITIATION: "citiation",
+} as const;
 
-// 검색 시 정렬 방식을 나타냅니다.
-export type SearchSortingType =
-  | "recency" /* 최근에 게시된 논문 순 */
-  | "similarity" /* 유사도가 높은 순 */
-  | "citiation" /* 피인용 수가 높은 순 */;
+/** 검색 결과의 크기를 나타냅니다. */
+export type Size = (typeof Size)[number];
+export const Size = [20, 30, 40, 50] as const;
 
-// 현 검색 쿼리의 정보를 나타냅니다.
-export type SearchQueryInfo = {
-  query: string /* 검색어 */;
-  filter: SearchFilterInfo /* 필터링 정보 */;
-  sorting: SearchSortingType /* 정렬 방식 */;
-  size: number /* 검색 결과물의 크기 */;
-  index: number /* 검색 결과의 시작 위치 */;
-  similarity_limit: boolean /* 유사도 제한 설정 여부 */;
+export type RequiredInfo = {
+  query: string;
+  sorting: Sorting;
+  size: Size;
+  index: number;
+  similarity_limit: boolean;
+};
+
+export type FilterInfo = {
+  filter_journal?: string[];
+  filter_category?: string[];
+  filter_start_date?: string;
+  filter_end_date?: string;
+};
+
+export type Info = RequiredInfo & FilterInfo;
+
+/** Query String에서 바로 가져온 값을 나타냅니다. */
+export type RawInfo = {
+  readonly [key in keyof Info]-?:
+    | (NonNullable<Info[key]> extends unknown[] ? string[] : string)
+    | null;
 };
