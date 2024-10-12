@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 
 import PageContainer from "@/components/page-container";
@@ -7,10 +8,9 @@ import ScrollLockOnce from "@/components/page-only/scroll-lock-once";
 import Button from "@/ui/button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
 import WarningIcon from "@/ui/icons/warning";
-import { Suspense } from "react";
 import ErrorReason from "../error-reason";
+import ErrorReasonSkeleton from "../error-reason-skeleton";
 
-// .../error/400?reason={reason}
 export default function Page() {
   const router = useRouter();
 
@@ -23,10 +23,7 @@ export default function Page() {
             <div className="select-none text-display-large">
               400 Bad Request
             </div>
-            <div className="select-none text-display-small">
-              From - <i className="select-text">Semantic Search</i>
-            </div>
-            <Suspense>
+            <Suspense fallback={<ErrorReasonSkeleton />}>
               <ErrorReason />
             </Suspense>
           </div>
