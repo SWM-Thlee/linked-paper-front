@@ -1,13 +1,10 @@
 "use client";
 
 import React from "react";
+
+import { TooltipProvider } from "@/ui/tooltip";
 import { tv, VariantProps } from "@/utils/tailwind-variants";
 import { sem } from "@/utils/semantic-styles";
-
-import IconButton from "@/ui/icon-button";
-import MenuIcon from "@/ui/icons/menu";
-import { Popover } from "@/ui/popover";
-import FieldContainer from "@/ui/container/field-container";
 import { AttributeDefaultRenderer } from "./default-renderer";
 import { Filter } from "../../types";
 
@@ -75,7 +72,6 @@ const filterInfoVariant = tv({
 type Props<T extends Filter.Build.FeatureID> = {
   data: Filter.Build.Data<T>;
   store: Filter.Store.Type;
-  description?: string;
 } & VariantProps<typeof filterInfoVariant>;
 
 /** FilterInfo의 네 부분을 직접 Customize할 수 있습니다. */
@@ -139,7 +135,7 @@ export function CustomizedFilterInfo<T extends Filter.Build.FeatureID>({
   };
 
   /* eslint-disable react/function-component-definition */
-  const FilterInfo = ({ data, description, store }: Props<T>) => {
+  const FilterInfo = ({ data, store }: Props<T>) => {
     const { container, header, title, attributeKey, attributeContent } =
       filterInfoVariant();
 
@@ -158,36 +154,12 @@ export function CustomizedFilterInfo<T extends Filter.Build.FeatureID>({
           <div className={title()}>
             {attributes.title?.(data, store) ?? data.name}
           </div>
-          {(description || attributes.options) && (
-            <Popover.Root>
-              <Popover.Trigger>
-                <IconButton ui_size="large">
-                  <MenuIcon ui_size="small" />
-                </IconButton>
-              </Popover.Trigger>
-              <Popover.Content
-                side="right"
-                className="flex w-[20rem] flex-col gap-4"
-              >
-                {description && (
-                  <FieldContainer
-                    ui_size="medium"
-                    ui_variant="bordered"
-                    title="INFO"
-                    className="text-body-large"
-                  >
-                    {description}
-                  </FieldContainer>
-                )}
-                {attributes.options && (
-                  <FieldContainer title="OPTIONS" ui_size="medium">
-                    <div className="flex flex-col gap-2">
-                      {attributes.options(data, store)}
-                    </div>
-                  </FieldContainer>
-                )}
-              </Popover.Content>
-            </Popover.Root>
+          {attributes.options && (
+            <TooltipProvider>
+              <div className="flex items-center gap-2">
+                {attributes.options(data, store)}
+              </div>
+            </TooltipProvider>
           )}
         </div>
         {entries.map(([key, content]) => (

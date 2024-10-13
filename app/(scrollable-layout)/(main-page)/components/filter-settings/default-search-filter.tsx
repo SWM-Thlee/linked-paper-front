@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Filter } from "@/features/filter/types";
 import { Search } from "@/features/search/types";
@@ -8,118 +8,14 @@ import { DefaultSearchFilterInfo } from "@/features/search/components/filter-inf
 import { DefaultPresetSearchFilterInfo } from "@/features/search/components/filter-info/default-preset-info";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
-import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
-import createSearchFilter from "@/features/search/utils/filter/initial";
-import { toPreset } from "@/features/filter/utils/converter/preset";
-import AddIcon from "@/ui/icons/add";
-import DeleteIcon from "@/ui/icons/delete";
 import FilterIcon from "@/ui/icons/filter";
-import TipIcon from "@/ui/icons/tip";
-import Button from "@/ui/button";
 import { Settings } from "@/ui/settings";
-import PresetIcon from "@/ui/icons/preset";
 import SearchField from "@/ui/search-field";
 import { matcher } from "@/features/search/utils/matcher";
-
-function AddPreset() {
-  const dispatch = useSearchFilterDispatcher({ store: Filter.Store.PERSIST });
-
-  const onClick = useCallback(
-    () =>
-      dispatch(
-        toPreset<Search.Filter.Type>({
-          data: createSearchFilter({ tags: {}, name: "Unnamed Preset" }),
-        }),
-      ),
-    [dispatch],
-  );
-
-  return (
-    <Button
-      onClick={onClick}
-      ui_size="small"
-      ui_variant="light"
-      className="flex items-center gap-4 text-nowrap"
-    >
-      <AddIcon /> New...
-    </Button>
-  );
-}
-
-function RemoveAll() {
-  const { reset: resetPersist } = useSearchFilters({
-    store: Filter.Store.PERSIST,
-    track: { tag: [Filter.Identify.Tag.PRESET] },
-  });
-
-  const { reset: resetTemp } = useSearchFilters({
-    store: Filter.Store.TEMPORARY,
-    track: { tag: [Filter.Identify.Tag.PRESET] },
-  });
-
-  const removeAll = useCallback(() => {
-    resetPersist();
-    resetTemp();
-  }, [resetPersist, resetTemp]);
-
-  return (
-    <Button
-      onClick={removeAll}
-      ui_color="tertiary"
-      ui_size="small"
-      ui_variant="light"
-      className="flex items-center gap-4 text-nowrap"
-    >
-      <DeleteIcon /> Remove All
-    </Button>
-  );
-}
-
-function DefaultFilterNotFound() {
-  return (
-    <div className="flex flex-col gap-6 rounded-4 p-6 text-body-large ring-2 ring-inset ring-light-outlineVariant dark:ring-dark-outlineVariant">
-      <TipIcon ui_size="large" />
-      <div className="text-title-large">Default Filter is Not Set</div>
-      <p>
-        Save time by setting up a Default Filter for faster, more accurate
-        search results.
-      </p>
-    </div>
-  );
-}
-
-function PresetFilterNotFound() {
-  const dispatch = useSearchFilterDispatcher({ store: Filter.Store.PERSIST });
-
-  const onClick = useCallback(
-    () =>
-      dispatch(
-        toPreset<Search.Filter.Type>({
-          data: createSearchFilter({ tags: {}, name: "Unnamed Preset" }),
-        }),
-      ),
-    [dispatch],
-  );
-
-  return (
-    <div className="flex animate-fadeIn flex-col gap-6 py-6 text-body-large">
-      <PresetIcon ui_size="large" />
-      <div className="text-title-large">
-        Don&apos;t set filters every time you search.
-      </div>
-      <p>Save time by setting up a Preset for faster search experience.</p>
-      <Button
-        ui_size="large"
-        ui_variant="light"
-        className="flex items-center justify-center gap-4"
-        onClick={onClick}
-      >
-        <AddIcon />
-        Create New Preset
-      </Button>
-    </div>
-  );
-}
+import AddPreset from "@/features/filter/components/add-preset";
+import RemoveAll from "@/features/filter/components/remove-all";
+import DefaultFilterNotFound from "@/app/(scrollable-layout)/search/components/filter-settings/default-filter-not-found";
+import PresetFilterNotFound from "@/app/(scrollable-layout)/search/components/filter-settings/preset-filter-not-found";
 
 export default function DefaultSearchFilter() {
   /* Tab */
