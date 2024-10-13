@@ -45,7 +45,7 @@ export default function OthersChip({
             className="flex items-center justify-between gap-24"
           >
             <div className="flex items-center gap-2">
-              <JournalIcon ui_size="small" /> Journal
+              <JournalIcon ui_size="small" /> Source
             </div>
             <div className="text-label-large">{journal}</div>
           </Button>

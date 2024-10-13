@@ -14,9 +14,9 @@ export const DATE = {
 
 export const JOURNAL = {
   ID: "FilterJournalEditor",
-  TITLE: "Journal",
+  TITLE: "Source",
   DESCRIPTION:
-    "Choose the journal of paper you want to narrow down when searching for papers.",
+    "Choose the source of paper you want to narrow down when searching for papers.",
 } as const;
 
 export const PREVIEW = {
