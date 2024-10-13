@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { Category, Subject } from "@/utils/category";
 
@@ -14,16 +14,32 @@ export const CategoryUnknown = "Unknown";
  *
  * 즉, 최종적인 설계에서 Category의 정보는 **Server State**에 해당됩니다.
  */
-export default function useCategories() {
+export default function useCategories(custom?: {
+  subject: typeof Subject;
+  category: typeof Category;
+}) {
+  const resolvedSubject = useMemo(
+    () => custom?.subject ?? Subject,
+    [custom?.subject],
+  );
+
+  const resolvedCategory = useMemo(
+    () => custom?.category ?? Category,
+    [custom?.category],
+  );
+
   /**
    * Subject 내에 해당하는 모든 Category를 불러옵니다.
    */
   const getCategories = useCallback(
-    (subject: string) => Subject[subject] ?? {},
-    [],
+    (subject: string) => resolvedSubject[subject] ?? {},
+    [resolvedSubject],
   );
 
-  const getSubjects = useCallback(() => Object.keys(Subject), []);
+  const getSubjects = useCallback(
+    () => Object.keys(resolvedSubject),
+    [resolvedSubject],
+  );
 
   /**
    * 특정 Category의 정보를 불러옵니다.
@@ -31,8 +47,9 @@ export default function useCategories() {
    * **참고**: Filter 내에도 설명이 존재하므로, 이를 초기 데이터로 사용하세요.
    */
   const getInfo = useCallback(
-    (categoryID: string): Category[string] | undefined => Category[categoryID],
-    [],
+    (categoryID: string): Category[string] | undefined =>
+      resolvedCategory[categoryID],
+    [resolvedCategory],
   );
 
   /**
