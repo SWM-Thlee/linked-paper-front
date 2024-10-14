@@ -16,45 +16,56 @@ import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import SearchIcon from "@/ui/icons/search";
 import FeedbackIcon from "@/ui/icons/feedback";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 
 export default function SearchForm() {
-  const [queryText, setQueryText] = useState("");
+  const { log } = useAnalytics();
   const router = useSearchRequest();
+  const [text, setText] = useState("");
 
-  /* 검색을 요청합니다. (검색 페이지로 이동합니다.) */
-  const request = useCallback(() => {
-    if (!queryText) return;
-    router.request({ ...defaultQueryValue, query: queryText });
-  }, [router, queryText]);
+  /* User Event: 검색 요청 */
+  const onRequestQuery = useCallback(() => {
+    if (!text) return;
+
+    log(Analytics.Event.SEARCH_QUERY_MAIN, {
+      query: text,
+      ...searchFilterForAnalytics(router.defaultFilter),
+    });
+
+    router.request({ ...defaultQueryValue, query: text });
+  }, [router, text, log]);
 
   const searchPlaceholder = useMemo(
     () => "describe what you’re looking for, not just keywords.",
     [],
   );
 
-  /* Event Handlers */
-  const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setQueryText(event.target.value);
+  const onChangeText = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
   }, []);
 
-  const onKeyUp = useCallback(
+  const onKeyEnter = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== "Enter") return;
+
       event.preventDefault();
-      if (event.key === "Enter") request();
+      onRequestQuery();
     },
-    [request],
+    [onRequestQuery],
   );
 
   return (
     <>
       <SearchField
-        value={queryText}
-        onChange={onChange}
-        onKeyUp={onKeyUp}
+        value={text}
+        onChange={onChangeText}
+        onKeyUp={onKeyEnter}
         defaultPlaceholder={searchPlaceholder}
       />
       <div className="flex items-center justify-center gap-4">
-        <LabelButton ui_size="large" onClick={request}>
+        <LabelButton ui_size="large" onClick={onRequestQuery}>
           <SearchIcon ui_size="small" />
           Search
         </LabelButton>

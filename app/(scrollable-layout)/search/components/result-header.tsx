@@ -20,6 +20,8 @@ import InfoIcon from "@/ui/icons/info";
 import Button from "@/ui/button";
 import CloseIcon from "@/ui/icons/close";
 import WarningIcon from "@/ui/icons/warning";
+import { Analytics } from "@/features/analytics/types";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import { FilterSettings } from "./filter-settings";
 
 function Attributes({
@@ -235,46 +237,46 @@ function SimilarityLimitation({
 }
 
 export default function SearchResultHeader() {
-  const { update: updateQuery } = useSearchUpdate();
+  const { log } = useAnalytics();
+  const { update } = useSearchUpdate();
   const { requiredQuery, stale } = useSearchQueryInfo();
-
-  // Search Text
   const [text, setText] = useState("");
 
   useEffect(() => {
-    if (stale) return;
-    setText(requiredQuery.query);
+    if (!stale) setText(requiredQuery.query);
   }, [stale, requiredQuery.query]);
 
-  // Search (Result) Size
-  const updateSize = useCallback(
-    (size: Search.Query.Size) => updateQuery({ ...requiredQuery, size }),
-    [updateQuery, requiredQuery],
+  /* User Event: 검색 결과의 크기 */
+  const onModifyResultSize = useCallback(
+    (size: Search.Query.Size) => update({ ...requiredQuery, size }),
+    [update, requiredQuery],
   );
 
-  // Similarity Limitation
-  const updateLimit = useCallback(
+  /* User Event: 유사도 제한 */
+  const onModifyLimitation = useCallback(
     (similarity_limit: boolean) =>
-      updateQuery({ ...requiredQuery, similarity_limit }),
-    [updateQuery, requiredQuery],
+      update({ ...requiredQuery, similarity_limit }),
+    [update, requiredQuery],
   );
 
-  // Search Sorting
-  const updateSorting = useCallback(
-    (sorting: Search.Query.Sorting) =>
-      updateQuery({ ...requiredQuery, sorting }),
-    [updateQuery, requiredQuery],
-  );
-
-  // Query Text
-  const updateQueryText = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (!text) return;
-      if (e.key === "Enter") {
-        updateQuery({ ...requiredQuery, query: text });
-      }
+  /* User Event: 정렬 옵션 */
+  const onModifySorting = useCallback(
+    (sorting: Search.Query.Sorting) => {
+      log(Analytics.Event.CHANGE_FILTER_SORTING, { sorting });
+      update({ ...requiredQuery, sorting });
     },
-    [updateQuery, requiredQuery, text],
+    [update, requiredQuery, log],
+  );
+
+  /* User Event: 검색어를 바꾼 뒤 검색 재요청 */
+  const onUpdateQuery = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!(text && event.key === "Enter")) return;
+      event.preventDefault();
+
+      update({ ...requiredQuery, query: text });
+    },
+    [update, requiredQuery, text],
   );
 
   return (
@@ -282,15 +284,18 @@ export default function SearchResultHeader() {
       <FilterChips />
       <SearchField
         value={text}
-        onKeyUp={updateQueryText}
+        onKeyUp={onUpdateQuery}
         onChange={(e) => setText(e.target.value)}
       />
       <div className="grid grid-cols-[1fr_auto]">
         <div className="flex items-center gap-2">
-          <ResultSize status={requiredQuery.size} onStatusChange={updateSize} />
+          <ResultSize
+            status={requiredQuery.size}
+            onStatusChange={onModifyResultSize}
+          />
           <SimilarityLimitation
             status={requiredQuery.similarity_limit}
-            onStatusChange={updateLimit}
+            onStatusChange={onModifyLimitation}
           />
           <FilterSettings>
             <LabelButton ui_color="secondary" ui_variant="bordered">
@@ -301,7 +306,7 @@ export default function SearchResultHeader() {
         <div className="flex flex-col justify-end">
           <Sorting
             status={requiredQuery.sorting}
-            onStatusChange={updateSorting}
+            onStatusChange={onModifySorting}
           />
         </div>
       </div>

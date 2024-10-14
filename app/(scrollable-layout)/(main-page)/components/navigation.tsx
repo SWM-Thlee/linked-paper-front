@@ -17,41 +17,43 @@ import { defaultQueryValue } from "@/features/search/stores/query";
 import DefaultFilterInfo from "./default-filter-info";
 
 function Content() {
-  const [queryText, setQueryText] = useState("");
   const router = useSearchRequest();
+  const [text, setText] = useState("");
 
-  /* 검색을 요청합니다. (검색 페이지로 이동합니다.) */
-  const request = useCallback(() => {
-    if (!queryText) return;
-    router.request({ ...defaultQueryValue, query: queryText });
-  }, [router, queryText]);
+  /* User Event: 검색 요청 */
+  const onRequestQuery = useCallback(() => {
+    if (!text) return;
+
+    router.request({ ...defaultQueryValue, query: text });
+  }, [router, text]);
 
   const searchPlaceholder = useMemo(
     () => "describe what you’re looking for, not just keywords.",
     [],
   );
 
-  /* Event Handlers */
-  const onChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setQueryText(event.target.value);
+  const onChangeText = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
   }, []);
 
-  const onKeyUp = useCallback(
+  const onKeyEnter = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== "Enter") return;
+
       event.preventDefault();
-      if (event.key === "Enter") request();
+      onRequestQuery();
     },
-    [request],
+    [onRequestQuery],
   );
 
   return (
     <div className="flex flex-col gap-8">
       <SearchField
         ui_size="medium"
-        value={queryText}
+        value={text}
         autoFocus
-        onChange={onChange}
-        onKeyUp={onKeyUp}
+        onChange={onChangeText}
+        onKeyUp={onKeyEnter}
         defaultPlaceholder={searchPlaceholder}
       />
       <FieldContainer title="DEFAULT OPTIONS">
