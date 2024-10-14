@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { Search } from "@/features/search/types";
 import Button from "@/ui/button";
 import DateIcon from "@/ui/icons/date";
-import { convertStringToDate } from "@/utils/date";
+import { convertStringToDate } from "@/utils/paper/date";
 import { ContentContainer, KeyContainer } from "./common";
 
 export function DateKey() {

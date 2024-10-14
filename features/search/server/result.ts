@@ -1,4 +1,4 @@
-import { ErrorResponse, fetchUniversally } from "@/utils/fetch-universally";
+import { ErrorResponse, api } from "@/utils/api";
 import { Search } from "../types";
 import { convertToQueryString } from "../utils/filter/query";
 
@@ -6,7 +6,7 @@ export async function SearchResult(
   info: Search.Query.Info,
 ): Promise<Search.Api.Result | ErrorResponse> {
   // Server Response
-  const response = await fetchUniversally<Search.Api.Response>(
+  const response = await api<Search.Api.Response>(
     `/api/search?${convertToQueryString(info)}`,
     Search.Api.NoStore,
   );

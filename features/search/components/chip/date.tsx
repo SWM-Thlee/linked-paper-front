@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import LabelButton from "@/ui/label-button";
 import DateIcon from "@/ui/icons/date";
-import { convertStringToDate } from "@/utils/date";
+import { convertStringToDate } from "@/utils/paper/date";
 
 type Props = {
   dateRange: { min?: string; max?: string };

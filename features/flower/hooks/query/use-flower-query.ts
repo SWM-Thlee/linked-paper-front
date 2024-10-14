@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { ErrorResponse } from "@/utils/fetch-universally";
+import { ErrorResponse } from "@/utils/api";
 import { queryOptions } from "../../server/queries";
 import { Flower } from "../../types";
 

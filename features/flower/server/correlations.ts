@@ -1,4 +1,4 @@
-import { ErrorResponse, fetchUniversally } from "@/utils/fetch-universally";
+import { ErrorResponse, api } from "@/utils/api";
 import { Data } from "@/features/search/types/result";
 
 import { Flower } from "../types";
@@ -6,7 +6,7 @@ import { Flower } from "../types";
 export async function Correlations({
   paperID,
 }: Flower.Query.Info): Promise<Flower.Api.Result | ErrorResponse> {
-  const response = await fetchUniversally<Flower.Api.Response>(
+  const response = await api<Flower.Api.Response>(
     `/api/correlations/${paperID}`,
     Flower.Api.NoStore,
   );

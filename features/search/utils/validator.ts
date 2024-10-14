@@ -1,4 +1,4 @@
-import { convertDateToString, convertStringToDate } from "@/utils/date";
+import { convertDateToString, convertStringToDate } from "@/utils/paper/date";
 import { Search } from "../types";
 
 const INVALID_QUERY = Symbol.for("INVALID_SEARCH_QUERY");

@@ -16,7 +16,7 @@ import useBidirectionalState from "@/hooks/use-bidirectional-state";
 import useCategories from "@/hooks/use-categories";
 import { matcher } from "@/features/search/utils/matcher";
 import { Search } from "@/features/search/types";
-import { Category, Subject } from "@/utils/cs-category";
+import { Category, Subject } from "@/utils/paper/cs-category";
 import { EditorContext } from "./context";
 
 function CategoryElement({
