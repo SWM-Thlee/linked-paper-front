@@ -1,25 +1,24 @@
 import { useCallback, useState } from "react";
 
-import { PaperMetadata } from "@/types/paper";
-import { Flower } from "../../types";
+import { Paper } from "@/features/paper/types";
 
 export default function useNodePapers() {
   const [paperIndexing, setPaperIndexing] = useState<
-    Map<Flower.Graph.PaperID, PaperMetadata>
+    Map<Paper.Scheme.Id, Paper.Scheme.Metadata>
   >(new Map());
 
   const hasPaper = useCallback(
-    (paperID: PaperMetadata["id"]) => paperIndexing.has(paperID),
+    (paperID: Paper.Scheme.Id) => paperIndexing.has(paperID),
     [paperIndexing],
   );
 
   const getPaper = useCallback(
-    (paperID?: PaperMetadata["id"]) =>
+    (paperID?: Paper.Scheme.Id) =>
       paperID ? paperIndexing.get(paperID) : undefined,
     [paperIndexing],
   );
 
-  const upsertPaper = useCallback((paper: PaperMetadata) => {
+  const upsertPaper = useCallback((paper: Paper.Scheme.Metadata) => {
     setPaperIndexing((papers) => {
       const newPapers = new Map(papers);
       newPapers.set(paper.id, paper);
@@ -29,7 +28,7 @@ export default function useNodePapers() {
   }, []);
 
   const removePaper = useCallback(
-    (paperID: PaperMetadata["id"]) => {
+    (paperID: Paper.Scheme.Id) => {
       if (!hasPaper(paperID)) return false;
 
       setPaperIndexing((papers) => {

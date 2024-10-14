@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { Category, Subject } from "@/utils/paper/category";
+import { Category, Subject } from "@/features/paper/utils/category";
 
 export type CategoryGroup = {
   [subject: string]: Category;

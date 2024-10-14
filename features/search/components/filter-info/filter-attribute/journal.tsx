@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { Search } from "@/features/search/types";
 import Button from "@/ui/button";
 import JournalIcon from "@/ui/icons/journal";
-import useJournals from "@/hooks/use-journals";
+import useJournals from "@/features/paper/hooks/use-journals";
 import { ContentContainer, KeyContainer } from "./common";
 
 export function JournalKey() {

@@ -10,7 +10,7 @@ import SearchField from "@/ui/search-field";
 import CheckBox from "@/ui/check-box";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useBidirectionalState from "@/hooks/use-bidirectional-state";
-import useJournals from "@/hooks/use-journals";
+import useJournals from "@/features/paper/hooks/use-journals";
 import JournalIcon from "@/ui/icons/journal";
 import { matches } from "@/features/search/utils/matcher";
 import LabelButton from "@/ui/label-button";

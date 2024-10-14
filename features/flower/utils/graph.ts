@@ -1,4 +1,4 @@
-import { PaperMetadata } from "@/types/paper";
+import { Paper } from "@/features/paper/types";
 import { Flower } from "../types";
 
 /**
@@ -9,7 +9,7 @@ export function makeExtensible<T>(data: T) {
 }
 
 export function createRootNode(
-  paperID: PaperMetadata["id"],
+  paperID: Paper.Scheme.Id,
   visible = true,
 ): Flower.Graph.RootNode {
   return makeExtensible({
@@ -22,7 +22,7 @@ export function createRootNode(
 }
 
 export function createChildNode(
-  paperID: PaperMetadata["id"],
+  paperID: Paper.Scheme.Id,
   parentID: Flower.Graph.RootNode["id"],
   visible = true,
 ): Flower.Graph.ChildNode {

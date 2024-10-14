@@ -1,6 +1,5 @@
 import { GraphData, LinkObject, NodeObject } from "react-force-graph-2d";
-
-import { PaperMetadata } from "@/types/paper";
+import { Paper } from "@/features/paper/types";
 
 /* Node의 뼈대를 이루는 타입을 나타냅니다. */
 export const BaseNodeType = {
@@ -29,7 +28,6 @@ export const DefaultNode = {
   [K in keyof typeof BaseNodeType]: NodeType<`Default${Capitalize<(typeof BaseNodeType)[K]>}Node`>;
 };
 
-export type PaperID = PaperMetadata["id"];
 export type GroupID = string;
 
 /* Nodes */
@@ -47,14 +45,14 @@ export type BaseNode<
 
 export interface RootNode<Node extends NodeType = typeof DefaultNode.ROOT>
   extends BaseNode<typeof BaseNodeType.ROOT, Node> {
-  id: `${typeof BaseNodeType.ROOT}:${Node}:${PaperID}`;
-  paperID: PaperID;
+  id: `${typeof BaseNodeType.ROOT}:${Node}:${Paper.Scheme.Id}`;
+  paperID: Paper.Scheme.Id;
 }
 
 export interface ChildNode<Node extends NodeType = typeof DefaultNode.CHILD>
   extends BaseNode<typeof BaseNodeType.CHILD, Node> {
-  id: `${typeof BaseNodeType.CHILD}:${Node}:${PaperID}-from-${RootNode["id"]}`;
-  paperID: PaperID;
+  id: `${typeof BaseNodeType.CHILD}:${Node}:${Paper.Scheme.Id}-from-${RootNode["id"]}`;
+  paperID: Paper.Scheme.Id;
   parentID: RootNode["id"];
 }
 

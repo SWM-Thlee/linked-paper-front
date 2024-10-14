@@ -13,10 +13,10 @@ import LabelButton from "@/ui/label-button";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useBidirectionalState from "@/hooks/use-bidirectional-state";
-import useCategories from "@/hooks/use-categories";
+import useCategories from "@/features/paper/hooks/use-categories";
 import { matcher } from "@/features/search/utils/matcher";
 import { Search } from "@/features/search/types";
-import { Category, Subject } from "@/utils/paper/cs-category";
+import { Category, Subject } from "@/features/paper/utils/cs-category";
 import { EditorContext } from "./context";
 
 function CategoryElement({

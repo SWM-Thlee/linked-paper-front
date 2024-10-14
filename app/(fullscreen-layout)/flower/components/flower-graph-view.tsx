@@ -15,9 +15,10 @@ import useNodePapers from "@/features/flower/hooks/extra/use-node-papers";
 import useFlowerParam from "@/features/flower/hooks/query/use-flower-param";
 import useFlowerQueries from "@/features/flower/hooks/query/use-flower-queries";
 
+import { Paper } from "@/features/paper/types";
+import { Flower } from "@/features/flower/types";
 import Graph from "@/features/flower/components/graph";
 import { merge } from "@/utils/merge";
-import { Flower } from "@/features/flower/types";
 import {
   defaultAreaHandler,
   defaultRenderer,
@@ -41,7 +42,6 @@ import {
 
 import LabelButton from "@/ui/label-button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
-import { PaperMetadata } from "@/types/paper";
 
 import { variants } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
@@ -75,7 +75,9 @@ export default function FlowerGraphView() {
   const { getPaper, upsertPaper, hasPaper } = useNodePapers();
 
   /* Flower Handler */
-  const [paperInfo, setPaperInfo] = useState<PaperMetadata | null>(null);
+  const [paperInfo, setPaperInfo] = useState<Paper.Scheme.Metadata | null>(
+    null,
+  );
 
   /* Node Renderer */
   const renderRootNode: Flower.Render.RenderNode = useCallback(

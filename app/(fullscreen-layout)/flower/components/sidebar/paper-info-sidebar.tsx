@@ -2,10 +2,10 @@
 
 import React from "react";
 
-import { PaperMetadata } from "@/types/paper";
 import Badge from "@/ui/badge";
 import IconButton from "@/ui/icon-button";
 import CloseIcon from "@/ui/icons/close";
+import { Paper } from "@/features/paper/types";
 import AuthorChip from "@/features/search/components/chip/author";
 import { CategoryChip } from "@/features/search/components/chip/category";
 import OthersChip from "@/features/search/components/chip/others";
@@ -14,7 +14,7 @@ import SearchResultPdfLink from "@/app/(scrollable-layout)/search/components/res
 import SidebarContainer from "./sidebar-container";
 
 type Props = {
-  paper: PaperMetadata | null;
+  paper: Paper.Scheme.Metadata | null;
   children?: React.ReactNode;
   onClose: () => void;
 };

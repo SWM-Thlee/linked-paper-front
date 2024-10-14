@@ -1,6 +1,6 @@
 import { Data } from "@/features/search/types/result";
 import { ResultDataResponse } from "@/features/search/types/api";
-import { PaperMetadata } from "@/types/paper";
+import { Paper } from "@/features/paper/types";
 import { Info } from "./query";
 
 export const Status = {
@@ -13,7 +13,7 @@ export type Status = (typeof Status)[keyof typeof Status];
 export interface Result extends Info {
   count: number;
   status: Status;
-  paper: PaperMetadata;
+  paper: Paper.Scheme.Metadata;
   data: Data[];
 }
 
