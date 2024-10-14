@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 import { buttonVariant } from "./button";
 
 export const labelButtonVariant = tv({

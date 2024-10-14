@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useGroupContainerID from "@/ui/settings/hooks/use-group-container-id";
-import { VariantProps } from "@/utils/tailwind-variants";
+import { VariantProps } from "@/utils/style/tailwind-variants";
 import { Settings } from "@/ui/settings";
 import { groupVariant } from "@/ui/settings/group";
 import { Search } from "@/features/search/types";

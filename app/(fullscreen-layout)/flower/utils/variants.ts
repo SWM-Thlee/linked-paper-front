@@ -1,4 +1,4 @@
-import { CSSVariants } from "@/utils/canvas-variants";
+import { CSSVariants } from "@/utils/style/canvas-variants";
 
 export const variants = {
   node: {

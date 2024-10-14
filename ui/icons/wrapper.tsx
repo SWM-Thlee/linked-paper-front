@@ -1,5 +1,5 @@
 import { IconType } from "react-icons";
-import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 
 export const iconVariant = tv({
   variants: {

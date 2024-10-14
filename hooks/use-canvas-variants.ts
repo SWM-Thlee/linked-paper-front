@@ -1,6 +1,6 @@
 import { useDeepCompareMemo } from "use-deep-compare";
 
-import cv, { CSSVariants } from "@/utils/canvas-variants";
+import cv, { CSSVariants } from "@/utils/style/canvas-variants";
 import useTheme from "@/features/theme/hooks/use-theme";
 import { useMemo } from "react";
 

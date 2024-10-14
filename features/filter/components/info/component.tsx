@@ -3,8 +3,8 @@
 import React from "react";
 
 import { TooltipProvider } from "@/ui/tooltip";
-import { tv, VariantProps } from "@/utils/tailwind-variants";
-import { sem } from "@/utils/semantic-styles";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
+import { sem } from "@/utils/style/semantic-styles";
 import { AttributeDefaultRenderer } from "./default-renderer";
 import { Filter } from "../../types";
 

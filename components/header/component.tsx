@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import Link from "next/link";
 
-import { tv } from "@/utils/tailwind-variants";
+import { tv } from "@/utils/style/tailwind-variants";
 import { Navigation } from "@/ui/navigation";
 import ThemeSwitcher from "./settings/theme-switcher";
 import modules from "./modules";

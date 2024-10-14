@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
-import { tv, VariantProps } from "@/utils/tailwind-variants";
-import { sem } from "@/utils/semantic-styles";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
+import { sem } from "@/utils/style/semantic-styles";
 
 export const fieldContainerVariant = tv({
   slots: {
