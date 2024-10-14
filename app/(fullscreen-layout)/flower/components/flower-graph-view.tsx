@@ -13,6 +13,7 @@ import useNodeSelectionHandler from "@/features/flower/hooks/extra/use-node-sele
 import useNodeFocus from "@/features/flower/hooks/extra/use-node-focus";
 import useNodePapers from "@/features/flower/hooks/extra/use-node-papers";
 import useFlowerParam from "@/features/flower/hooks/query/use-flower-param";
+import useFlowerQuery from "@/features/flower/hooks/query/use-flower-query";
 
 import Graph from "@/features/flower/components/graph";
 import { merge } from "@/utils/merge";
@@ -40,11 +41,8 @@ import {
 
 import LabelButton from "@/ui/label-button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
-import InfoIcon from "@/ui/icons/info";
 import { PaperMetadata } from "@/types/paper";
-import Button from "@/ui/button";
 
-import useFlowerQuery from "@/features/flower/hooks/query/use-flower-query";
 import { variants } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
 import ToolbarWrapper from "./toolbar/toolbar-wrapper";
@@ -246,6 +244,7 @@ export default function FlowerGraphView() {
         link: {
           [Flower.Graph.DefaultNode.ROOT]: {
             [Flower.Graph.DefaultNode.ROOT]: renderLink,
+            [Flower.Graph.DefaultNode.CHILD]: renderLink,
           },
         },
       }),
@@ -436,16 +435,7 @@ export default function FlowerGraphView() {
           <PaperInfoSidebar
             paper={paperInfo}
             onClose={() => setPaperInfo(null)}
-          >
-            <Button
-              ui_size="small"
-              ui_color="secondary"
-              ui_variant="light"
-              className="flex items-center gap-2"
-            >
-              <InfoIcon ui_size="small" /> Paper Info
-            </Button>
-          </PaperInfoSidebar>
+          />
         )}
       </SidebarWrapper>
       <ToolbarWrapper>
