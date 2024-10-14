@@ -1,22 +1,22 @@
 import { useCallback, useState } from "react";
 
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 
 type EventHandler = {
-  [key in Flower.Event.Type]?: {
-    [key: string]: (...args: Parameters<Flower.Event.Handler<key>>) => void;
+  [key in Graph.Event.Type]?: {
+    [key: string]: (...args: Parameters<Graph.Event.Handler<key>>) => void;
   };
 };
 
-type RegisterFn = <T extends Flower.Event.Type>(
+type RegisterFn = <T extends Graph.Event.Type>(
   type: T,
-  handler: Flower.Event.Handler<T>,
+  handler: Graph.Event.Handler<T>,
   name?: string,
 ) => void;
 
-type OnHandleEventFn = <T extends Flower.Event.Type>(
+type OnHandleEventFn = <T extends Graph.Event.Type>(
   type: T,
-) => (...args: Parameters<Flower.Event.Handler<T>>) => void;
+) => (...args: Parameters<Graph.Event.Handler<T>>) => void;
 
 export default function useInternalGraphEventHandler() {
   const [handlers, setHandlers] = useState<EventHandler>({});

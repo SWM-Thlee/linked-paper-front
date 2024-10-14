@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { merge } from "@/utils/merge";
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 import { defaultNodeConfig } from "../../utils/default-config";
 
 type Props<T extends string = string> = {
-  modes?: Record<T, Flower.Config.NodePatcher>;
-  initialNodeConfig?: Flower.Config.Node;
+  modes?: Record<T, Graph.Config.NodePatcher>;
+  initialNodeConfig?: Graph.Config.Node;
 };
 
 /**
@@ -18,7 +18,7 @@ type Props<T extends string = string> = {
 export default function useGraphNodeConfig<T extends string = string>(
   props?: Props<T>,
 ) {
-  const [nodeConfig, setNodeConfig] = useState<Flower.Config.Node>(
+  const [nodeConfig, setNodeConfig] = useState<Graph.Config.Node>(
     props?.initialNodeConfig ?? defaultNodeConfig,
   );
   const [nodeMode, setNodeMode] = useState<T | null>(null);
@@ -27,7 +27,7 @@ export default function useGraphNodeConfig<T extends string = string>(
 
   const resolvedConfig = useMemo(
     () =>
-      merge<Flower.Config.Node>(
+      merge<Graph.Config.Node>(
         nodeConfig,
         nodeMode ? props?.modes?.[nodeMode] ?? {} : {},
       ),

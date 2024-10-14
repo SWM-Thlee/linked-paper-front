@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import usePrevious from "@/hooks/use-previous";
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 
-type Listener = (nodeID: Flower.Graph.NodeID) => void;
+type Listener = (nodeID: Graph.Element.NodeID) => void;
 type Listeners = Map<string, Listener>;
 
 export default function useNodeSelectionHandler() {
-  const [nodeIDs, setNodeIDs] = useState<Set<Flower.Graph.NodeID>>(new Set());
+  const [nodeIDs, setNodeIDs] = useState<Set<Graph.Element.NodeID>>(new Set());
   const { setPrevious, value: prevNodeIDs } =
-    usePrevious<Set<Flower.Graph.NodeID>>();
+    usePrevious<Set<Graph.Element.NodeID>>();
 
   const [selectListeners, setSelectListeners] = useState<Listeners>(new Map());
   const [unselectListeners, setUnselectListeners] = useState<Listeners>(
@@ -35,7 +35,7 @@ export default function useNodeSelectionHandler() {
   }, []);
 
   const isSelected = useCallback(
-    (nodeID: Flower.Graph.NodeID) => nodeIDs.has(nodeID),
+    (nodeID: Graph.Element.NodeID) => nodeIDs.has(nodeID),
     [nodeIDs],
   );
 
@@ -47,7 +47,7 @@ export default function useNodeSelectionHandler() {
   const selected = useMemo(() => nodeIDs, [nodeIDs]);
 
   const select = useCallback(
-    (nodeID: Flower.Graph.NodeID, only?: boolean) => {
+    (nodeID: Graph.Element.NodeID, only?: boolean) => {
       if (isSelected(nodeID)) return false;
 
       setPrevious(nodeIDs);
@@ -64,7 +64,7 @@ export default function useNodeSelectionHandler() {
   );
 
   const unselect = useCallback(
-    (nodeID?: Flower.Graph.NodeID) => {
+    (nodeID?: Graph.Element.NodeID) => {
       // Node를 명시하지 않은 경우 모두 해제합니다.
       if (!nodeID) {
         setPrevious(nodeIDs);

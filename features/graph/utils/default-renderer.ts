@@ -1,9 +1,9 @@
-import { Flower } from "../types";
+import { Graph } from "../types";
 import { drawCircle } from "./draw";
 
 export const defaultAreaHandler: (
   radius: number,
-) => Flower.Render.DetermineArea = (radius: number) => (node, color, ctx) => {
+) => Graph.Render.DetermineArea = (radius: number) => (node, color, ctx) => {
   ctx.fillStyle = color;
 
   drawCircle({
@@ -14,7 +14,7 @@ export const defaultAreaHandler: (
   });
 };
 
-export const defaultRenderer: Flower.Render.Renderer = {
+export const defaultRenderer: Graph.Render.Renderer = {
   node: {
     default: () => {},
   },

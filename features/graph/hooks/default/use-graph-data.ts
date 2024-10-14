@@ -1,29 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { produce } from "immer";
 
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 import { makeExtensible } from "../../utils/graph";
 
-const initialData: Flower.Graph.Data = {
+const initialData: Graph.Element.Data = {
   links: [],
   nodes: [],
 };
 
 function isNodeArray(
-  elements: Flower.Graph.Node[] | Flower.Graph.Link[],
-): elements is Flower.Graph.Node[] {
+  elements: Graph.Element.Node[] | Graph.Element.Link[],
+): elements is Graph.Element.Node[] {
   return !!elements[0].baseType;
 }
 
 function isNodeIDArray(
-  elementIDs: Flower.Graph.NodeID[] | Flower.Graph.LinkID[],
-): elementIDs is Flower.Graph.NodeID[] {
+  elementIDs: Graph.Element.NodeID[] | Graph.Element.LinkID[],
+): elementIDs is Graph.Element.NodeID[] {
   return !elementIDs[0].startsWith("link-from");
 }
 
 function isNodeID(
-  elementID: Flower.Graph.NodeID | Flower.Graph.LinkID,
-): elementID is Flower.Graph.NodeID {
+  elementID: Graph.Element.NodeID | Graph.Element.LinkID,
+): elementID is Graph.Element.NodeID {
   return !elementID.startsWith("link-from");
 }
 
@@ -36,28 +36,28 @@ function isNodeID(
  * - 따라서, 고정적인 부분(노드의 기본 정보)을 React에서 관리하고, 변동되는 정보를 포함한 모든 데이터를 useRef로 관리합니다.
  */
 export default function useGraphData() {
-  const [staticData, setStaticData] = useState<Flower.Graph.Data>(initialData);
+  const [staticData, setStaticData] = useState<Graph.Element.Data>(initialData);
   const graphDataRef = useRef(staticData);
 
   /* 데이터를 인덱싱합니다. */
   const [nodeIndexing, setNodeIndexing] = useState<
-    Map<Flower.Graph.NodeID, Flower.Graph.Node>
+    Map<Graph.Element.NodeID, Graph.Element.Node>
   >(new Map());
 
   const [linkIndexing, setLinkIndexing] = useState<
-    Map<Flower.Graph.LinkID, Flower.Graph.Link>
+    Map<Graph.Element.LinkID, Graph.Element.Link>
   >(new Map());
 
   const [sourceLinkIndexing, setSourceLinkIndexing] = useState<
-    Map<Flower.Graph.NodeID, Set<Flower.Graph.Link>>
+    Map<Graph.Element.NodeID, Set<Graph.Element.Link>>
   >(new Map());
 
   const [targetLinkIndexing, setTargetLinkIndexing] = useState<
-    Map<Flower.Graph.NodeID, Set<Flower.Graph.Link>>
+    Map<Graph.Element.NodeID, Set<Graph.Element.Link>>
   >(new Map());
 
   const has = useCallback(
-    (elementID: Flower.Graph.NodeID | Flower.Graph.LinkID) => {
+    (elementID: Graph.Element.NodeID | Graph.Element.LinkID) => {
       if (isNodeID(elementID)) return nodeIndexing.has(elementID);
       return linkIndexing.has(elementID);
     },
@@ -66,11 +66,11 @@ export default function useGraphData() {
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const get = useCallback(
-    <T extends Flower.Graph.NodeID | Flower.Graph.LinkID>(
+    <T extends Graph.Element.NodeID | Graph.Element.LinkID>(
       elementID: T,
-    ): T extends Flower.Graph.NodeID
-      ? Flower.Graph.Node | undefined
-      : Flower.Graph.Link | undefined => {
+    ): T extends Graph.Element.NodeID
+      ? Graph.Element.Node | undefined
+      : Graph.Element.Link | undefined => {
       if (isNodeID(elementID)) return nodeIndexing.get(elementID) as any;
       return linkIndexing.get(elementID) as any;
     },
@@ -78,34 +78,38 @@ export default function useGraphData() {
   );
 
   const getNodes = useCallback(
-    (filterFn: (node: Flower.Graph.Node) => boolean) => {
+    (filterFn: (node: Graph.Element.Node) => boolean) => {
       return [...nodeIndexing.values()].filter(filterFn);
     },
     [nodeIndexing],
   );
 
   const hasLinkFromSource = useCallback(
-    (sourceNodeID: Flower.Graph.NodeID) => sourceLinkIndexing.has(sourceNodeID),
+    (sourceNodeID: Graph.Element.NodeID) =>
+      sourceLinkIndexing.has(sourceNodeID),
     [sourceLinkIndexing],
   );
 
   const hasLinkFromTarget = useCallback(
-    (targetNodeID: Flower.Graph.NodeID) => targetLinkIndexing.has(targetNodeID),
+    (targetNodeID: Graph.Element.NodeID) =>
+      targetLinkIndexing.has(targetNodeID),
     [targetLinkIndexing],
   );
 
   const getLinksFromSource = useCallback(
-    (sourceNodeID: Flower.Graph.NodeID) => sourceLinkIndexing.get(sourceNodeID),
+    (sourceNodeID: Graph.Element.NodeID) =>
+      sourceLinkIndexing.get(sourceNodeID),
     [sourceLinkIndexing],
   );
 
   const getLinksFromTarget = useCallback(
-    (targetNodeID: Flower.Graph.NodeID) => targetLinkIndexing.get(targetNodeID),
+    (targetNodeID: Graph.Element.NodeID) =>
+      targetLinkIndexing.get(targetNodeID),
     [targetLinkIndexing],
   );
 
   const upsert = useCallback(
-    (...elements: Flower.Graph.Node[] | Flower.Graph.Link[]) => {
+    (...elements: Graph.Element.Node[] | Graph.Element.Link[]) => {
       if (elements.length === 0) return;
 
       setStaticData((previousData) =>
@@ -132,7 +136,7 @@ export default function useGraphData() {
   );
 
   const remove = useCallback(
-    (...elementIDs: Flower.Graph.LinkID[] | Flower.Graph.NodeID[]) => {
+    (...elementIDs: Graph.Element.LinkID[] | Graph.Element.NodeID[]) => {
       if (elementIDs.length === 0) return;
 
       const index = new Set(elementIDs);
@@ -163,14 +167,14 @@ export default function useGraphData() {
     setNodeIndexing(
       staticData.nodes.reduce(
         (result, node) => result.set(node.id, node),
-        new Map<Flower.Graph.NodeID, Flower.Graph.Node>(),
+        new Map<Graph.Element.NodeID, Graph.Element.Node>(),
       ),
     );
 
     setLinkIndexing(
       staticData.links.reduce(
         (result, link) => result.set(link.id, link),
-        new Map<Flower.Graph.LinkID, Flower.Graph.Link>(),
+        new Map<Graph.Element.LinkID, Graph.Element.Link>(),
       ),
     );
 
@@ -181,12 +185,14 @@ export default function useGraphData() {
             link.source.id,
             (result.get(link.source.id) ?? new Set()).add(link),
           ),
-        new Map<Flower.Graph.NodeID, Set<Flower.Graph.Link>>(),
+        new Map<Graph.Element.NodeID, Set<Graph.Element.Link>>(),
       ),
     );
 
     setTargetLinkIndexing(
-      staticData.links.reduce<Map<Flower.Graph.NodeID, Set<Flower.Graph.Link>>>(
+      staticData.links.reduce<
+        Map<Graph.Element.NodeID, Set<Graph.Element.Link>>
+      >(
         (result, link) =>
           result.set(
             link.target.id,
@@ -199,7 +205,7 @@ export default function useGraphData() {
 
   /* Static Data를 현재 운용 중인 Graph Data에 적용합니다. */
   useEffect(() => {
-    const patch = makeExtensible<Flower.Graph.Data>(staticData);
+    const patch = makeExtensible<Graph.Element.Data>(staticData);
     const nodes = new Map(
       graphDataRef.current.nodes.map((node) => [node.id, node]),
     );

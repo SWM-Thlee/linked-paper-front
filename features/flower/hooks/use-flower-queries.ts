@@ -2,15 +2,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 
 import { ErrorResponse } from "@/utils/api";
-import { queryOptions } from "../../server/queries";
-import { Flower } from "../../types";
+import { queryOptions } from "../server/queries";
+import { Flower } from "../types";
 
 type FlowerLoadedListener = (result: Flower.Api.Result) => void;
 type FlowerErrorListener = (response: ErrorResponse) => void;
 
 // TODO: Error 시 Refetching 구현
-export default function useFlowerQueries(intialTarget: string[]) {
-  const [target, setTarget] = useState(intialTarget);
+export default function useFlowerQueries(intialTarget?: string[]) {
+  const [target, setTarget] = useState(intialTarget ?? []);
   const loaded = useRef(new Map<string, boolean>());
 
   const loadedListener = useRef<FlowerLoadedListener>(() => {});
@@ -46,6 +46,12 @@ export default function useFlowerQueries(intialTarget: string[]) {
     [target],
   );
 
+  const isFlowerLoaded = useCallback(
+    (paperID: string) =>
+      target.includes(paperID) && loaded.current.has(paperID),
+    [target],
+  );
+
   useEffect(() => {
     flowers
       .filter((flower) => !!flower)
@@ -74,6 +80,7 @@ export default function useFlowerQueries(intialTarget: string[]) {
 
   return {
     isFlowerLoading,
+    isFlowerLoaded,
     onFlowerError,
     onFlowerLoaded,
     loadFlower,

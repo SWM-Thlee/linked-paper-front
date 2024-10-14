@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { merge } from "@/utils/merge";
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 import { defaultViewConfig } from "../../utils/default-config";
 
 type Props = {
-  initialViewConfig?: Flower.Config.View;
+  initialViewConfig?: Graph.Config.View;
 };
 
 /**
@@ -15,16 +15,16 @@ type Props = {
  * 별도의 전역 상수로 두어야 합니다.
  */
 export default function useGraphViewConfig(props?: Props) {
-  const [viewConfig, setViewConfig] = useState<Flower.Config.View>(
+  const [viewConfig, setViewConfig] = useState<Graph.Config.View>(
     props?.initialViewConfig ?? defaultViewConfig,
   );
   const [extraViewConfig, setExtraViewConfig] =
-    useState<Flower.Config.ViewPatcher>({});
+    useState<Graph.Config.ViewPatcher>({});
 
   const setDefaults = useCallback(() => setExtraViewConfig({}), []);
 
   const resolvedConfig = useMemo(
-    () => merge<Flower.Config.View>(viewConfig, extraViewConfig),
+    () => merge<Graph.Config.View>(viewConfig, extraViewConfig),
     [viewConfig, extraViewConfig],
   );
 

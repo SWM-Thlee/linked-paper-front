@@ -2,15 +2,15 @@ import { useCallback, useMemo } from "react";
 
 import LabelButton from "@/ui/label-button";
 import CheckIcon from "@/ui/icons/check";
-import { Flower } from "@/features/flower/types";
+import { Graph } from "@/features/graph/types";
 import { merge } from "@/utils/merge";
 import CloseIcon from "@/ui/icons/close";
 import ToolbarContainer from "./toolbar-container";
 
 type Props = {
-  viewConfig: Flower.Config.View;
+  viewConfig: Graph.Config.View;
   setExtraConfig: (
-    fn: (prevPatcher: Flower.Config.ViewPatcher) => Flower.Config.ViewPatcher,
+    fn: (prevPatcher: Graph.Config.ViewPatcher) => Graph.Config.ViewPatcher,
   ) => void;
 };
 

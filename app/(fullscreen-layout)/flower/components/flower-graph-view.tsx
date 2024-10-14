@@ -4,42 +4,42 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { produce } from "immer";
 
 import useCanvasVariants from "@/hooks/use-canvas-variants";
-import useGraphHandler from "@/features/flower/hooks/default/use-graph-handler";
-import useGraphNodeConfig from "@/features/flower/hooks/default/use-graph-node-config";
-import useGraphViewConfig from "@/features/flower/hooks/default/use-graph-view-config";
-import useGraphData from "@/features/flower/hooks/default/use-graph-data";
-import useNodeHoverHandler from "@/features/flower/hooks/extra/use-node-hover-handler";
-import useNodeSelectionHandler from "@/features/flower/hooks/extra/use-node-selection-handler";
-import useNodeFocus from "@/features/flower/hooks/extra/use-node-focus";
-import useFlowerParam from "@/features/flower/hooks/query/use-flower-param";
-import useFlowerQueries from "@/features/flower/hooks/query/use-flower-queries";
+import useGraphHandler from "@/features/graph/hooks/default/use-graph-handler";
+import useGraphNodeConfig from "@/features/graph/hooks/default/use-graph-node-config";
+import useGraphViewConfig from "@/features/graph/hooks/default/use-graph-view-config";
+import useGraphData from "@/features/graph/hooks/default/use-graph-data";
+import useNodeHoverHandler from "@/features/graph/hooks/extra/use-node-hover-handler";
+import useNodeSelectionHandler from "@/features/graph/hooks/extra/use-node-selection-handler";
+import useNodeFocus from "@/features/graph/hooks/extra/use-node-focus";
+import useFlowerParam from "@/features/flower/hooks/use-flower-param";
+import useFlowerQueries from "@/features/flower/hooks/use-flower-queries";
 import usePapers from "@/features/paper/hooks/use-papers";
 
 import { Paper } from "@/features/paper/types";
-import { Flower } from "@/features/flower/types";
-import Graph from "@/features/flower/components/graph";
+import { Graph } from "@/features/graph/types";
 import { merge } from "@/utils/merge";
 import {
   defaultAreaHandler,
   defaultRenderer,
-} from "@/features/flower/utils/default-renderer";
+} from "@/features/graph/utils/default-renderer";
 import {
   drawCircle,
   drawLink,
   drawWrappedText,
   limitRange,
-} from "@/features/flower/utils/draw";
+} from "@/features/graph/utils/draw";
 import {
   createChildNode,
   createLink,
   createRootNode,
-} from "@/features/flower/utils/graph";
+} from "@/features/graph/utils/graph";
 import {
   isChildNode,
   isGroupNode,
   isRootNode,
-} from "@/features/flower/utils/validator";
+} from "@/features/graph/utils/validator";
 
+import GraphView from "@/features/graph/components/graph-view";
 import LabelButton from "@/ui/label-button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
 
@@ -69,9 +69,8 @@ export default function FlowerGraphView() {
 
   /* Flower Correlations */
   const initial = useFlowerParam();
-  const { isFlowerLoading, loadFlower, onFlowerLoaded } = useFlowerQueries([
-    initial,
-  ]);
+  const { isFlowerLoading, isFlowerLoaded, loadFlower, onFlowerLoaded } =
+    useFlowerQueries();
   const { getPaper, upsertPaper, hasPaper } = usePapers();
 
   /* Flower Handler */
@@ -80,7 +79,7 @@ export default function FlowerGraphView() {
   );
 
   /* Node Renderer */
-  const renderRootNode: Flower.Render.RenderNode = useCallback(
+  const renderRootNode: Graph.Render.RenderNode = useCallback(
     (node, ctx, scale) => {
       const paper = getPaper(node.paperID);
       const style = isSelected(node.id)
@@ -132,7 +131,7 @@ export default function FlowerGraphView() {
     ],
   );
 
-  const renderChildNode: Flower.Render.RenderNode = useCallback(
+  const renderChildNode: Graph.Render.RenderNode = useCallback(
     (node, ctx, scale) => {
       const paper = getPaper(node.paperID);
       const style = isFlowerLoading(node.paperID)
@@ -182,7 +181,7 @@ export default function FlowerGraphView() {
     ],
   );
 
-  const renderLink: Flower.Render.RenderLink = useCallback(
+  const renderLink: Graph.Render.RenderLink = useCallback(
     ({ source, target }, ctx) => {
       if (viewConfig.panel.linkOfAdjacentRootNodeOnly) {
         if (
@@ -234,25 +233,25 @@ export default function FlowerGraphView() {
     ],
   );
 
-  const renderer = useMemo<Flower.Render.Renderer>(
+  const renderer = useMemo<Graph.Render.Renderer>(
     () =>
       merge(defaultRenderer, {
         area: {
-          [Flower.Graph.DefaultNode.ROOT]: defaultAreaHandler(
+          [Graph.Element.DefaultNode.ROOT]: defaultAreaHandler(
             nodeConfig.radius.root.default,
           ),
-          [Flower.Graph.DefaultNode.CHILD]: defaultAreaHandler(
+          [Graph.Element.DefaultNode.CHILD]: defaultAreaHandler(
             nodeConfig.radius.child.default,
           ),
         },
         node: {
-          [Flower.Graph.DefaultNode.ROOT]: renderRootNode,
-          [Flower.Graph.DefaultNode.CHILD]: renderChildNode,
+          [Graph.Element.DefaultNode.ROOT]: renderRootNode,
+          [Graph.Element.DefaultNode.CHILD]: renderChildNode,
         },
         link: {
-          [Flower.Graph.DefaultNode.ROOT]: {
-            [Flower.Graph.DefaultNode.ROOT]: renderLink,
-            [Flower.Graph.DefaultNode.CHILD]: renderLink,
+          [Graph.Element.DefaultNode.ROOT]: {
+            [Graph.Element.DefaultNode.ROOT]: renderLink,
+            [Graph.Element.DefaultNode.CHILD]: renderLink,
           },
         },
       }),
@@ -267,9 +266,11 @@ export default function FlowerGraphView() {
 
   /* Initial Behavior: 중앙에 Root Node를 삽입합니다. */
   useEffect(() => {
+    if (isFlowerLoading(initial) || isFlowerLoaded(initial)) return;
+
     loadFlower(initial);
     upsert(createRootNode(initial));
-  }, [initial, loadFlower, upsert]);
+  }, [initial, loadFlower, upsert, isFlowerLoading, isFlowerLoaded]);
 
   // TODO: 적절한 Error 처리
   /* On Correlations Loaded: Paper 정보를 추가 후, Child Node를 생성합니다. */
@@ -280,7 +281,7 @@ export default function FlowerGraphView() {
 
       if (nodes.length !== 1) {
         throw new Error(
-          "Error from Loading Flower: There are Node of specific paper",
+          "Error from Loading Flower: There are more than a node or not found.",
         );
       }
 
@@ -392,7 +393,7 @@ export default function FlowerGraphView() {
   /* Event: 특정 Root Node Click 시 Select합니다. */
   useEffect(() => {
     handler?.event.registerHandler(
-      Flower.Event.Type.NODE_CLICK,
+      Graph.Event.Type.NODE_CLICK,
       (node) => {
         if (!isRootNode(node)) return;
 
@@ -406,7 +407,7 @@ export default function FlowerGraphView() {
   /* Event: 특정 Child Node Click 시 Bloom합니다. */
   useEffect(() => {
     handler?.event.registerHandler(
-      Flower.Event.Type.NODE_CLICK,
+      Graph.Event.Type.NODE_CLICK,
       (node) => {
         if (!isChildNode(node)) return;
         if (isFlowerLoading(node.paperID)) return;
@@ -434,7 +435,7 @@ export default function FlowerGraphView() {
   /* Event: Root or Child Node Right Click 시 Paper Info를 보여줍니다. */
   useEffect(() => {
     handler?.event.registerHandler(
-      Flower.Event.Type.NODE_RCLICK,
+      Graph.Event.Type.NODE_RCLICK,
       (node) => {
         if (isGroupNode(node)) return;
         const paper = getPaper(node.paperID);
@@ -445,7 +446,7 @@ export default function FlowerGraphView() {
   }, [handler?.event, getPaper]);
 
   return (
-    <Graph
+    <GraphView
       data={data}
       ref={refHandler}
       renderer={renderer}
@@ -485,6 +486,6 @@ export default function FlowerGraphView() {
           setExtraConfig={setExtraViewConfig}
         />
       </ToolbarWrapper>
-    </Graph>
+    </GraphView>
   );
 }

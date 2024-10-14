@@ -2,8 +2,7 @@
 
 import { useMemo } from "react";
 import { redirect, useSearchParams } from "next/navigation";
-
-import { Flower } from "../../types";
+import { Flower } from "../types";
 
 export default function useFlowerParam() {
   const searchParams = useSearchParams();

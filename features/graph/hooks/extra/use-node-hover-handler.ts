@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 
 import useSignature from "@/hooks/use-signature";
 
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 import { GraphHandler } from "../default/use-graph-handler";
 
-type Listener = (node: Flower.Graph.Node) => void;
+type Listener = (node: Graph.Element.Node) => void;
 type Listeners = Map<string, Listener>;
 
 export default function useNodeHoverHandler(handler: GraphHandler | null) {
@@ -14,7 +14,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
   const idHoverIn = useSignature("NodeHoverHandler-HoverIn");
   const idHoverOut = useSignature("NodeHoverHandler-HoverOut");
 
-  const [nodeOnHover, setNodeOnHover] = useState<Flower.Graph.Node | null>(
+  const [nodeOnHover, setNodeOnHover] = useState<Graph.Element.Node | null>(
     null,
   );
   const [hoverIn, setHoverIn] = useState<Listeners>(new Map());
@@ -46,7 +46,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
 
   useEffect(() => {
     handler?.event.registerHandler(
-      Flower.Event.Type.NODE_HOVER,
+      Graph.Event.Type.NODE_HOVER,
       (node) => setNodeOnHover(node),
       idHover,
     );
@@ -54,7 +54,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
 
   useEffect(() => {
     handler?.event.registerHandler(
-      Flower.Event.Type.NODE_HOVER,
+      Graph.Event.Type.NODE_HOVER,
       (node, prevNode) => {
         /* Hover In */
         if (node !== null && prevNode === null) {
@@ -67,7 +67,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
 
   useEffect(() => {
     handler?.event.registerHandler(
-      Flower.Event.Type.NODE_HOVER,
+      Graph.Event.Type.NODE_HOVER,
       (node, prevNode) => {
         /* Hover Out */
         if (node === null && prevNode !== null) {

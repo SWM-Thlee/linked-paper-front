@@ -1,5 +1,5 @@
 import { Default } from "@/utils/type-helper";
-import { Link, Node, NodeType } from "./graph";
+import { Link, Node, NodeType } from "./element";
 
 export type RenderBefore = (
   ctx: CanvasRenderingContext2D,

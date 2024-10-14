@@ -2,16 +2,16 @@ import { useCallback, useRef } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import * as d3 from "d3-force";
 
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 
 type InternalGraphViewConfiguration = ForceGraphMethods<
-  Flower.Graph.Node,
-  Flower.Graph.Link
+  Graph.Element.Node,
+  Graph.Element.Link
 >;
 
-type LinkConfigInstance = d3.ForceLink<Flower.Graph.Node, Flower.Graph.Link>;
-type CollideConfigInstance = d3.ForceCollide<Flower.Graph.Node>;
-type ChargeConfigInstance = d3.ForceManyBody<Flower.Graph.Node>;
+type LinkConfigInstance = d3.ForceLink<Graph.Element.Node, Graph.Element.Link>;
+type CollideConfigInstance = d3.ForceCollide<Graph.Element.Node>;
+type ChargeConfigInstance = d3.ForceManyBody<Graph.Element.Node>;
 
 type ApplyConfigFn = <T>(
   applyConfigFn: (config: InternalGraphViewConfiguration) => T,

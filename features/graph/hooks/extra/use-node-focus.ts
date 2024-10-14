@@ -1,14 +1,14 @@
 import { useCallback } from "react";
-import { Flower } from "../../types";
+import { Graph } from "../../types";
 import { GraphHandler } from "../default/use-graph-handler";
 
 type FocusOptions = {
-  nodeID: Flower.Graph.NodeID;
+  nodeID: Graph.Element.NodeID;
 };
 
 export default function useNodeFocus(
   handler: GraphHandler | null,
-  viewConfig: Flower.Config.View,
+  viewConfig: Graph.Config.View,
 ) {
   const focus = useCallback(
     ({ nodeID }: FocusOptions) => {

@@ -1,6 +1,6 @@
 import { ForceGraphProps } from "react-force-graph-2d";
 
-import { Link, Node } from "./graph";
+import { Link, Node } from "./element";
 
 type Props = {
   [K in keyof ForceGraphProps<Node, Link>]-?: ForceGraphProps<Node, Link>[K];

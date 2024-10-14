@@ -10,10 +10,10 @@ import {
 import ForceGraph from "react-force-graph-2d";
 
 import useFullscreen from "@/hooks/use-fullscreen";
-import useInternalGraphConfig from "@/features/flower/hooks/internal/use-internal-graph-config";
-import useInternalGraphEventHandler from "@/features/flower/hooks/internal/use-internal-graph-event-handler";
+import useInternalGraphConfig from "@/features/graph/hooks/internal/use-internal-graph-config";
+import useInternalGraphEventHandler from "@/features/graph/hooks/internal/use-internal-graph-event-handler";
 
-import { Flower } from "@/features/flower/types";
+import { Graph } from "@/features/graph/types";
 import { GraphHandler } from "../hooks/default/use-graph-handler";
 
 type Props = {
@@ -21,19 +21,19 @@ type Props = {
   children?: React.ReactNode;
 
   /** 노드의 설정을 나타냅니다. */
-  nodeConfig: Flower.Config.Node;
+  nodeConfig: Graph.Config.Node;
 
   /** 그래프 뷰 탐색 설정을 나타냅니다. */
-  viewConfig: Flower.Config.View;
+  viewConfig: Graph.Config.View;
 
   /** 그래프 뷰 요소에 대한 렌더러를 나타냅니다. */
-  renderer: Flower.Render.Renderer;
+  renderer: Graph.Render.Renderer;
 
   /** 그래프 데이터를 나타냅니다. */
-  data: Flower.Graph.Data;
+  data: Graph.Element.Data;
 };
 
-const Graph = forwardRef<GraphHandler, Props>(
+const GraphView = forwardRef<GraphHandler, Props>(
   ({ children, viewConfig, nodeConfig, renderer, data }, handlerRef) => {
     /** 그래프는 항상 스크린 전체를 차지합니다. */
     const { width, height } = useFullscreen();
@@ -99,7 +99,7 @@ const Graph = forwardRef<GraphHandler, Props>(
       );
     }, [chargeConfig, nodeConfig.charge]);
 
-    const onDetermineArea: Flower.Render.DetermineArea = useCallback(
+    const onDetermineArea: Graph.Render.DetermineArea = useCallback(
       (node, color, ctx, scale) => {
         const determineAreaFn =
           renderer.area[node.type] ?? renderer.area.default;
@@ -108,14 +108,14 @@ const Graph = forwardRef<GraphHandler, Props>(
       [renderer.area],
     );
 
-    const onDetermineRadius: Flower.Render.DetermineRadius = useCallback(
+    const onDetermineRadius: Graph.Render.DetermineRadius = useCallback(
       (node) =>
         nodeConfig.radius[node.baseType]?.[node.type] ??
         nodeConfig.radius[node.baseType].default,
       [nodeConfig.radius],
     );
 
-    const onDrawNode: Flower.Render.RenderNode = useCallback(
+    const onDrawNode: Graph.Render.RenderNode = useCallback(
       (node, ctx, scale) => {
         const renderNodeFn = renderer.node[node.type] ?? renderer.node.default;
         renderNodeFn(node, ctx, scale);
@@ -123,7 +123,7 @@ const Graph = forwardRef<GraphHandler, Props>(
       [renderer.node],
     );
 
-    const onDrawLink: Flower.Render.RenderLink = useCallback(
+    const onDrawLink: Graph.Render.RenderLink = useCallback(
       (link, ctx, scale) => {
         const renderLinkFn =
           renderer.link[link.source.type]?.[link.target.type] ??
@@ -134,12 +134,12 @@ const Graph = forwardRef<GraphHandler, Props>(
       [renderer.link],
     );
 
-    const onDrawBefore: Flower.Render.RenderBefore = useCallback(
+    const onDrawBefore: Graph.Render.RenderBefore = useCallback(
       (ctx, scale) => renderer.renderBefore?.(ctx, scale),
       [renderer],
     );
 
-    const onDrawAfter: Flower.Render.RenderAfter = useCallback(
+    const onDrawAfter: Graph.Render.RenderAfter = useCallback(
       (ctx, scale) => renderer.renderAfter?.(ctx, scale),
       [renderer],
     );
@@ -178,11 +178,11 @@ const Graph = forwardRef<GraphHandler, Props>(
     );
 
     /* Visibility Handlers */
-    const onLinkVisible = useCallback((link: Flower.Graph.Link) => {
+    const onLinkVisible = useCallback((link: Graph.Element.Link) => {
       return link.source.visible && link.target.visible;
     }, []);
 
-    const onNodeVisible = useCallback((node: Flower.Graph.Node) => {
+    const onNodeVisible = useCallback((node: Graph.Element.Node) => {
       return node.visible;
     }, []);
 
@@ -221,17 +221,17 @@ const Graph = forwardRef<GraphHandler, Props>(
             linkCanvasObject={onDrawLink}
             nodeCanvasObject={onDrawNode}
             /* Graph Event Handler */
-            onNodeClick={onHandleEvent(Flower.Event.Type.NODE_CLICK)}
-            onNodeRightClick={onHandleEvent(Flower.Event.Type.NODE_RCLICK)}
-            onNodeHover={onHandleEvent(Flower.Event.Type.NODE_HOVER)}
-            onNodeDrag={onHandleEvent(Flower.Event.Type.NODE_DRAG)}
-            onBackgroundClick={onHandleEvent(Flower.Event.Type.BG_CLICK)}
-            onBackgroundRightClick={onHandleEvent(Flower.Event.Type.BG_RCLICK)}
-            onLinkClick={onHandleEvent(Flower.Event.Type.LINK_CLICK)}
-            onLinkHover={onHandleEvent(Flower.Event.Type.LINK_HOVER)}
-            onLinkRightClick={onHandleEvent(Flower.Event.Type.LINK_RCLICK)}
-            onZoom={onHandleEvent(Flower.Event.Type.ZOOM_UPDATE)}
-            onZoomEnd={onHandleEvent(Flower.Event.Type.ZOOM_END)}
+            onNodeClick={onHandleEvent(Graph.Event.Type.NODE_CLICK)}
+            onNodeRightClick={onHandleEvent(Graph.Event.Type.NODE_RCLICK)}
+            onNodeHover={onHandleEvent(Graph.Event.Type.NODE_HOVER)}
+            onNodeDrag={onHandleEvent(Graph.Event.Type.NODE_DRAG)}
+            onBackgroundClick={onHandleEvent(Graph.Event.Type.BG_CLICK)}
+            onBackgroundRightClick={onHandleEvent(Graph.Event.Type.BG_RCLICK)}
+            onLinkClick={onHandleEvent(Graph.Event.Type.LINK_CLICK)}
+            onLinkHover={onHandleEvent(Graph.Event.Type.LINK_HOVER)}
+            onLinkRightClick={onHandleEvent(Graph.Event.Type.LINK_RCLICK)}
+            onZoom={onHandleEvent(Graph.Event.Type.ZOOM_UPDATE)}
+            onZoomEnd={onHandleEvent(Graph.Event.Type.ZOOM_END)}
           />
         </div>
       </>
@@ -239,6 +239,6 @@ const Graph = forwardRef<GraphHandler, Props>(
   },
 );
 
-Graph.displayName = "Graph";
+GraphView.displayName = "GraphView";
 
-export default Graph;
+export default GraphView;

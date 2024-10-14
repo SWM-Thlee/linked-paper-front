@@ -1,5 +1,5 @@
 import { Default, Optional } from "@/utils/type-helper";
-import { BaseNodeType, NodeType } from "./graph";
+import { BaseNodeType, NodeType } from "./element";
 
 /** 그래프 내 특정 범위를 나타냅니다. */
 export const GraphBoundary = {

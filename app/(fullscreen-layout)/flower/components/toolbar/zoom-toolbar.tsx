@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { GraphHandler } from "@/features/flower/hooks/default/use-graph-handler";
-import { Flower } from "@/features/flower/types";
+import { GraphHandler } from "@/features/graph/hooks/default/use-graph-handler";
+import { Graph } from "@/features/graph/types";
 import LabelButton from "@/ui/label-button";
 import SearchIcon from "@/ui/icons/search";
 import Slider from "@/ui/slider";
@@ -14,7 +14,7 @@ import ToolContainer from "./toolbar-container";
 
 type Props = {
   handler: GraphHandler | null;
-  viewConfig: Flower.Config.View;
+  viewConfig: Graph.Config.View;
 };
 
 export type AdjustZoomOption = { duration?: number } & (
@@ -60,7 +60,7 @@ export default function ZoomToolbar({ handler, viewConfig }: Props) {
 
   useEffect(() => {
     handler?.event.registerHandler(
-      Flower.Event.Type.ZOOM_UPDATE,
+      Graph.Event.Type.ZOOM_UPDATE,
       ({ k: scale }) => setZoom(scale),
     );
   }, [handler?.event]);
