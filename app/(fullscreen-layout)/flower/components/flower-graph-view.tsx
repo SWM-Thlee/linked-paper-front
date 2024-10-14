@@ -41,8 +41,8 @@ import {
 
 import GraphView from "@/features/graph/components/graph-view";
 import LabelButton from "@/ui/label-button";
-import ArrowBackIcon from "@/ui/icons/arrow-back";
 
+import ArrowUpIcon from "@/ui/icons/arrow-up";
 import { variants } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
 import ToolbarWrapper from "./toolbar/toolbar-wrapper";
@@ -469,13 +469,9 @@ export default function FlowerGraphView() {
         <div className="absolute left-[50%] top-[50%] flex -translate-x-[50%] -translate-y-[50%] items-center gap-2">
           {selectedOne && (
             <ToolbarContainer>
-              <LabelButton
-                ui_variant="light"
-                ui_color="tertiary"
-                onClick={() => focus({ nodeID: selectedOne })}
-              >
-                <ArrowBackIcon ui_size="small" />
-                Back to Current Flower
+              <LabelButton onClick={() => focus({ nodeID: selectedOne })}>
+                <ArrowUpIcon ui_size="small" />
+                Current Flower
               </LabelButton>
             </ToolbarContainer>
           )}
