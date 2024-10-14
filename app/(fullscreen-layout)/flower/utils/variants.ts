@@ -46,6 +46,15 @@ export const variants = {
       "text-light-onTertiary",
       "text-dark-onTertiary",
     ],
+
+    // Bloom 중인 Child Node
+    childBlooming: [
+      "text-display-large",
+      "border-light-tertiary",
+      "border-dark-tertiary",
+      "text-light-onSurface",
+      "text-dark-onSurface",
+    ],
   },
   link: {
     default: ["bg-light-outlineVariant", "bg-dark-outlineVariant"],

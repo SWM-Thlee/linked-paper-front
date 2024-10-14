@@ -5,9 +5,10 @@ export type SuccessResponse<T> = {
   data: T;
 };
 
-export type ErrorResponse = {
+export type ErrorResponse<T extends object = object> = {
   status: "ERROR";
   errorCode?: number;
+  extra?: T;
 };
 
 export type UniversalResponse<T> = SuccessResponse<T> | ErrorResponse;

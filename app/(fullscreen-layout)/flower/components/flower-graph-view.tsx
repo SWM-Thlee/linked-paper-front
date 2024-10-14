@@ -13,7 +13,7 @@ import useNodeSelectionHandler from "@/features/flower/hooks/extra/use-node-sele
 import useNodeFocus from "@/features/flower/hooks/extra/use-node-focus";
 import useNodePapers from "@/features/flower/hooks/extra/use-node-papers";
 import useFlowerParam from "@/features/flower/hooks/query/use-flower-param";
-import useFlowerQuery from "@/features/flower/hooks/query/use-flower-query";
+import useFlowerQueries from "@/features/flower/hooks/query/use-flower-queries";
 
 import Graph from "@/features/flower/components/graph";
 import { merge } from "@/utils/merge";
@@ -69,7 +69,9 @@ export default function FlowerGraphView() {
 
   /* Flower Correlations */
   const initial = useFlowerParam();
-  const { flowerPaperID, loadFlower, onFlowerLoaded } = useFlowerQuery(initial);
+  const { isFlowerLoading, loadFlower, onFlowerLoaded } = useFlowerQueries([
+    initial,
+  ]);
   const { getPaper, upsertPaper, hasPaper } = useNodePapers();
 
   /* Flower Handler */
@@ -131,8 +133,9 @@ export default function FlowerGraphView() {
   const renderChildNode: Flower.Render.RenderNode = useCallback(
     (node, ctx, scale) => {
       const paper = getPaper(node.paperID);
-      const style =
-        nodeOnHover?.id === node.id
+      const style = isFlowerLoading(node.paperID)
+        ? styles.node.childBlooming
+        : nodeOnHover?.id === node.id
           ? styles.node.childHovered
           : styles.node.child;
 
@@ -145,6 +148,7 @@ export default function FlowerGraphView() {
         x: node.x!,
         y: node.y!,
         radius: nodeConfig.radius.child.default,
+        stroke: isFlowerLoading(node.paperID) ? 16 : undefined,
       });
 
       // Draw Text
@@ -167,9 +171,11 @@ export default function FlowerGraphView() {
     },
     [
       getPaper,
+      isFlowerLoading,
       nodeConfig.radius.child.default,
       styles.node.child,
       styles.node.childHovered,
+      styles.node.childBlooming,
       nodeOnHover?.id,
     ],
   );
@@ -259,54 +265,87 @@ export default function FlowerGraphView() {
 
   /* Initial Behavior: 중앙에 Root Node를 삽입합니다. */
   useEffect(() => {
+    loadFlower(initial);
     upsert(createRootNode(initial));
-  }, [initial, upsert]);
+  }, [initial, loadFlower, upsert]);
 
   // TODO: 적절한 Error 처리
   /* On Correlations Loaded: Paper 정보를 추가 후, Child Node를 생성합니다. */
   useEffect(() => {
     onFlowerLoaded(({ paper, data: childData }) => {
-      // 1. Root Node에 Paper 등록
-      if (flowerPaperID !== paper.id) {
+      // 1. Node 가져오기
+      const nodes = getNodes((node) => node.paperID === paper.id);
+
+      if (nodes.length !== 1) {
         throw new Error(
-          "Error from Load Flower: Loaded flower data and target data mismatches.",
+          "Error from Loading Flower: There are Node of specific paper",
         );
       }
 
-      const nodes = getNodes((node) => node.paperID === flowerPaperID);
+      const [currentNode] = nodes;
 
-      // TODO: 다시 이 페이지로 돌아올 시 에러 발생
-      if (nodes.length !== 1 || !isRootNode(nodes[0])) {
+      if (isRootNode(currentNode)) {
+        upsertPaper(paper);
+
+        childData
+          .filter((child) => !hasPaper(child.id))
+          .forEach((childPaper) => {
+            const childNode = createChildNode(
+              childPaper.id,
+              currentNode.id,
+              true,
+            );
+            const link = createLink(currentNode, childNode);
+
+            upsertPaper(childPaper);
+            upsert(childNode);
+            upsert(link);
+          });
+
+        setTimeout(() => select(currentNode.id, true), 100);
+      } else if (isChildNode(currentNode)) {
+        const parentNode = get(currentNode.parentID);
+
+        if (!parentNode || !isRootNode(parentNode))
+          throw new Error("Error from Loading Flower: Parent node is invalid.");
+
+        const rootNode = createRootNode(paper.id);
+        const rootLink = createLink(parentNode, rootNode);
+
+        upsert(rootNode);
+        upsert(rootLink);
+
+        remove(currentNode.id);
+        getLinksFromTarget(currentNode.id)?.forEach((link) => remove(link.id));
+        upsertPaper(paper);
+
+        childData
+          .filter((child) => !hasPaper(child.id))
+          .forEach((childPaper) => {
+            const childNode = createChildNode(childPaper.id, rootNode.id, true);
+            const link = createLink(rootNode, childNode);
+
+            upsertPaper(childPaper);
+            upsert(childNode);
+            upsert(link);
+          });
+
+        setTimeout(() => select(rootNode.id, true), 100);
+      } else {
         throw new Error(
-          "Error from Load Flower: Target Node must be a root node.",
+          "Error from Loading Flower: Target Node is not supported for flowering.",
         );
       }
-
-      const [rootNode] = nodes;
-      upsertPaper(paper);
-
-      // 2. Child Node 등록
-      childData
-        .filter((child) => !hasPaper(child.id))
-        .forEach((childPaper) => {
-          const childNode = createChildNode(childPaper.id, rootNode.id, true);
-          const link = createLink(rootNode, childNode);
-
-          upsertPaper(childPaper);
-          upsert(childNode);
-          upsert(link);
-        });
-
-      // 3. Root Node 선택
-      setTimeout(() => select(rootNode.id, true), 100);
     });
   }, [
-    flowerPaperID,
+    get,
+    getLinksFromTarget,
     getNodes,
     hasPaper,
     onFlowerLoaded,
     select,
     upsert,
+    remove,
     upsertPaper,
   ]);
 
@@ -368,27 +407,7 @@ export default function FlowerGraphView() {
       Flower.Event.Type.NODE_CLICK,
       (node) => {
         if (!isChildNode(node)) return;
-
-        // 1. 새로운 Root Node 생성 및 Link 연결
-        const rootPaper = getPaper(node.paperID);
-        const parentRootNode = get(node.parentID);
-
-        if (!rootPaper || !parentRootNode || !isRootNode(parentRootNode))
-          return;
-
-        const rootNode = createRootNode(rootPaper.id);
-        const rootLink = createLink(parentRootNode, rootNode);
-
-        // TODO: 업데이트 시 x를 고정하는 역할이 될 수 있다.
-        // rootNode.x = node.x! + (node.x! - parentRootNode.x!) * 10;
-        // rootNode.y = node.y! + (node.y! - parentRootNode.y!) * 10;
-
-        upsert(rootNode);
-        upsert(rootLink);
-
-        // 2. 기존 Child Node 및 Link 삭제
-        remove(node.id);
-        getLinksFromTarget(node.id)?.forEach((link) => remove(link.id));
+        if (isFlowerLoading(node.paperID)) return;
 
         // 3. Flower
         loadFlower(node.paperID);
@@ -398,6 +417,7 @@ export default function FlowerGraphView() {
   }, [
     unselect,
     isSelected,
+    isFlowerLoading,
     handler?.event,
     getLinksFromTarget,
     select,
