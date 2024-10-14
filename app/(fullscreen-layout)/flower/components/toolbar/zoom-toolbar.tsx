@@ -85,10 +85,18 @@ export default function ZoomToolbar({ handler, viewConfig }: Props) {
           ui_color="tertiary"
         />
       )}
-      <IconButton ui_shape="circle" onClick={() => zoomInOut(10)}>
+      <IconButton
+        ui_shape="circle"
+        onClick={() => zoomInOut(10)}
+        aria-label="Zoom In"
+      >
         <AddIcon ui_size="small" />
       </IconButton>
-      <IconButton ui_shape="circle" onClick={() => zoomInOut(-10)}>
+      <IconButton
+        ui_shape="circle"
+        onClick={() => zoomInOut(-10)}
+        aria-label="Zoom Out"
+      >
         <RemoveIcon ui_size="small" />
       </IconButton>
     </ToolContainer>
