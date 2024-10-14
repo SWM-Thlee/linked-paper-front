@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
+    "analyse": "ANALYZE=true next build",
     "start": "next start",
     "postinstall": "husky init && echo \"yarn lint-staged\" > .husky/pre-commit",
     "lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@next/bundle-analyzer": "^14.2.15",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
