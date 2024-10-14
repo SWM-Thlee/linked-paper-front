@@ -9,6 +9,8 @@ import CloseIcon from "@/ui/icons/close";
 import AuthorChip from "@/features/search/components/chip/author";
 import { CategoryChip } from "@/features/search/components/chip/category";
 import OthersChip from "@/features/search/components/chip/others";
+import SearchResultOriginLink from "@/app/(scrollable-layout)/search/components/result-item/links/origin";
+import SearchResultPdfLink from "@/app/(scrollable-layout)/search/components/result-item/links/pdf";
 import SidebarContainer from "./sidebar-container";
 
 type Props = {
@@ -27,7 +29,15 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
       </div>
       <div className="flex max-h-[80vh] flex-col gap-8 overflow-y-auto p-8 scrollbar-none">
         {/* Header */}
-        <div className="flex items-center">{children}</div>
+        <div className="flex items-center gap-2">
+          {paper?.link.origin_link && (
+            <SearchResultOriginLink origin_link={paper?.link.origin_link} />
+          )}
+          {paper?.link.pdf_link && (
+            <SearchResultPdfLink pdf_link={paper?.link.pdf_link} />
+          )}
+          {children}
+        </div>
         {/* Content */}
         {paper && (
           <>
