@@ -7,13 +7,13 @@ export const defaultNodeConfig: Flower.Config.Node = (() => {
   const config: Flower.Config.Node = {
     collision: {
       [BaseNodeType.ROOT]: {
-        default: 225,
+        default: 300,
       },
       [BaseNodeType.GROUP]: {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: 100,
+        default: 135,
       },
     },
     charge: {
@@ -24,7 +24,7 @@ export const defaultNodeConfig: Flower.Config.Node = (() => {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: -200,
+        default: -500,
       },
     },
     radius: {
@@ -35,7 +35,7 @@ export const defaultNodeConfig: Flower.Config.Node = (() => {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: 200,
+        default: 150,
       },
     },
     link: {
@@ -53,7 +53,7 @@ export const defaultNodeConfig: Flower.Config.Node = (() => {
           default: 0,
         },
         [BaseNodeType.CHILD]: {
-          default: 215,
+          default: 165,
         },
       },
     },
@@ -64,7 +64,9 @@ export const defaultNodeConfig: Flower.Config.Node = (() => {
   config.link.width[DefaultNode.ROOT] = {};
   config.link.distance[DefaultNode.ROOT] = {};
   config.link.width[DefaultNode.ROOT][DefaultNode.ROOT] = 16;
-  config.link.distance[DefaultNode.ROOT][DefaultNode.ROOT] = 500;
+  config.link.distance[DefaultNode.ROOT][DefaultNode.ROOT] = 300;
+  config.link.width[DefaultNode.ROOT][DefaultNode.CHILD] = 4;
+  config.link.distance[DefaultNode.ROOT][DefaultNode.CHILD] = 300;
 
   return config;
 })();
@@ -75,7 +77,7 @@ export const defaultViewConfig: Flower.Config.View = {
     max: 5,
     delta: 0.05,
     focus: {
-      zoom: 0.75,
+      zoom: 0.8,
       duration: 750,
       adjustDurationByZoom: false,
     },
