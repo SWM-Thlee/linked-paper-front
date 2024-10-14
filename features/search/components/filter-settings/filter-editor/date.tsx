@@ -18,7 +18,7 @@ import { Search } from "@/features/search/types";
 import {
   convertDateToString as convertToString,
   convertStringToDate as convertToDate,
-} from "@/features/paper/utils/date";
+} from "@/utils/date";
 import { DateOptions } from "@/features/search/utils/date-option";
 import { EditorContext } from "./context";
 import "react-day-picker/style.css";

@@ -1,6 +1,6 @@
 import { startOfMonth, startOfYear, subMonths, subYears } from "date-fns";
 
-import { convertDateToString } from "@/features/paper/utils/date";
+import { convertDateToString } from "@/utils/date";
 import { signature } from "@/utils/signature";
 import { Search } from "../types";
 

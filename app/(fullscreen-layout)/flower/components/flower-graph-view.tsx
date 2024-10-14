@@ -11,9 +11,9 @@ import useGraphData from "@/features/flower/hooks/default/use-graph-data";
 import useNodeHoverHandler from "@/features/flower/hooks/extra/use-node-hover-handler";
 import useNodeSelectionHandler from "@/features/flower/hooks/extra/use-node-selection-handler";
 import useNodeFocus from "@/features/flower/hooks/extra/use-node-focus";
-import useNodePapers from "@/features/flower/hooks/extra/use-node-papers";
 import useFlowerParam from "@/features/flower/hooks/query/use-flower-param";
 import useFlowerQueries from "@/features/flower/hooks/query/use-flower-queries";
+import usePapers from "@/features/paper/hooks/use-papers";
 
 import { Paper } from "@/features/paper/types";
 import { Flower } from "@/features/flower/types";
@@ -72,7 +72,7 @@ export default function FlowerGraphView() {
   const { isFlowerLoading, loadFlower, onFlowerLoaded } = useFlowerQueries([
     initial,
   ]);
-  const { getPaper, upsertPaper, hasPaper } = useNodePapers();
+  const { getPaper, upsertPaper, hasPaper } = usePapers();
 
   /* Flower Handler */
   const [paperInfo, setPaperInfo] = useState<Paper.Scheme.Metadata | null>(
