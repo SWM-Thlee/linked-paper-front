@@ -1,4 +1,4 @@
-import PageContainer from "@/components/page-container";
+import PageContainer from "@/components/layout/page-container";
 import AnnouncementProvider from "@/features/announcement/components/announcement-provider";
 import DefaultFilterInfo from "./components/default-filter-info";
 import SearchForm from "./components/search-form";

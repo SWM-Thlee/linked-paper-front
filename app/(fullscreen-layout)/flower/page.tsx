@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 
-import FloatingLayout from "@/components/page-only/floating-layout";
-import ScrollLockOnce from "@/components/page-only/scroll-lock-once";
+import FloatingLayout from "@/components/layout/floating-layout";
+import ScrollLockOnce from "@/components/layout/scroll-lock-once";
 import ViewLoading from "./components/view-loading";
 
 const FlowerGraphView = dynamic(

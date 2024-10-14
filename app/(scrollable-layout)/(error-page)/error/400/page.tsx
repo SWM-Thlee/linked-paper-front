@@ -3,8 +3,8 @@
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 
-import PageContainer from "@/components/page-container";
-import ScrollLockOnce from "@/components/page-only/scroll-lock-once";
+import PageContainer from "@/components/layout/page-container";
+import ScrollLockOnce from "@/components/layout/scroll-lock-once";
 import Button from "@/ui/button";
 import ArrowBackIcon from "@/ui/icons/arrow-back";
 import WarningIcon from "@/ui/icons/warning";
