@@ -4,6 +4,7 @@ export const variants = {
   rootStyle: {
     defaultNode: [
       "text-display-medium",
+      "border-8",
       "border-light-outline",
       "border-dark-outline",
       "text-light-onSurface/75",
@@ -40,6 +41,7 @@ export const variants = {
       "text-dark-onTertiary",
     ],
     blooming: [
+      "border-8",
       "text-display-medium",
       "border-light-tertiary/25",
       "border-dark-tertiary/25",
@@ -48,6 +50,7 @@ export const variants = {
     ],
   },
   rootLinkStyle: {
+    base: ["border-4"],
     defaultLink: [
       "text-title-large",
       "bg-light-tertiaryContainer",
@@ -57,6 +60,7 @@ export const variants = {
     ],
   },
   childLinkStyle: {
+    base: ["border-4"],
     hovered: [
       "text-title-large",
       "bg-light-tertiary",

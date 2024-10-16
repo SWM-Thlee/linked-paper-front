@@ -1,68 +1,106 @@
-import { CanvasVariant } from "@/utils/style/canvas-variants";
+import { Graph } from "../types";
 
-export type DrawCircleOption = {
-  ctx: CanvasRenderingContext2D;
-  x: number;
-  y: number;
-  radius: number;
-  stroke?: number;
-};
+function resolveScale(scale: number, option?: Graph.Render.ScaleOption) {
+  if (!option) return 1;
 
-export function drawCircle({ ctx, x, y, radius, stroke }: DrawCircleOption) {
-  ctx.lineWidth = stroke ?? 0;
+  let resolvedScale = scale;
+
+  if (option === true) return resolvedScale;
+
+  if (option.min !== undefined)
+    resolvedScale = Math.max(option.min, resolvedScale);
+
+  if (option.max !== undefined)
+    resolvedScale = Math.min(option.max, resolvedScale);
+
+  return resolvedScale;
+}
+
+function resolveDetermination(
+  color: string,
+  option?: Graph.Render.DetermineOption,
+) {
+  return option?.color ?? color;
+}
+
+export const internalDrawNodeCircle: Graph.Render.DrawNodeCircleResolver = ({
+  ctx,
+  node,
+  radius,
+  rawScale,
+  style,
+  scale,
+  determine,
+}) => {
+  const x = node.x!;
+  const y = node.y!;
+  const resolvedScale = resolveScale(rawScale, scale);
+
+  ctx.strokeStyle = resolveDetermination(style.borderColor, determine);
+  ctx.fillStyle = resolveDetermination(style.bgColor, determine);
+  ctx.lineWidth = (style.borderWidth ?? 0) / resolvedScale;
 
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
   ctx.fill();
 
-  if (stroke) ctx.stroke();
-}
+  if (style.borderWidth > 0) ctx.stroke();
+};
 
-export function drawLinkText({
+export const internalDrawLinkText: Graph.Render.DrawLinkTextResolver = ({
   ctx,
-  style,
-  scale,
-  text,
   height,
-  sourceX,
-  targetX,
-  sourceY,
-  targetY,
-}: {
-  ctx: CanvasRenderingContext2D;
-  style: CanvasVariant;
-  scale: number;
-  text: string;
-  height: number;
-  sourceX: number;
-  sourceY: number;
-  targetX: number;
-  targetY: number;
-}) {
+  link: { source, target },
+  radius,
+  style,
+  text,
+  rawScale,
+  scale,
+  determine,
+}) => {
+  const sourceRadius =
+    radius[source.baseType]?.[source.type] ?? radius[source.baseType].default;
+
+  const targetRadius =
+    radius[target.baseType]?.[source.type] ?? radius[target.baseType].default;
+
+  const x1 = source.x!;
+  const y1 = source.y!;
+  const x2 = target.x!;
+  const y2 = target.y!;
+  let angle = Math.atan2(y2 - y1, x2 - x1);
+
+  const sourceX = x1 + Math.cos(angle) * sourceRadius;
+  const sourceY = y1 + Math.sin(angle) * sourceRadius;
+  const targetX = x2 - Math.cos(angle) * targetRadius;
+  const targetY = y2 - Math.sin(angle) * targetRadius;
+
   const midX = (sourceX + targetX) / 2;
   const midY = (sourceY + targetY) / 2;
-
-  let angle = Math.atan2(targetY - sourceY, targetX - sourceX);
 
   /* 사용자가 보았을 때 뒤집어져 보이는 경우 180도 회전합니다. */
   if (angle > Math.PI / 2 || angle < -Math.PI / 2) {
     angle += Math.PI;
   }
 
-  const padding = 5;
+  const resolvedScale = resolveScale(rawScale, scale);
+  const padding = 7 / resolvedScale;
 
   ctx.save();
+
+  ctx.strokeStyle = resolveDetermination(style.bgColor, determine);
+  ctx.lineWidth = style.borderWidth;
 
   ctx.translate(midX, midY);
   ctx.rotate(angle);
 
-  ctx.font = style.fontStyleWith({
-    scale,
+  ctx.font = style.fontWith({
+    scale: resolvedScale,
   });
 
   const { width } = ctx.measureText(text);
 
-  ctx.fillStyle = style.bgColorStyle;
+  ctx.fillStyle = resolveDetermination(style.bgColor, determine);
 
   ctx.fillRect(
     -(width / 2) - padding,
@@ -76,36 +114,59 @@ export function drawLinkText({
   ctx.arc(width / 2 + padding, 0, height / 2 + padding, 0, 2 * Math.PI, false);
   ctx.fill();
 
-  ctx.strokeStyle = style.bgColorStyle;
-  ctx.fillStyle = style.textColorStyle;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  /* Text는 영역을 결정할 때 방해 요소가 됩니다. */
+  if (!determine) {
+    ctx.fillStyle = style.textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
-  ctx.fillText(text, 0, 0);
+    ctx.fillText(text, 0, 0);
+  }
+
   ctx.restore();
-}
+};
 
-export function drawLink({
+export const internalDrawLink: Graph.Render.DrawLinkResolver = ({
   ctx,
-  sourceX,
-  targetX,
-  sourceY,
-  targetY,
-}: {
-  ctx: CanvasRenderingContext2D;
-  sourceX: number;
-  sourceY: number;
-  targetX: number;
-  targetY: number;
-}) {
+  style,
+  link: { source, target },
+  radius,
+  rawScale,
+  scale,
+  determine,
+}) => {
+  const sourceRadius =
+    radius[source.baseType]?.[source.type] ?? radius[source.baseType].default;
+
+  const targetRadius =
+    radius[target.baseType]?.[source.type] ?? radius[target.baseType].default;
+
+  const x1 = source.x!;
+  const y1 = source.y!;
+  const x2 = target.x!;
+  const y2 = target.y!;
+
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  const sourceX = x1 + Math.cos(angle) * sourceRadius;
+  const sourceY = y1 + Math.sin(angle) * sourceRadius;
+  const targetX = x2 - Math.cos(angle) * targetRadius;
+  const targetY = y2 - Math.sin(angle) * targetRadius;
+
+  const resolvedScale = resolveScale(rawScale, scale);
+
   ctx.save();
+
+  ctx.strokeStyle = resolveDetermination(style.bgColor, determine);
+  ctx.lineWidth = style.borderWidth / resolvedScale;
   ctx.lineCap = "round";
+
   ctx.beginPath();
   ctx.moveTo(sourceX, sourceY);
   ctx.lineTo(targetX, targetY);
   ctx.stroke();
+
   ctx.restore();
-}
+};
 
 /**
  * 특정 길이에 맞추어 문장을 분리합니다.
@@ -143,39 +204,54 @@ export function wrapText({
   return result;
 }
 
-export function drawWrappedText({
+export const internalDrawNodeText: Graph.Render.DrawNodeTextResolver = ({
   ctx,
+  height,
+  node,
+  rawScale,
+  style,
   text,
-  maxWidth,
+  offsetY,
   maxLines,
-  x,
-  y,
-  lineHeight,
-  defaultOffsetY,
-}: {
-  ctx: CanvasRenderingContext2D;
-  text: string;
-  maxWidth: number;
-  maxLines?: number;
-  x: number;
-  y: number;
-  lineHeight: number;
-  defaultOffsetY?: number;
-}) {
-  const sentences = wrapText({
-    ctx,
-    text,
-    maxWidth,
-    maxLines,
-  });
+  maxWidth,
+  scale,
+  determine,
+}) => {
+  const x = node.x!;
+  const y = node.y!;
+  const resolvedScale = resolveScale(rawScale, scale);
 
-  const offsetY = defaultOffsetY ?? -(lineHeight / 2) * (sentences.length - 1);
+  ctx.save();
 
-  sentences.forEach((sentence, i) =>
-    ctx.fillText(sentence, x, y + lineHeight * i + offsetY),
-  );
-}
+  if (!determine) {
+    ctx.fillStyle = style.textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
-export function limitRange(x: number, min: number, max: number) {
-  return Math.min(max, Math.max(x, min));
-}
+    ctx.font = style.fontWith({
+      scale: resolvedScale,
+    });
+
+    if (!maxWidth) {
+      ctx.fillText(text, x, y + (offsetY ?? 0));
+      ctx.restore();
+      return;
+    }
+
+    const sentences = wrapText({
+      ctx,
+      text,
+      maxWidth,
+      maxLines,
+    });
+
+    const resolvedOffsetY =
+      (offsetY ?? 0) - (height / 2) * (sentences.length - 1);
+
+    sentences.forEach((sentence, i) =>
+      ctx.fillText(sentence, x, y + height * i + resolvedOffsetY),
+    );
+  }
+
+  ctx.restore();
+};

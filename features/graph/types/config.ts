@@ -34,13 +34,6 @@ export type Node = {
   };
 
   link: {
-    /** 각 Link의 굵기를 정의합니다. */
-    width: Default<number> & {
-      [source: NodeType]: {
-        [target: NodeType]: number;
-      };
-    };
-
     distance: Default<number> & {
       [source in NodeType]: {
         [target in NodeType]: number;

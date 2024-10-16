@@ -15,6 +15,12 @@ import useInternalGraphEventHandler from "@/features/graph/hooks/internal/use-in
 
 import { Graph } from "@/features/graph/types";
 import { GraphHandler } from "../hooks/default/use-graph-handler";
+import {
+  internalDrawLink,
+  internalDrawLinkText,
+  internalDrawNodeCircle,
+  internalDrawNodeText,
+} from "../utils/draw";
 
 type Props = {
   /** Graph View 이외의 보조 UI를 구현할 때 사용됩니다. */
@@ -99,37 +105,103 @@ const GraphView = forwardRef<GraphHandler, Props>(
       );
     }, [chargeConfig, nodeConfig.charge]);
 
-    const onDetermineArea: Graph.Render.DetermineArea = useCallback(
-      (node, color, ctx, scale) => {
-        const determineAreaFn =
-          renderer.area[node.type] ?? renderer.area.default;
-        determineAreaFn(node, color, ctx, scale);
-      },
-      [renderer.area],
-    );
-
-    const onDetermineRadius: Graph.Render.DetermineRadius = useCallback(
-      (node) =>
-        nodeConfig.radius[node.baseType]?.[node.type] ??
-        nodeConfig.radius[node.baseType].default,
-      [nodeConfig.radius],
-    );
-
-    const onDrawNode: Graph.Render.RenderNode = useCallback(
-      (node, ctx, scale) => {
+    const onDetermineNode: Graph.Render.DetermineNodeResolver = useCallback(
+      (node, color, ctx, rawScale) => {
         const renderNodeFn = renderer.node[node.type] ?? renderer.node.default;
-        renderNodeFn(node, ctx, scale);
+
+        renderNodeFn({
+          node,
+          drawCircle(props) {
+            internalDrawNodeCircle({
+              node,
+              ctx,
+              rawScale,
+              determine: { color },
+              ...props,
+            });
+          },
+          drawText(props) {
+            internalDrawNodeText({
+              node,
+              ctx,
+              rawScale,
+              determine: { color },
+              ...props,
+            });
+          },
+        });
       },
       [renderer.node],
     );
 
-    const onDrawLink: Graph.Render.RenderLink = useCallback(
-      (link, ctx, scale) => {
+    const onDrawNode: Graph.Render.RenderNodeResolver = useCallback(
+      (node, ctx, rawScale) => {
+        const renderNodeFn = renderer.node[node.type] ?? renderer.node.default;
+
+        renderNodeFn({
+          node,
+          drawCircle(props) {
+            internalDrawNodeCircle({ node, ctx, rawScale, ...props });
+          },
+          drawText(props) {
+            internalDrawNodeText({ node, ctx, rawScale, ...props });
+          },
+        });
+      },
+      [renderer.node],
+    );
+
+    const onDrawLink: Graph.Render.RenderLinkResolver = useCallback(
+      (link, ctx, rawScale) => {
         const renderLinkFn =
           renderer.link[link.source.type]?.[link.target.type] ??
           renderer.link.default;
 
-        renderLinkFn(link, ctx, scale);
+        renderLinkFn({
+          link,
+          drawLink(props) {
+            internalDrawLink({ ctx, link, rawScale, ...props });
+          },
+          drawLinkText(props) {
+            internalDrawLinkText({
+              ctx,
+              link,
+              rawScale,
+              ...props,
+            });
+          },
+        });
+      },
+      [renderer.link],
+    );
+
+    const onDetermineLink: Graph.Render.DetermineLinkResolver = useCallback(
+      (link, color, ctx, rawScale) => {
+        const renderLinkFn =
+          renderer.link[link.source.type]?.[link.target.type] ??
+          renderer.link.default;
+
+        renderLinkFn({
+          link,
+          drawLink(props) {
+            internalDrawLink({
+              ctx,
+              link,
+              rawScale,
+              determine: { color },
+              ...props,
+            });
+          },
+          drawLinkText(props) {
+            internalDrawLinkText({
+              ctx,
+              link,
+              rawScale,
+              determine: { color },
+              ...props,
+            });
+          },
+        });
       },
       [renderer.link],
     );
@@ -205,6 +277,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
             linkTarget="targetID"
             linkVisibility={onLinkVisible}
             nodeVisibility={onNodeVisible}
+            autoPauseRedraw
             enableZoomInteraction={false} /* Zoom은 별도로 관리합니다. */
             /* Config */
             enableNodeDrag={viewConfig.interaction.drag.node}
@@ -214,8 +287,8 @@ const GraphView = forwardRef<GraphHandler, Props>(
             maxZoom={viewConfig.zoom.max}
             d3AlphaDecay={nodeConfig.alphaDecay}
             /* Renderer */
-            nodeVal={onDetermineRadius}
-            nodePointerAreaPaint={onDetermineArea}
+            nodePointerAreaPaint={onDetermineNode}
+            linkPointerAreaPaint={onDetermineLink}
             onRenderFramePre={onDrawBefore}
             onRenderFramePost={onDrawAfter}
             linkCanvasObject={onDrawLink}

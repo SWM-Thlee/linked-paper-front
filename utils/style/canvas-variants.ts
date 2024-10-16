@@ -1,15 +1,16 @@
 import { Theme } from "@/features/theme/types";
 
 export type CSSVariants = {
-  [component: string]: { [variant: string]: string[] };
+  [component: string]: { base?: string[] } & { [variant: string]: string[] };
 };
 
 export type CanvasVariant = {
-  bgColorStyle: string;
-  textColorStyle: string;
-  borderColorStyle: string;
-  fontStyle: string;
-  fontStyleWith: ({ scale }: { scale?: number }) => string;
+  bgColor: string;
+  textColor: string;
+  borderColor: string;
+  borderWidth: number;
+  font: string;
+  fontWith: ({ scale }: { scale?: number }) => string;
 };
 
 export type CanvasVariants<T extends CSSVariants> = {
@@ -78,28 +79,38 @@ export default function cv<T extends CSSVariants>(
       ...resultOfVariants,
       [variant]: Object.entries(components).reduce(
         (resultOfComponents, [component, rawStyle]) => {
-          const [bgColorStyle, textColorStyle, borderColorStyle, fontStyle] =
+          const [bgColor, textColor, borderColor, font, borderWidth] =
             extractStyleFromCSS({
-              classNames: resolveCSSByTheme(theme, rawStyle),
-              properties: ["background-color", "color", "border-color", "font"],
+              classNames: resolveCSSByTheme(theme, [
+                ...(components.base ?? []),
+                ...rawStyle,
+              ]),
+              properties: [
+                "background-color",
+                "color",
+                "border-color",
+                "font",
+                "border-width",
+              ],
             });
 
           return {
             ...resultOfComponents,
             [component]: {
-              bgColorStyle,
-              textColorStyle,
-              borderColorStyle,
-              fontStyle,
-              fontStyleWith: ({ scale }: { scale?: number }) => {
-                if (scale === undefined) return fontStyle;
+              bgColor,
+              textColor,
+              borderColor,
+              font,
+              borderWidth: parseInt(borderWidth, 10),
+              fontWith: ({ scale }: { scale?: number }) => {
+                if (scale === undefined) return font;
 
-                return fontStyle.replace(
+                return font.replace(
                   /\d+px/g,
                   (a) => `${parseInt(a, 10) / scale}px`,
                 );
               },
-            },
+            } satisfies CanvasVariant,
           };
         },
         {},

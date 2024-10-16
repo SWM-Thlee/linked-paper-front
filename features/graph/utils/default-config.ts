@@ -13,7 +13,7 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: 135,
+        default: 115,
       },
     },
     charge: {
@@ -39,9 +39,6 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
       },
     },
     link: {
-      width: {
-        default: 0,
-      },
       distance: {
         default: 0,
       },
@@ -61,11 +58,8 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
   };
 
   /* Default Link Config */
-  config.link.width[DefaultNode.ROOT] = {};
   config.link.distance[DefaultNode.ROOT] = {};
-  config.link.width[DefaultNode.ROOT][DefaultNode.ROOT] = 6;
   config.link.distance[DefaultNode.ROOT][DefaultNode.ROOT] = 100;
-  config.link.width[DefaultNode.ROOT][DefaultNode.CHILD] = 6;
   config.link.distance[DefaultNode.ROOT][DefaultNode.CHILD] = 200;
 
   return config;

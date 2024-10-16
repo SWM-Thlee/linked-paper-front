@@ -9,6 +9,7 @@ import useGraphNodeConfig from "@/features/graph/hooks/default/use-graph-node-co
 import useGraphViewConfig from "@/features/graph/hooks/default/use-graph-view-config";
 import useGraphData from "@/features/graph/hooks/default/use-graph-data";
 import useNodeHoverHandler from "@/features/graph/hooks/extra/use-node-hover-handler";
+import useLinkHoverHandler from "@/features/graph/hooks/extra/use-link-hover-handler";
 import useNodeSelectionHandler from "@/features/graph/hooks/extra/use-node-selection-handler";
 import useNodeFocus from "@/features/graph/hooks/extra/use-node-focus";
 import useFlowerParam from "@/features/flower/hooks/use-flower-param";
@@ -19,17 +20,7 @@ import usePaperSimilarities from "@/features/paper/hooks/use-paper-similarities"
 import { Paper } from "@/features/paper/types";
 import { Graph } from "@/features/graph/types";
 import { merge } from "@/utils/merge";
-import {
-  defaultAreaHandler,
-  defaultRenderer,
-} from "@/features/graph/utils/default-renderer";
-import {
-  drawCircle,
-  drawLink,
-  drawLinkText,
-  drawWrappedText,
-  limitRange,
-} from "@/features/graph/utils/draw";
+import { defaultRenderer } from "@/features/graph/utils/default-renderer";
 import {
   createChildNode,
   createLink,
@@ -65,7 +56,8 @@ export default function FlowerGraphView() {
   /* Extra Node Handler */
   const { rootLinkStyle, childLinkStyle, rootStyle, childStyle } =
     useCanvasVariants(variants);
-  const { isHovered } = useNodeHoverHandler(handler);
+  const { isHovered: isNodeHovered } = useNodeHoverHandler(handler);
+  const { isHovered: isLinkHovered } = useLinkHoverHandler(handler);
   const { focus } = useNodeFocus(handler, viewConfig);
   const { select, unselect, isSelected, selectedOne, onSelect, onUnselect } =
     useNodeSelectionHandler();
@@ -89,155 +81,122 @@ export default function FlowerGraphView() {
 
   /* Node Renderer */
   const renderRootNode: Graph.Render.RenderNode = useCallback(
-    (node, ctx, scale) => {
+    ({ node, drawCircle, drawText }) => {
       const { selected, hovered, defaultNode } = rootStyle;
       const paper = getPaper(node.paperID);
       const style = isSelected(node.id)
         ? selected
-        : isHovered(node.id)
+        : isNodeHovered(node.id)
           ? hovered
           : defaultNode;
 
-      /* Render Node */
-      ctx.strokeStyle = style.borderColorStyle;
-      ctx.fillStyle = style.bgColorStyle;
+      /* Draw Node */
+      drawCircle({ style, radius: nodeConfig.radius.root.default });
 
-      drawCircle({
-        ctx,
-        x: node.x!,
-        y: node.y!,
-        radius: nodeConfig.radius.root.default,
-        stroke: !(isSelected(node.id) || isHovered(node.id)) ? 2 : undefined,
-      });
-
-      /* Render Text */
-      ctx.fillStyle = style.textColorStyle;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      ctx.font = style.fontStyleWith({
-        scale: limitRange(scale, 3, 4),
-      });
-
-      /* Title */
-      drawWrappedText({
-        ctx,
+      /* Draw Title */
+      drawText({
+        style,
         text: paper?.title ?? "Loading Node",
         maxWidth: 175,
-        lineHeight: 24,
+        height: 24,
         maxLines: 3,
-        x: node.x!,
-        y: node.y! - 24,
+        offsetY: -24,
+        scale: { min: 3, max: 4 },
       });
 
-      /* Date */
-      drawWrappedText({
-        ctx,
+      /* Draw Date */
+      drawText({
+        style,
         text: paper?.date ?? "Unknown Date",
         maxWidth: 175,
-        lineHeight: 24,
-        x: node.x!,
-        y: node.y! + 36,
+        height: 24,
+        offsetY: 36,
+        scale: { min: 3, max: 4 },
       });
 
-      /* Author */
-      drawWrappedText({
-        ctx,
+      /* Draw Author */
+      drawText({
+        style,
         text: `${paper?.authors?.[0] ?? "Unknown"}`,
         maxWidth: 175,
-        lineHeight: 24,
-        x: node.x!,
-        y: node.y! + 72,
+        height: 24,
+        offsetY: 72,
+        scale: { min: 3, max: 4 },
       });
     },
     [
       getPaper,
       isSelected,
-      isHovered,
+      isNodeHovered,
       rootStyle,
       nodeConfig.radius.root.default,
     ],
   );
 
   const renderChildNode: Graph.Render.RenderNode = useCallback(
-    (node, ctx, scale) => {
+    ({ node, drawCircle, drawText }) => {
       const { blooming, hovered, defaultNode } = childStyle;
       const paper = getPaper(node.paperID);
       const style = isFlowerLoading(node.paperID)
         ? blooming
-        : isHovered(node.id)
+        : isNodeHovered(node.id)
           ? hovered
           : defaultNode;
 
-      /* Render Node */
-      ctx.strokeStyle = style.borderColorStyle;
-      ctx.fillStyle = style.bgColorStyle;
-
+      /* Draw Node */
       drawCircle({
-        ctx,
-        x: node.x!,
-        y: node.y!,
+        style,
         radius: nodeConfig.radius.child.default,
-        stroke: isFlowerLoading(node.paperID) ? 16 : undefined,
       });
 
-      /* Render Text */
-      ctx.fillStyle = style.textColorStyle;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      ctx.font = style.fontStyleWith({
-        scale: limitRange(scale, 3, 4),
-      });
-
-      /* Title */
-      drawWrappedText({
-        ctx,
+      /* Draw Title */
+      drawText({
+        style,
         text: paper?.title ?? "Loading Node",
         maxWidth: 175,
-        lineHeight: 24,
+        height: 24,
         maxLines: 3,
-        x: node.x!,
-        y: node.y! - 24,
+        offsetY: -24,
+        scale: { min: 3, max: 4 },
       });
 
-      /* Date */
-      drawWrappedText({
-        ctx,
+      /* Draw Date */
+      drawText({
+        style,
         text: paper?.date ?? "Unknown Date",
         maxWidth: 175,
-        lineHeight: 24,
-        x: node.x!,
-        y: node.y! + 36,
+        height: 24,
+        offsetY: 36,
+        scale: { min: 3, max: 4 },
       });
 
-      /* Author */
-      drawWrappedText({
-        ctx,
+      /* Draw Author */
+      drawText({
+        style,
         text: `${paper?.authors?.[0] ?? "Unknown"}`,
         maxWidth: 175,
-        lineHeight: 16,
-        x: node.x!,
-        y: node.y! + 72,
+        height: 24,
+        offsetY: 72,
+        scale: { min: 3, max: 4 },
       });
     },
     [
       getPaper,
       childStyle,
       isFlowerLoading,
-      isHovered,
+      isNodeHovered,
       nodeConfig.radius.child.default,
     ],
   );
 
   const renderRootLink: Graph.Render.RenderLink = useCallback(
-    ({ source, target }, ctx, scale) => {
+    ({ link: { source, target }, drawLink, drawLinkText }) => {
       // Resolve Adjacent Node
       if (viewConfig.panel.linkOfAdjacentRootNodeOnly) {
         if (
           !(
-            isHovered(source.id) ||
-            isHovered(target.id) ||
+            isNodeHovered(source.id) ||
+            isNodeHovered(target.id) ||
             selectedOne === source.id ||
             selectedOne === target.id
           )
@@ -246,132 +205,70 @@ export default function FlowerGraphView() {
       }
 
       const style = rootLinkStyle.defaultLink;
-      const fromCenter = nodeConfig.link.distanceFromCenter;
+      const radius = nodeConfig.link.distanceFromCenter;
 
       const similarity =
         (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
 
-      ctx.strokeStyle = style.bgColorStyle;
-      ctx.lineWidth =
-        nodeConfig.link.width[source.type]?.[target?.type] ??
-        nodeConfig.link.width.default;
-
-      const sourceRadius =
-        fromCenter[source.baseType]?.[source.type] ??
-        fromCenter[source.baseType].default;
-
-      const targetRadius =
-        fromCenter[target.baseType]?.[source.type] ??
-        fromCenter[target.baseType].default;
-
-      const x1 = source.x!;
-      const y1 = source.y!;
-      const x2 = target.x!;
-      const y2 = target.y!;
-      const angle = Math.atan2(y2 - y1, x2 - x1);
-      const sourceX = x1 + Math.cos(angle) * sourceRadius;
-      const sourceY = y1 + Math.sin(angle) * sourceRadius;
-      const targetX = x2 - Math.cos(angle) * targetRadius;
-      const targetY = y2 - Math.sin(angle) * targetRadius;
-
-      drawLink({ ctx, sourceX, sourceY, targetX, targetY });
+      drawLink({ style, radius });
       drawLinkText({
-        ctx,
         style,
         height: 24,
         text: `${similarity.toFixed(2)}%`,
-        scale: limitRange(scale, 1, 2),
-        sourceX,
-        sourceY,
-        targetX,
-        targetY,
+        scale: { min: 1, max: 2 },
+        radius,
       });
     },
     [
-      isHovered,
+      isNodeHovered,
       selectedOne,
       getSimilarity,
       rootLinkStyle.defaultLink,
       viewConfig.panel.linkOfAdjacentRootNodeOnly,
       nodeConfig.link.distanceFromCenter,
-      nodeConfig.link.width,
     ],
   );
 
   const renderChildLink: Graph.Render.RenderLink = useCallback(
-    ({ source, target }, ctx, scale) => {
+    ({ link: { id, source, target }, drawLink, drawLinkText }) => {
       const { hovered, highSimilarity, mediumSimilarity, lowSimilarity } =
         childLinkStyle;
 
       const similarity =
         (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
 
-      const style = isHovered(target.id)
-        ? hovered
-        : similarity > 66.0
-          ? highSimilarity
-          : similarity > 33.0
-            ? mediumSimilarity
-            : lowSimilarity;
+      const style =
+        isNodeHovered(target.id) || isLinkHovered(id)
+          ? hovered
+          : similarity > 66.0
+            ? highSimilarity
+            : similarity > 33.0
+              ? mediumSimilarity
+              : lowSimilarity;
 
-      const fromCenter = nodeConfig.link.distanceFromCenter;
+      const radius = nodeConfig.link.distanceFromCenter;
 
-      ctx.strokeStyle = style.bgColorStyle;
-      ctx.lineWidth =
-        nodeConfig.link.width[source.type]?.[target?.type] ??
-        nodeConfig.link.width.default;
-
-      const sourceRadius =
-        fromCenter[source.baseType]?.[source.type] ??
-        fromCenter[source.baseType].default;
-
-      const targetRadius =
-        fromCenter[target.baseType]?.[source.type] ??
-        fromCenter[target.baseType].default;
-
-      const x1 = source.x!;
-      const y1 = source.y!;
-      const x2 = target.x!;
-      const y2 = target.y!;
-      const angle = Math.atan2(y2 - y1, x2 - x1);
-      const sourceX = x1 + Math.cos(angle) * sourceRadius;
-      const sourceY = y1 + Math.sin(angle) * sourceRadius;
-      const targetX = x2 - Math.cos(angle) * targetRadius;
-      const targetY = y2 - Math.sin(angle) * targetRadius;
-
-      drawLink({ ctx, sourceX, sourceY, targetX, targetY });
+      drawLink({ style, radius });
       drawLinkText({
-        ctx,
         style,
         height: 24,
         text: `${similarity.toFixed(2)}%`,
-        scale: limitRange(scale, 1, 2),
-        sourceX,
-        sourceY,
-        targetX,
-        targetY,
+        scale: { min: 1, max: 2 },
+        radius,
       });
     },
     [
-      isHovered,
+      isNodeHovered,
+      isLinkHovered,
       getSimilarity,
       childLinkStyle,
       nodeConfig.link.distanceFromCenter,
-      nodeConfig.link.width,
     ],
   );
 
   const renderer = useMemo<Graph.Render.Renderer>(
     () =>
       merge(defaultRenderer, {
-        area: {
-          [Graph.Element.DefaultNode.ROOT]: defaultAreaHandler(
-            nodeConfig.radius.root.default,
-          ),
-          [Graph.Element.DefaultNode.CHILD]: defaultAreaHandler(
-            nodeConfig.radius.child.default,
-          ),
-        },
         node: {
           [Graph.Element.DefaultNode.ROOT]: renderRootNode,
           [Graph.Element.DefaultNode.CHILD]: renderChildNode,
@@ -383,14 +280,7 @@ export default function FlowerGraphView() {
           },
         },
       }),
-    [
-      renderRootNode,
-      renderRootLink,
-      renderChildLink,
-      renderChildNode,
-      nodeConfig.radius.root.default,
-      nodeConfig.radius.child.default,
-    ],
+    [renderRootNode, renderRootLink, renderChildLink, renderChildNode],
   );
 
   /* Initial Loading: 중앙에 Root Node를 삽입합니다. */
