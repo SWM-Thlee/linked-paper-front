@@ -137,9 +137,13 @@ export default function FlowerGraphView() {
     ({ node, drawCircle, drawText }) => {
       const { blooming, hovered, defaultNode } = childStyle;
       const paper = getPaper(node.paperID);
+      const links = getLinksFromTarget(node.id);
+
+      /* Child Node Style */
       const style = isFlowerLoading(node.paperID)
         ? blooming
-        : isNodeHovered(node.id)
+        : isNodeHovered(node.id) ||
+            links?.values().some((link) => isLinkHovered(link.id))
           ? hovered
           : defaultNode;
 
@@ -182,6 +186,8 @@ export default function FlowerGraphView() {
     },
     [
       getPaper,
+      getLinksFromTarget,
+      isLinkHovered,
       childStyle,
       isFlowerLoading,
       isNodeHovered,
@@ -210,12 +216,20 @@ export default function FlowerGraphView() {
       const similarity =
         (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
 
+      const locate: Graph.Render.LinkTextLocateOption | undefined =
+        selectedOne === source.id
+          ? { from: "source", distance: 100 }
+          : selectedOne === target.id
+            ? { from: "target", distance: 100 }
+            : undefined;
+
       drawLink({ style, radius });
       drawLinkText({
         style,
         height: 24,
         text: `${similarity.toFixed(2)}%`,
         scale: { min: 1, max: 2 },
+        locate,
         radius,
       });
     },
@@ -231,14 +245,21 @@ export default function FlowerGraphView() {
 
   const renderChildLink: Graph.Render.RenderLink = useCallback(
     ({ link: { id, source, target }, drawLink, drawLinkText }) => {
-      const { hovered, highSimilarity, mediumSimilarity, lowSimilarity } =
-        childLinkStyle;
+      const {
+        hovered,
+        blooming,
+        highSimilarity,
+        mediumSimilarity,
+        lowSimilarity,
+      } = childLinkStyle;
 
       const similarity =
         (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
 
-      const style =
-        isNodeHovered(target.id) || isLinkHovered(id)
+      /* Child Link Style */
+      const style = isFlowerLoading(target.paperID)
+        ? blooming
+        : isNodeHovered(target.id) || isLinkHovered(id)
           ? hovered
           : similarity > 66.0
             ? highSimilarity
@@ -254,12 +275,14 @@ export default function FlowerGraphView() {
         height: 24,
         text: `${similarity.toFixed(2)}%`,
         scale: { min: 1, max: 2 },
+        locate: { from: "source", distance: 100 },
         radius,
       });
     },
     [
       isNodeHovered,
       isLinkHovered,
+      isFlowerLoading,
       getSimilarity,
       childLinkStyle,
       nodeConfig.link.distanceFromCenter,

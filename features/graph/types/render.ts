@@ -119,6 +119,7 @@ export type DrawLinkText = (option: {
   height: number;
   text: string;
   scale?: ScaleOption;
+  locate?: LinkTextLocateOption;
   radius: NodeConfig["link"]["distanceFromCenter"];
 }) => void;
 
@@ -130,6 +131,7 @@ export type DrawLinkTextResolver = (option: {
   text: string;
   rawScale: number;
   scale?: ScaleOption;
+  locate?: LinkTextLocateOption;
   radius: NodeConfig["link"]["distanceFromCenter"];
   determine?: DetermineOption;
 }) => void;
@@ -150,4 +152,8 @@ export type Renderer = {
 
 /* Others */
 export type ScaleOption = true | { min?: number; max?: number };
+export type LinkTextLocateOption = {
+  from: "source" | "target";
+  distance: number;
+};
 export type DetermineOption = { color: string };

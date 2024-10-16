@@ -23,6 +23,45 @@ function resolveDetermination(
   return option?.color ?? color;
 }
 
+function resolveLocation(
+  pos: {
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+    resolvedScale: number;
+  },
+  option?: Graph.Render.LinkTextLocateOption,
+) {
+  /* option이 존재하지 않을 경우 중앙에 위치시킵니다. */
+  if (!option) {
+    return {
+      midX: (pos.sourceX + pos.targetX) / 2,
+      midY: (pos.sourceY + pos.targetY) / 2,
+    };
+  }
+
+  const linkLength = Math.hypot(
+    pos.targetX - pos.sourceX,
+    pos.targetY - pos.sourceY,
+  );
+
+  let distance = Math.max(
+    0,
+    option.from === "source"
+      ? option.distance / pos.resolvedScale
+      : linkLength - option.distance / pos.resolvedScale,
+  );
+  distance = Math.min(distance, linkLength);
+
+  const midX =
+    pos.sourceX + ((pos.targetX - pos.sourceX) / linkLength) * distance;
+  const midY =
+    pos.sourceY + ((pos.targetY - pos.sourceY) / linkLength) * distance;
+
+  return { midX, midY };
+}
+
 export const internalDrawNodeCircle: Graph.Render.DrawNodeCircleResolver = ({
   ctx,
   node,
@@ -36,15 +75,21 @@ export const internalDrawNodeCircle: Graph.Render.DrawNodeCircleResolver = ({
   const y = node.y!;
   const resolvedScale = resolveScale(rawScale, scale);
 
-  ctx.strokeStyle = resolveDetermination(style.borderColor, determine);
+  ctx.save();
+
   ctx.fillStyle = resolveDetermination(style.bgColor, determine);
-  ctx.lineWidth = (style.borderWidth ?? 0) / resolvedScale;
 
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
   ctx.fill();
 
-  if (style.borderWidth > 0) ctx.stroke();
+  if (!determine) {
+    ctx.strokeStyle = style.borderColor;
+    ctx.lineWidth = (style.borderWidth ?? 0) / resolvedScale;
+    if (style.borderWidth > 0) ctx.stroke();
+  }
+
+  ctx.restore();
 };
 
 export const internalDrawLinkText: Graph.Render.DrawLinkTextResolver = ({
@@ -56,6 +101,7 @@ export const internalDrawLinkText: Graph.Render.DrawLinkTextResolver = ({
   text,
   rawScale,
   scale,
+  locate,
   determine,
 }) => {
   const sourceRadius =
@@ -68,22 +114,31 @@ export const internalDrawLinkText: Graph.Render.DrawLinkTextResolver = ({
   const y1 = source.y!;
   const x2 = target.x!;
   const y2 = target.y!;
+
   let angle = Math.atan2(y2 - y1, x2 - x1);
+  const resolvedScale = resolveScale(rawScale, scale);
 
   const sourceX = x1 + Math.cos(angle) * sourceRadius;
   const sourceY = y1 + Math.sin(angle) * sourceRadius;
   const targetX = x2 - Math.cos(angle) * targetRadius;
   const targetY = y2 - Math.sin(angle) * targetRadius;
 
-  const midX = (sourceX + targetX) / 2;
-  const midY = (sourceY + targetY) / 2;
+  const { midX, midY } = resolveLocation(
+    {
+      sourceX,
+      sourceY,
+      targetX,
+      targetY,
+      resolvedScale,
+    },
+    locate,
+  );
 
   /* 사용자가 보았을 때 뒤집어져 보이는 경우 180도 회전합니다. */
   if (angle > Math.PI / 2 || angle < -Math.PI / 2) {
     angle += Math.PI;
   }
 
-  const resolvedScale = resolveScale(rawScale, scale);
   const padding = 7 / resolvedScale;
 
   ctx.save();

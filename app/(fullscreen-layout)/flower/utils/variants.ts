@@ -68,6 +68,13 @@ export const variants = {
       "text-light-onTertiary",
       "text-dark-onTertiary",
     ],
+    blooming: [
+      "text-title-large",
+      "bg-light-tertiaryContainer",
+      "bg-dark-tertiaryContainer",
+      "text-light-onTertiaryContainer",
+      "text-dark-onTertiaryContainer",
+    ],
     highSimilarity: [
       "text-title-large",
       "bg-light-primary",
