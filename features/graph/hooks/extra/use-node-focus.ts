@@ -4,6 +4,7 @@ import { GraphHandler } from "../default/use-graph-handler";
 
 type FocusOptions = {
   nodeID: Graph.Element.NodeID;
+  delay: number;
 };
 
 export default function useNodeFocus(
@@ -11,7 +12,7 @@ export default function useNodeFocus(
   viewConfig: Graph.Config.View,
 ) {
   const focus = useCallback(
-    ({ nodeID }: FocusOptions) => {
+    ({ nodeID, delay }: FocusOptions) => {
       const { adjustDurationByZoom, duration, zoom } = viewConfig.zoom.focus;
 
       setTimeout(
@@ -39,7 +40,7 @@ export default function useNodeFocus(
             );
             config.zoom(zoom, resolvedDuration);
           }),
-        50,
+        delay,
       );
     },
     [handler?.config, viewConfig.zoom.focus],

@@ -202,8 +202,9 @@ export default function FlowerGraphView() {
   );
 
   const renderRootLink: Graph.Render.RenderLink = useCallback(
-    ({ link: { source, target }, drawLink, drawLinkText }) => {
-      const style = rootLinkStyle.defaultLink;
+    ({ link: { id, source, target }, drawLink, drawLinkText }) => {
+      const { defaultLink, hovered } = rootLinkStyle;
+      const style = isLinkHovered(id) ? hovered : defaultLink;
       const radius = nodeConfig.link.distanceFromCenter;
 
       const similarity =
@@ -229,7 +230,8 @@ export default function FlowerGraphView() {
     [
       selectedOne,
       getSimilarity,
-      rootLinkStyle.defaultLink,
+      rootLinkStyle,
+      isLinkHovered,
       nodeConfig.link.distanceFromCenter,
     ],
   );
@@ -389,7 +391,7 @@ export default function FlowerGraphView() {
             upsert(link);
           });
 
-        setTimeout(() => select(currentNode.id, true), 100);
+        setTimeout(() => select(currentNode.id, true), 500);
       } else if (isChildNode(currentNode)) {
         const parentNode = get(currentNode.parentID);
 
@@ -418,7 +420,7 @@ export default function FlowerGraphView() {
             upsert(link);
           });
 
-        setTimeout(() => select(rootNode.id, true), 100);
+        setTimeout(() => select(rootNode.id, true), 500);
       } else {
         throw new Error(
           "Error from Loading Flower: Target Node is not supported for flowering.",
@@ -438,10 +440,29 @@ export default function FlowerGraphView() {
     upsertPaper,
   ]);
 
+  /* Event: 한 쪽이 Selected 상태인 Root-Root Link Click 시 Select되지 않은 쪽을 Select합니다. */
+  useEffect(() => {
+    handler?.event.onEvent(
+      Graph.Event.Type.LINK_CLICK,
+      ({ source, target }) => {
+        if (!(isRootNode(source) && isRootNode(target))) return;
+
+        if (selectedOne === source.id && selectedOne !== target.id) {
+          select(target.id, true);
+        }
+
+        if (selectedOne !== source.id && selectedOne === target.id) {
+          select(source.id, true);
+        }
+      },
+      "SelectedRootRootLinkClicked",
+    );
+  }, [handler?.event, selectedOne, select]);
+
   /* Event: 특정 Node가 선택된 경우 Child Node를 표시합니다. */
   useEffect(() => {
     onSelect("RootNodeSelected", (nodeID) => {
-      focus({ nodeID });
+      focus({ nodeID, delay: 100 });
     });
   }, [onSelect, get, getNodes, upsert, focus]);
 
@@ -459,7 +480,7 @@ export default function FlowerGraphView() {
     );
   }, [handler?.event, isSelected, select, unselect, isFlowerLoading]);
 
-  /* Event: 특정 Child Node Click 시 Bloom합니다. */
+  /* Event: 특정 Child Node 또는 Root-Child Click 시 Bloom합니다. */
   useEffect(() => {
     handler?.event.onEvent(
       Graph.Event.Type.NODE_CLICK,
@@ -469,6 +490,20 @@ export default function FlowerGraphView() {
         loadFlower(node.paperID);
       },
       "ChildNodeClicked",
+    );
+    handler?.event.onEvent(
+      Graph.Event.Type.LINK_CLICK,
+      ({ source, target }) => {
+        if (
+          !isRootNode(source) ||
+          !isChildNode(target) ||
+          isFlowerLoading(target.paperID)
+        )
+          return;
+
+        loadFlower(target.paperID);
+      },
+      "RootChildLinkClicked",
     );
   }, [
     unselect,
@@ -522,7 +557,9 @@ export default function FlowerGraphView() {
         <div className="absolute left-[50%] top-[50%] flex -translate-x-[50%] -translate-y-[50%] items-center gap-2">
           {selectedOne && (
             <ToolbarContainer>
-              <LabelButton onClick={() => focus({ nodeID: selectedOne })}>
+              <LabelButton
+                onClick={() => focus({ nodeID: selectedOne, delay: 100 })}
+              >
                 <ArrowUpIcon ui_size="small" />
                 Current Flower
               </LabelButton>

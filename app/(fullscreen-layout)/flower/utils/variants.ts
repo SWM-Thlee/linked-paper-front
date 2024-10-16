@@ -58,6 +58,13 @@ export const variants = {
       "text-light-onTertiaryContainer",
       "text-dark-onTertiaryContainer",
     ],
+    hovered: [
+      "text-title-large",
+      "bg-light-tertiary",
+      "bg-dark-tertiary",
+      "text-light-onTertiary",
+      "text-dark-onTertiary",
+    ],
   },
   childLinkStyle: {
     base: ["border-4"],
