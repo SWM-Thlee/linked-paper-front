@@ -12,6 +12,7 @@ import ForceGraph from "react-force-graph-2d";
 import useFullscreen from "@/hooks/use-fullscreen";
 import useInternalGraphConfig from "@/features/graph/hooks/internal/use-internal-graph-config";
 import useInternalGraphEventHandler from "@/features/graph/hooks/internal/use-internal-graph-event-handler";
+import useInternalGraphFilter from "@/features/graph/hooks/internal/use-internal-graph-filter";
 
 import { Graph } from "@/features/graph/types";
 import { GraphHandler } from "../hooks/default/use-graph-handler";
@@ -54,9 +55,11 @@ const GraphView = forwardRef<GraphHandler, Props>(
     } = useInternalGraphConfig();
 
     /** 그래프의 이벤트 핸들러를 관리합니다. */
-    const { onHandleEvent, registerHandler } = useInternalGraphEventHandler();
+    const { handleEvent, onEvent } = useInternalGraphEventHandler();
+    const { onNodeFilter, onLinkFilter, handleNodeFilter, handleLinkFilter } =
+      useInternalGraphFilter();
 
-    // 외부에서 사용할 설정들을 정의합니다.
+    /* 외부에서 사용할 설정들을 정의합니다. */
     useImperativeHandle(
       handlerRef,
       () => ({
@@ -67,10 +70,20 @@ const GraphView = forwardRef<GraphHandler, Props>(
           linkConfig,
         },
         event: {
-          registerHandler,
+          onEvent,
+          onNodeFilter,
+          onLinkFilter,
         },
       }),
-      [applyConfig, chargeConfig, collideConfig, linkConfig, registerHandler],
+      [
+        applyConfig,
+        chargeConfig,
+        collideConfig,
+        linkConfig,
+        onEvent,
+        onNodeFilter,
+        onLinkFilter,
+      ],
     );
 
     /** 물리 엔진 초기화를 수행합니다. */
@@ -249,15 +262,6 @@ const GraphView = forwardRef<GraphHandler, Props>(
       [applyConfig, viewConfig.interaction.scroll, viewConfig.scroll],
     );
 
-    /* Visibility Handlers */
-    const onLinkVisible = useCallback((link: Graph.Element.Link) => {
-      return link.source.visible && link.target.visible;
-    }, []);
-
-    const onNodeVisible = useCallback((node: Graph.Element.Node) => {
-      return node.visible;
-    }, []);
-
     return (
       <>
         {children}
@@ -275,8 +279,8 @@ const GraphView = forwardRef<GraphHandler, Props>(
             height={height}
             linkSource="sourceID"
             linkTarget="targetID"
-            linkVisibility={onLinkVisible}
-            nodeVisibility={onNodeVisible}
+            linkVisibility={handleLinkFilter}
+            nodeVisibility={handleNodeFilter}
             autoPauseRedraw
             enableZoomInteraction={false} /* Zoom은 별도로 관리합니다. */
             /* Config */
@@ -294,17 +298,17 @@ const GraphView = forwardRef<GraphHandler, Props>(
             linkCanvasObject={onDrawLink}
             nodeCanvasObject={onDrawNode}
             /* Graph Event Handler */
-            onNodeClick={onHandleEvent(Graph.Event.Type.NODE_CLICK)}
-            onNodeRightClick={onHandleEvent(Graph.Event.Type.NODE_RCLICK)}
-            onNodeHover={onHandleEvent(Graph.Event.Type.NODE_HOVER)}
-            onNodeDrag={onHandleEvent(Graph.Event.Type.NODE_DRAG)}
-            onBackgroundClick={onHandleEvent(Graph.Event.Type.BG_CLICK)}
-            onBackgroundRightClick={onHandleEvent(Graph.Event.Type.BG_RCLICK)}
-            onLinkClick={onHandleEvent(Graph.Event.Type.LINK_CLICK)}
-            onLinkHover={onHandleEvent(Graph.Event.Type.LINK_HOVER)}
-            onLinkRightClick={onHandleEvent(Graph.Event.Type.LINK_RCLICK)}
-            onZoom={onHandleEvent(Graph.Event.Type.ZOOM_UPDATE)}
-            onZoomEnd={onHandleEvent(Graph.Event.Type.ZOOM_END)}
+            onNodeClick={handleEvent(Graph.Event.Type.NODE_CLICK)}
+            onNodeRightClick={handleEvent(Graph.Event.Type.NODE_RCLICK)}
+            onNodeHover={handleEvent(Graph.Event.Type.NODE_HOVER)}
+            onNodeDrag={handleEvent(Graph.Event.Type.NODE_DRAG)}
+            onBackgroundClick={handleEvent(Graph.Event.Type.BG_CLICK)}
+            onBackgroundRightClick={handleEvent(Graph.Event.Type.BG_RCLICK)}
+            onLinkClick={handleEvent(Graph.Event.Type.LINK_CLICK)}
+            onLinkHover={handleEvent(Graph.Event.Type.LINK_HOVER)}
+            onLinkRightClick={handleEvent(Graph.Event.Type.LINK_RCLICK)}
+            onZoom={handleEvent(Graph.Event.Type.ZOOM_UPDATE)}
+            onZoomEnd={handleEvent(Graph.Event.Type.ZOOM_END)}
           />
         </div>
       </>

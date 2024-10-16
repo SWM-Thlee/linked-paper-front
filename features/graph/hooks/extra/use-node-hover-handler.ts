@@ -32,7 +32,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
   );
 
   useEffect(() => {
-    handler?.event.registerHandler(
+    handler?.event.onEvent(
       Graph.Event.Type.NODE_HOVER,
       (node) => setNodeID(node?.id ?? null),
       idHover,
@@ -40,7 +40,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
   }, [handler?.event, idHover]);
 
   useEffect(() => {
-    handler?.event.registerHandler(
+    handler?.event.onEvent(
       Graph.Event.Type.NODE_HOVER,
       (node, prevNode) => {
         /* Hover In */
@@ -53,7 +53,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
   }, [handler?.event, idHoverIn, hoverIn]);
 
   useEffect(() => {
-    handler?.event.registerHandler(
+    handler?.event.onEvent(
       Graph.Event.Type.NODE_HOVER,
       (node, prevNode) => {
         /* Hover Out */

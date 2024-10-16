@@ -31,7 +31,7 @@ export default function useLinkHoverHandler(handler: GraphHandler | null) {
   );
 
   useEffect(() => {
-    handler?.event.registerHandler(
+    handler?.event.onEvent(
       Graph.Event.Type.LINK_HOVER,
       (link) => setLinkID(link?.id ?? null),
       idHover,
@@ -39,7 +39,7 @@ export default function useLinkHoverHandler(handler: GraphHandler | null) {
   }, [handler?.event, idHover]);
 
   useEffect(() => {
-    handler?.event.registerHandler(
+    handler?.event.onEvent(
       Graph.Event.Type.LINK_HOVER,
       (link, prevLink) => {
         /* Hover In */
@@ -52,7 +52,7 @@ export default function useLinkHoverHandler(handler: GraphHandler | null) {
   }, [handler?.event, idHoverIn, hoverIn]);
 
   useEffect(() => {
-    handler?.event.registerHandler(
+    handler?.event.onEvent(
       Graph.Event.Type.LINK_HOVER,
       (link, prevLink) => {
         /* Hover Out */

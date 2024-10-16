@@ -59,9 +59,8 @@ export default function ZoomToolbar({ handler, viewConfig }: Props) {
   }, [zoom, min, max]);
 
   useEffect(() => {
-    handler?.event.registerHandler(
-      Graph.Event.Type.ZOOM_UPDATE,
-      ({ k: scale }) => setZoom(scale),
+    handler?.event.onEvent(Graph.Event.Type.ZOOM_UPDATE, ({ k: scale }) =>
+      setZoom(scale),
     );
   }, [handler?.event]);
 

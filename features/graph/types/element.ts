@@ -38,9 +38,6 @@ export type BaseNode<
   baseType: Base;
   type: Node;
   id: `${Base}:${Node}:${string}`;
-
-  /** 이 Node의 표시 여부를 나타냅니다. */
-  visible: boolean;
 }>;
 
 export interface RootNode<Node extends NodeType = typeof DefaultNode.ROOT>

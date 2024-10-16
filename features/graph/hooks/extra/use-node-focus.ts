@@ -39,7 +39,7 @@ export default function useNodeFocus(
             );
             config.zoom(zoom, resolvedDuration);
           }),
-        200,
+        50,
       );
     },
     [handler?.config, viewConfig.zoom.focus],

@@ -7,13 +7,13 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
   const config: Graph.Config.Node = {
     collision: {
       [BaseNodeType.ROOT]: {
-        default: 300,
+        default: 250,
       },
       [BaseNodeType.GROUP]: {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: 115,
+        default: 150,
       },
     },
     charge: {

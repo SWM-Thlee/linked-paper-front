@@ -29,14 +29,17 @@ export default function SettingsToolbar({ viewConfig, setExtraConfig }: Props) {
   );
 
   return (
-    <ToolbarContainer>
-      <LabelButton
-        ui_color="secondary"
-        ui_variant={isAdjacentLinkOnly ? "default" : "ghost"}
-        onClick={() => setAdjacentLinkOnly(!isAdjacentLinkOnly)}
-      >
-        {isAdjacentLinkOnly ? <CheckIcon /> : <CloseIcon />} Adjacent Link Only
-      </LabelButton>
-    </ToolbarContainer>
+    <div className="flex items-center gap-4">
+      <ToolbarContainer>
+        <LabelButton
+          ui_color="secondary"
+          ui_variant={isAdjacentLinkOnly ? "default" : "ghost"}
+          onClick={() => setAdjacentLinkOnly(!isAdjacentLinkOnly)}
+        >
+          {isAdjacentLinkOnly ? <CheckIcon /> : <CloseIcon />} Adjacent Link
+          Only
+        </LabelButton>
+      </ToolbarContainer>
+    </div>
   );
 }

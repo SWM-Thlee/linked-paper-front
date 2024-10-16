@@ -10,21 +10,18 @@ export function makeExtensible<T>(data: T) {
 
 export function createRootNode(
   paperID: Paper.Scheme.Id,
-  visible = true,
 ): Graph.Element.RootNode {
   return makeExtensible({
     baseType: Graph.Element.BaseNodeType.ROOT,
     type: Graph.Element.DefaultNode.ROOT,
     id: `root:${Graph.Element.DefaultNode.ROOT}:${paperID}`,
     paperID,
-    visible,
   } satisfies Graph.Element.RootNode);
 }
 
 export function createChildNode(
   paperID: Paper.Scheme.Id,
   parentID: Graph.Element.RootNode["id"],
-  visible = true,
 ): Graph.Element.ChildNode {
   return makeExtensible({
     baseType: Graph.Element.BaseNodeType.CHILD,
@@ -32,7 +29,6 @@ export function createChildNode(
     id: `child:${Graph.Element.DefaultNode.CHILD}:${paperID}-from-${parentID}`,
     paperID,
     parentID,
-    visible,
   } satisfies Graph.Element.ChildNode);
 }
 

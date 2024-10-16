@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef } from "react";
 
 import { Graph } from "../../types";
 
@@ -8,37 +8,34 @@ type EventHandler = {
   };
 };
 
-type RegisterFn = <T extends Graph.Event.Type>(
+type OnEvent = <T extends Graph.Event.Type>(
   type: T,
   handler: Graph.Event.Handler<T>,
   name?: string,
 ) => void;
 
-type OnHandleEventFn = <T extends Graph.Event.Type>(
+type HandleEvent = <T extends Graph.Event.Type>(
   type: T,
 ) => (...args: Parameters<Graph.Event.Handler<T>>) => void;
 
 export default function useInternalGraphEventHandler() {
-  const [handlers, setHandlers] = useState<EventHandler>({});
+  const handlers = useRef<EventHandler>({});
 
-  const registerHandler: RegisterFn = useCallback(
-    (type, handler, name = "default") => {
-      setHandlers((prev) => ({
-        ...prev,
-        [type]: { ...(prev[type] ?? {}), [name]: handler },
-      }));
-    },
+  const onEvent: OnEvent = useCallback((type, handler, name = "default") => {
+    handlers.current[type] = {
+      ...(handlers.current[type] ?? {}),
+      [name]: handler,
+    };
+  }, []);
+
+  const handleEvent: HandleEvent = useCallback(
+    (type) =>
+      (...args) =>
+        Object.values(handlers.current[type] ?? []).forEach((handler) =>
+          handler(...args),
+        ),
     [],
   );
 
-  const onHandleEvent: OnHandleEventFn = useCallback(
-    (type) =>
-      (...args) =>
-        Object.values(handlers[type] ?? []).forEach((handler) =>
-          handler(...args),
-        ),
-    [handlers],
-  );
-
-  return { registerHandler, onHandleEvent };
+  return { onEvent, handleEvent };
 }
