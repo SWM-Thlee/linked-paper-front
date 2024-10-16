@@ -6,7 +6,7 @@ import { queryOptions } from "../server/queries";
 import { Flower } from "../types";
 
 type FlowerLoadedListener = (result: Flower.Api.Result) => void;
-type FlowerErrorListener = (response: ErrorResponse) => void;
+type FlowerErrorListener = (response: ErrorResponse<Flower.Api.Error>) => void;
 
 // TODO: Error 시 Refetching 구현
 export default function useFlowerQueries(intialTarget?: string[]) {
@@ -48,7 +48,7 @@ export default function useFlowerQueries(intialTarget?: string[]) {
 
   const isFlowerLoaded = useCallback(
     (paperID: string) =>
-      target.includes(paperID) && loaded.current.has(paperID),
+      target.includes(paperID) && loaded.current.get(paperID),
     [target],
   );
 
@@ -56,8 +56,8 @@ export default function useFlowerQueries(intialTarget?: string[]) {
     flowers
       .filter((flower) => !!flower)
       .forEach((flower) => {
-        /* Error Response */
         if (flower.status === "ERROR") {
+          /* Error Response */
           if (!flower.extra?.paperID) return;
 
           const isLoaded = loaded.current.get(flower.extra?.paperID);

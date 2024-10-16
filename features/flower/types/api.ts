@@ -25,4 +25,8 @@ export interface Response {
   data: ResultDataResponse[];
 }
 
+export type Error = {
+  paperID: Paper.Scheme.Id;
+};
+
 export const NoStore: RequestInit = { cache: "no-store" };
