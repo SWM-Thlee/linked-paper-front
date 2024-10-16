@@ -1,62 +1,89 @@
 import { CSSVariants } from "@/utils/style/canvas-variants";
 
 export const variants = {
-  node: {
-    // 선택되지 않은 Root Node
-    root: [
+  rootStyle: {
+    defaultNode: [
       "text-display-medium",
       "border-light-outline",
       "border-dark-outline",
       "text-light-onSurface/75",
       "text-dark-onSurface/75",
     ],
-
-    // 선택된 Root Node
-    rootSelected: [
+    selected: [
       "text-display-medium",
       "bg-light-secondary",
       "text-light-onSecondary",
       "bg-dark-secondary",
       "text-dark-onSecondary",
     ],
-
-    // 호버된 Root Node
-    rootHovered: [
+    hovered: [
       "text-display-medium",
       "bg-light-secondary/75",
       "text-light-onSecondary",
       "bg-dark-secondary/75",
       "text-dark-onSecondary",
     ],
-
-    // Child Node
-    child: [
+  },
+  childStyle: {
+    defaultNode: [
       "text-display-medium",
       "bg-light-tertiary/25",
       "bg-dark-tertiary/25",
       "text-light-onSurface",
       "text-dark-onSurface",
     ],
-
-    // 호버된 Child Node
-    childHovered: [
-      "text-display-large",
+    hovered: [
+      "text-display-medium",
       "bg-light-tertiary",
       "bg-dark-tertiary",
       "text-light-onTertiary",
       "text-dark-onTertiary",
     ],
-
-    // Bloom 중인 Child Node
-    childBlooming: [
-      "text-display-large",
-      "border-light-tertiary",
-      "border-dark-tertiary",
+    blooming: [
+      "text-display-medium",
+      "border-light-tertiary/25",
+      "border-dark-tertiary/25",
       "text-light-onSurface",
       "text-dark-onSurface",
     ],
   },
-  link: {
-    default: ["bg-light-outlineVariant", "bg-dark-outlineVariant"],
+  rootLinkStyle: {
+    defaultLink: [
+      "text-title-large",
+      "bg-light-tertiaryContainer",
+      "bg-dark-tertiaryContainer",
+      "text-light-onTertiaryContainer",
+      "text-dark-onTertiaryContainer",
+    ],
+  },
+  childLinkStyle: {
+    hovered: [
+      "text-title-large",
+      "bg-light-tertiary",
+      "bg-dark-tertiary",
+      "text-light-onTertiary",
+      "text-dark-onTertiary",
+    ],
+    highSimilarity: [
+      "text-title-large",
+      "bg-light-primary",
+      "bg-dark-primary",
+      "text-light-onPrimary",
+      "text-dark-onPrimary",
+    ],
+    mediumSimilarity: [
+      "text-title-large",
+      "bg-light-secondary",
+      "bg-dark-secondary",
+      "text-light-onSecondary/75",
+      "text-dark-onSecondary/75",
+    ],
+    lowSimilarity: [
+      "text-title-large",
+      "bg-light-outlineVariant",
+      "bg-dark-outlineVariant",
+      "text-light-onSurface/75",
+      "text-dark-onSurface/75",
+    ],
   },
 } satisfies CSSVariants;

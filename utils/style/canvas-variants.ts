@@ -4,15 +4,17 @@ export type CSSVariants = {
   [component: string]: { [variant: string]: string[] };
 };
 
+export type CanvasVariant = {
+  bgColorStyle: string;
+  textColorStyle: string;
+  borderColorStyle: string;
+  fontStyle: string;
+  fontStyleWith: ({ scale }: { scale?: number }) => string;
+};
+
 export type CanvasVariants<T extends CSSVariants> = {
   [component in keyof T]: {
-    [variant in keyof T[component]]: {
-      bgColorStyle: string;
-      textColorStyle: string;
-      borderColorStyle: string;
-      fontStyle: string;
-      fontStyleWith: ({ scale }: { scale?: number }) => string;
-    };
+    [variant in keyof T[component]]: CanvasVariant;
   };
 };
 

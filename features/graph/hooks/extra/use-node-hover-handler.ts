@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import useSignature from "@/hooks/use-signature";
 
@@ -14,40 +14,27 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
   const idHoverIn = useSignature("NodeHoverHandler-HoverIn");
   const idHoverOut = useSignature("NodeHoverHandler-HoverOut");
 
-  const [nodeOnHover, setNodeOnHover] = useState<Graph.Element.Node | null>(
-    null,
-  );
-  const [hoverIn, setHoverIn] = useState<Listeners>(new Map());
-  const [hoverOut, setHoverOut] = useState<Listeners>(new Map());
+  const [nodeID, setNodeID] = useState<Graph.Element.NodeID | null>(null);
+  const hoverIn = useRef<Listeners>(new Map());
+  const hoverOut = useRef<Listeners>(new Map());
 
-  const registerHoverInListener = useCallback(
-    (name: string, listener: Listener) => {
-      setHoverIn((listeners) => {
-        const newListeners = new Map(listeners);
-        newListeners.set(name, listener);
+  const onHoverIn = useCallback((name: string, listener: Listener) => {
+    hoverIn.current.set(name, listener);
+  }, []);
 
-        return newListeners;
-      });
-    },
-    [],
-  );
+  const onHoverOut = useCallback((name: string, listener: Listener) => {
+    hoverOut.current.set(name, listener);
+  }, []);
 
-  const registerHoverOutListener = useCallback(
-    (name: string, listener: Listener) => {
-      setHoverOut((listeners) => {
-        const newListeners = new Map(listeners);
-        newListeners.set(name, listener);
-
-        return newListeners;
-      });
-    },
-    [],
+  const isHovered = useCallback(
+    (id: Graph.Element.NodeID) => nodeID === id,
+    [nodeID],
   );
 
   useEffect(() => {
     handler?.event.registerHandler(
       Graph.Event.Type.NODE_HOVER,
-      (node) => setNodeOnHover(node),
+      (node) => setNodeID(node?.id ?? null),
       idHover,
     );
   }, [handler?.event, idHover]);
@@ -58,7 +45,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
       (node, prevNode) => {
         /* Hover In */
         if (node !== null && prevNode === null) {
-          hoverIn.forEach((listener) => listener(node));
+          hoverIn.current.forEach((listener) => listener(node));
         }
       },
       idHoverIn,
@@ -71,7 +58,7 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
       (node, prevNode) => {
         /* Hover Out */
         if (node === null && prevNode !== null) {
-          hoverOut.forEach((listener) => listener(prevNode));
+          hoverOut.current.forEach((listener) => listener(prevNode));
         }
       },
       idHoverOut,
@@ -79,8 +66,8 @@ export default function useNodeHoverHandler(handler: GraphHandler | null) {
   }, [handler?.event, idHoverOut, hoverOut]);
 
   return {
-    nodeOnHover,
-    registerHoverInListener,
-    registerHoverOutListener,
+    isHovered,
+    onHoverIn,
+    onHoverOut,
   };
 }
