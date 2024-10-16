@@ -1,3 +1,5 @@
+import { CanvasVariant } from "@/utils/style/canvas-variants";
+
 export type DrawCircleOption = {
   ctx: CanvasRenderingContext2D;
   x: number;
@@ -16,6 +18,73 @@ export function drawCircle({ ctx, x, y, radius, stroke }: DrawCircleOption) {
   if (stroke) ctx.stroke();
 }
 
+export function drawLinkText({
+  ctx,
+  style,
+  scale,
+  text,
+  height,
+  sourceX,
+  targetX,
+  sourceY,
+  targetY,
+}: {
+  ctx: CanvasRenderingContext2D;
+  style: CanvasVariant;
+  scale: number;
+  text: string;
+  height: number;
+  sourceX: number;
+  sourceY: number;
+  targetX: number;
+  targetY: number;
+}) {
+  const midX = (sourceX + targetX) / 2;
+  const midY = (sourceY + targetY) / 2;
+
+  let angle = Math.atan2(targetY - sourceY, targetX - sourceX);
+
+  /* 사용자가 보았을 때 뒤집어져 보이는 경우 180도 회전합니다. */
+  if (angle > Math.PI / 2 || angle < -Math.PI / 2) {
+    angle += Math.PI;
+  }
+
+  const padding = 5;
+
+  ctx.save();
+
+  ctx.translate(midX, midY);
+  ctx.rotate(angle);
+
+  ctx.font = style.fontStyleWith({
+    scale,
+  });
+
+  const { width } = ctx.measureText(text);
+
+  ctx.fillStyle = style.bgColorStyle;
+
+  ctx.fillRect(
+    -(width / 2) - padding,
+    -(height / 2) - padding,
+    width + padding * 2,
+    height + padding * 2,
+  );
+
+  ctx.beginPath();
+  ctx.arc(-width / 2 - padding, 0, height / 2 + padding, 0, 2 * Math.PI, false);
+  ctx.arc(width / 2 + padding, 0, height / 2 + padding, 0, 2 * Math.PI, false);
+  ctx.fill();
+
+  ctx.strokeStyle = style.bgColorStyle;
+  ctx.fillStyle = style.textColorStyle;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  ctx.fillText(text, 0, 0);
+  ctx.restore();
+}
+
 export function drawLink({
   ctx,
   sourceX,
@@ -29,11 +98,13 @@ export function drawLink({
   targetX: number;
   targetY: number;
 }) {
+  ctx.save();
   ctx.lineCap = "round";
   ctx.beginPath();
   ctx.moveTo(sourceX, sourceY);
   ctx.lineTo(targetX, targetY);
   ctx.stroke();
+  ctx.restore();
 }
 
 /**
@@ -64,7 +135,7 @@ export function wrapText({
   }, []);
 
   // 3. 라인의 개수가 정해져 있는 경우 해당 라인까지만 반환합니다.
-  if (maxLines) {
+  if (maxLines && result.length >= maxLines) {
     const [lastLine, ...lines] = result.slice(0, maxLines).reverse();
     return [...lines.reverse(), `${lastLine} (...)`];
   }
