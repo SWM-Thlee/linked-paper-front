@@ -80,7 +80,7 @@ export const internalDrawNodeCircle: Graph.Render.DrawNodeCircleResolver = ({
   ctx.fillStyle = resolveDetermination(style.bgColor, determine);
 
   ctx.beginPath();
-  ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+  ctx.arc(x, y, radius / resolvedScale, 0, 2 * Math.PI, false);
   ctx.fill();
 
   if (!determine) {
@@ -139,7 +139,7 @@ export const internalDrawLinkText: Graph.Render.DrawLinkTextResolver = ({
     angle += Math.PI;
   }
 
-  const padding = 7 / resolvedScale;
+  const padding = 8 / resolvedScale;
 
   ctx.save();
 
@@ -253,7 +253,7 @@ export function wrapText({
   // 3. 라인의 개수가 정해져 있는 경우 해당 라인까지만 반환합니다.
   if (maxLines && result.length >= maxLines) {
     const [lastLine, ...lines] = result.slice(0, maxLines).reverse();
-    return [...lines.reverse(), `${lastLine} (...)`];
+    return [...lines.reverse(), `${lastLine}...`];
   }
 
   return result;
@@ -288,7 +288,7 @@ export const internalDrawNodeText: Graph.Render.DrawNodeTextResolver = ({
     });
 
     if (!maxWidth) {
-      ctx.fillText(text, x, y + (offsetY ?? 0));
+      ctx.fillText(text, x, y + (offsetY ?? 0) / resolvedScale);
       ctx.restore();
       return;
     }
@@ -296,15 +296,20 @@ export const internalDrawNodeText: Graph.Render.DrawNodeTextResolver = ({
     const sentences = wrapText({
       ctx,
       text,
-      maxWidth,
+      maxWidth: maxWidth / resolvedScale,
       maxLines,
     });
 
     const resolvedOffsetY =
-      (offsetY ?? 0) - (height / 2) * (sentences.length - 1);
+      (offsetY ?? 0) / resolvedScale -
+      (height / resolvedScale / 2) * (sentences.length - 1);
 
     sentences.forEach((sentence, i) =>
-      ctx.fillText(sentence, x, y + height * i + resolvedOffsetY),
+      ctx.fillText(
+        sentence,
+        x,
+        y + (height / resolvedScale) * i + resolvedOffsetY,
+      ),
     );
   }
 

@@ -11,7 +11,7 @@ import { CategoryChip } from "@/features/search/components/chip/category";
 import OthersChip from "@/features/search/components/chip/others";
 import SearchResultOriginLink from "@/app/(scrollable-layout)/search/components/result-item/links/origin";
 import SearchResultPdfLink from "@/app/(scrollable-layout)/search/components/result-item/links/pdf";
-import SidebarContainer from "./sidebar-container";
+import SidebarContainer from "@/features/graph/components/sidebar/sidebar-container";
 
 type Props = {
   paper: Paper.Scheme.Metadata | null;
@@ -51,7 +51,7 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
               <Badge ui_color="secondary" className="self-start">
                 ABSTRACTION
               </Badge>
-              <div className="text-body-large leading-loose">
+              <div className="text-body-large text-lg leading-loose tracking-wider">
                 {paper.abstraction}
               </div>
             </div>

@@ -1,50 +1,70 @@
-import { useCallback } from "react";
-import { Graph } from "../../types";
+import { useCallback, useState } from "react";
+
+import useFullscreen from "@/hooks/use-fullscreen";
 import { GraphHandler } from "../default/use-graph-handler";
+import { Graph } from "../../types";
 
 type FocusOptions = {
   nodeID: Graph.Element.NodeID;
-  delay: number;
+  padding?: number;
 };
 
 export default function useNodeFocus(
   handler: GraphHandler | null,
   viewConfig: Graph.Config.View,
 ) {
+  const [focusOffsetX, setFocusOffsetX] = useState(0);
+  const [focusOffsetY, setFocusOffsetY] = useState(0);
+  const { width, height } = useFullscreen();
+
   const focus = useCallback(
-    ({ nodeID, delay }: FocusOptions) => {
-      const { adjustDurationByZoom, duration, zoom } = viewConfig.zoom.focus;
+    ({ nodeID, padding }: FocusOptions) => {
+      const { adjustDurationByZoom, duration } = viewConfig.zoom.focus;
+      handler?.config.applyConfig((config) => {
+        const currentZoom = config.zoom();
+        const box = config.getGraphBbox((node) => node.id === nodeID);
 
-      setTimeout(
-        () =>
-          handler?.config.applyConfig((config) => {
-            const scale = config.zoom();
-            const resolvedDuration =
-              duration / (adjustDurationByZoom ? scale : zoom);
+        if (!box) {
+          throw new Error("Error from Focusing Root Node: Node is not found.");
+        }
 
-            const box = config.getGraphBbox((node) => node.id === nodeID);
+        const {
+          x: [minX, maxX],
+          y: [minY, maxY],
+        } = box;
 
-            if (!box) {
-              throw new Error("Error from Focusing Node: Node is not found.");
-            }
+        const zoom = Math.min(
+          width / (maxX - minX + (padding ?? 0)),
+          height / (maxY - minY + (padding ?? 0)),
+        );
 
-            const {
-              x: [minX, maxX],
-              y: [minY, maxY],
-            } = box;
+        const resolvedDuration =
+          duration *
+          (adjustDurationByZoom ? 1 / Math.abs(currentZoom - zoom) : 1);
 
-            config.centerAt(
-              (minX + maxX) / 2,
-              (minY + maxY) / 2,
-              resolvedDuration,
-            );
-            config.zoom(zoom, resolvedDuration);
-          }),
-        delay,
-      );
+        config.centerAt(
+          (minX + maxX) / 2 + focusOffsetX,
+          (minY + maxY) / 2 + focusOffsetY,
+          resolvedDuration,
+        );
+        config.zoom(zoom, resolvedDuration);
+      });
     },
-    [handler?.config, viewConfig.zoom.focus],
+    [
+      handler?.config,
+      viewConfig.zoom.focus,
+      focusOffsetX,
+      focusOffsetY,
+      width,
+      height,
+    ],
   );
 
-  return { focus };
+  return {
+    focus,
+    focusOffsetX,
+    focusOffsetY,
+    setFocusOffsetX,
+    setFocusOffsetY,
+  };
 }

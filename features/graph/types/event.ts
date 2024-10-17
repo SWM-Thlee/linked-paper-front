@@ -38,6 +38,10 @@ export const Type = {
   /* Zoom Event */
   ZOOM_UPDATE: "zoomUpdate",
   ZOOM_END: "zoomEnd",
+
+  /* Engine Event */
+  ENGINE_TICK: "engineTick",
+  ENGINE_STOP: "engineStop",
 } as const;
 
 export type Type = (typeof Type)[keyof typeof Type];
@@ -62,6 +66,10 @@ const Mapper = {
   /* Zoom Event */
   [Type.ZOOM_UPDATE]: "onZoom",
   [Type.ZOOM_END]: "onZoomEnd",
+
+  /* Engine Event */
+  [Type.ENGINE_TICK]: "onEngineTick",
+  [Type.ENGINE_STOP]: "onEngineStop",
 } as const;
 
 export type Handler<T extends Type> = ForceGraphFunctions[(typeof Mapper)[T]];

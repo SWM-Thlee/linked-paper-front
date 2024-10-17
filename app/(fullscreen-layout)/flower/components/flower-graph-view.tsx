@@ -15,6 +15,7 @@ import useFlowerParam from "@/features/flower/hooks/use-flower-param";
 import useFlowerQueries from "@/features/flower/hooks/use-flower-queries";
 import usePapers from "@/features/paper/hooks/use-papers";
 import usePaperSimilarities from "@/features/paper/hooks/use-paper-similarities";
+import useFullscreen from "@/hooks/use-fullscreen";
 
 import { Paper } from "@/features/paper/types";
 import { Graph } from "@/features/graph/types";
@@ -25,40 +26,48 @@ import {
   createLink,
   createRootNode,
 } from "@/features/graph/utils/graph";
-import {
-  isChildNode,
-  isGroupNode,
-  isRootNode,
-} from "@/features/graph/utils/validator";
+import { isChildNode, isRootNode } from "@/features/graph/utils/validator";
 
 import GraphView from "@/features/graph/components/graph-view";
+import Sidebar from "@/features/graph/components/sidebar";
 import LabelButton from "@/ui/label-button";
 
-import ArrowUpIcon from "@/ui/icons/arrow-up";
+import CheckIcon from "@/ui/icons/check";
 import { variants } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
 import ToolbarWrapper from "./toolbar/toolbar-wrapper";
 import ToolbarContainer from "./toolbar/toolbar-container";
-import SidebarWrapper from "./sidebar/sidebar-wrapper";
 import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
-import SettingsToolbar from "./toolbar/settings-toolbar";
 
 // TODO: Node 중앙 고정 기능 추가
-// TODO: CenterPoint
 export default function FlowerGraphView() {
   const { nodeConfig } = useGraphNodeConfig();
-  const { viewConfig, setExtraViewConfig } = useGraphViewConfig();
+  const { viewConfig } = useGraphViewConfig();
   const { handler, refHandler } = useGraphHandler();
-  const { data, get, upsert, remove, getNodes, getLinksFromTarget } =
-    useGraphData();
+  const {
+    data,
+    get,
+    upsertNode,
+    upsertLink,
+    removeNode,
+    removeLink,
+    getNodes,
+    getLinksFromTarget,
+    getConnectedNodes,
+    getNodeDynamicData,
+  } = useGraphData();
+  const { width } = useFullscreen();
 
   /* Extra Node Handler */
   const { rootLinkStyle, childLinkStyle, rootStyle, childStyle } =
     useCanvasVariants(variants);
   const { isHovered: isNodeHovered } = useNodeHoverHandler(handler);
   const { isHovered: isLinkHovered } = useLinkHoverHandler(handler);
-  const { focus } = useNodeFocus(handler, viewConfig);
-  const { select, unselect, isSelected, selectedOne, onSelect } =
+  const { focus, focusOffsetX, setFocusOffsetX } = useNodeFocus(
+    handler,
+    viewConfig,
+  );
+  const { select, unselect, isSelected, selectedOne, onSelect, onUnselect } =
     useNodeSelectionHandler();
 
   /* Flower Correlations */
@@ -93,7 +102,11 @@ export default function FlowerGraphView() {
             : defaultNode;
 
       /* Draw Node */
-      drawCircle({ style, radius: nodeConfig.radius.root.default });
+      drawCircle({
+        style,
+        radius: nodeConfig.radius.root.default,
+        scale: { min: 0.2, max: 1 },
+      });
 
       /* Draw Title */
       drawText({
@@ -103,7 +116,7 @@ export default function FlowerGraphView() {
         height: 24,
         maxLines: 3,
         offsetY: isFlowerLoading(node.paperID) ? 0 : -24,
-        scale: { min: 3, max: 4 },
+        scale: { min: 0.2, max: 1 },
       });
 
       /* Draw if loaded */
@@ -115,7 +128,7 @@ export default function FlowerGraphView() {
           maxWidth: 175,
           height: 24,
           offsetY: 36,
-          scale: { min: 3, max: 4 },
+          scale: { min: 0.2, max: 1 },
         });
 
         /* Draw Author */
@@ -125,7 +138,7 @@ export default function FlowerGraphView() {
           maxWidth: 175,
           height: 24,
           offsetY: 72,
-          scale: { min: 3, max: 4 },
+          scale: { min: 0.2, max: 1 },
         });
       }
     },
@@ -167,7 +180,6 @@ export default function FlowerGraphView() {
         height: 24,
         maxLines: 3,
         offsetY: -24,
-        scale: { min: 3, max: 4 },
       });
 
       /* Draw Date */
@@ -177,7 +189,6 @@ export default function FlowerGraphView() {
         maxWidth: 175,
         height: 24,
         offsetY: 36,
-        scale: { min: 3, max: 4 },
       });
 
       /* Draw Author */
@@ -187,7 +198,6 @@ export default function FlowerGraphView() {
         maxWidth: 175,
         height: 24,
         offsetY: 72,
-        scale: { min: 3, max: 4 },
       });
     },
     [
@@ -210,25 +220,16 @@ export default function FlowerGraphView() {
       const similarity =
         (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
 
-      const locate: Graph.Render.LinkTextLocateOption | undefined =
-        selectedOne === source.id
-          ? { from: "source", distance: 100 }
-          : selectedOne === target.id
-            ? { from: "target", distance: 100 }
-            : undefined;
-
-      drawLink({ style, radius });
+      drawLink({ style, radius, scale: { max: 0.5 } });
       drawLinkText({
         style,
         height: 24,
         text: `${similarity.toFixed(2)}%`,
-        scale: { min: 0.5, max: 2 },
-        locate,
+        scale: { max: 0.5 },
         radius,
       });
     },
     [
-      selectedOne,
       getSimilarity,
       rootLinkStyle,
       isLinkHovered,
@@ -268,7 +269,6 @@ export default function FlowerGraphView() {
         height: 24,
         text: `${similarity.toFixed(2)}%`,
         scale: { min: 1, max: 2 },
-        locate: { from: "source", distance: 100 },
         radius,
       });
     },
@@ -299,57 +299,71 @@ export default function FlowerGraphView() {
     [renderRootNode, renderRootLink, renderChildLink, renderChildNode],
   );
 
+  /* 노드 간을 연결하는 간선에 대해 설정합니다. */
+  useEffect(() => {
+    handler?.config.linkConfig((config) =>
+      config
+        .distance(({ source, target }) => {
+          /* 일반적으로 기본 설정을 적용합니다. */
+          return (
+            nodeConfig.link.distance[source.type]?.[target.type] ??
+            nodeConfig.link.distance.default
+          );
+        })
+        .strength(({ source, target }) => {
+          /* 단, Root-Root Link에는 Force를 부여하지 않습니다. */
+          return isRootNode(source) && isRootNode(target) ? 0 : 1;
+        }),
+    );
+  }, [handler?.config, nodeConfig.link.distance]);
+
+  /* 어떤 노드를 보여줄 지 결정합니다. */
   useEffect(() => {
     handler?.event.onNodeFilter((node) => {
       if (isChildNode(node)) {
-        return selectedOne === node.parentID;
+        /* Child Node는 선택된 Root Node의 Child여야 합니다. */
+        if (node.parentID !== selectedOne) return false;
+
+        /* Zoom 배율이 일정 수치 이하이면 Child Node를 숨깁니다. */
+        const zoom = handler.config.applyConfig((config) => config.zoom());
+
+        return !zoom || zoom > 0.4;
       }
 
       return true;
     });
-  }, [handler?.event, selectedOne]);
+  }, [handler?.event, handler?.config, selectedOne, getConnectedNodes]);
 
+  /* 어떤 간선을 보여줄 지 결정합니다. */
   useEffect(() => {
     handler?.event.onLinkFilter(({ source, target }) => {
-      // 1. Child Link는 선택된 경우에만 보이도록 합니다.
+      /* Root-Child Link는 선택된 경우에만 보이도록 합니다. */
       if (
         (isRootNode(source) && isChildNode(target)) ||
         (isRootNode(target) && isChildNode(source))
       ) {
-        return selectedOne === source.id || selectedOne === target.id;
-      }
+        if (!(selectedOne === source.id || selectedOne === target.id))
+          return false;
 
-      // 2. 인접 노드만 링크가 보이도록 할 경우,
-      // 루트 노드 간 링크에 대해 한 쪽 노드가 선택되거나 호버된 상태여야 합니다.
-      if (viewConfig.panel.linkOfAdjacentRootNodeOnly) {
-        if (isRootNode(source) && isRootNode(target)) {
-          return (
-            source.id === selectedOne ||
-            target.id === selectedOne ||
-            isNodeHovered(source.id) ||
-            isNodeHovered(target.id)
-          );
-        }
+        /* Zoom 배율이 일정 수치 이하이면 Child Node를 숨깁니다. */
+        const zoom = handler.config.applyConfig((config) => config.zoom());
+
+        return !zoom || zoom > 0.4;
       }
 
       return true;
     });
-  }, [
-    handler?.event,
-    selectedOne,
-    isNodeHovered,
-    viewConfig.panel.linkOfAdjacentRootNodeOnly,
-  ]);
+  }, [handler?.event, handler?.config, selectedOne, isNodeHovered]);
 
-  /* Initial Loading: 중앙에 Root Node를 삽입합니다. */
+  /* 초기 로딩 시: 중앙에 Root Node를 삽입합니다. */
   useEffect(() => {
     if (isFlowerLoading(initial) || isFlowerLoaded(initial)) return;
 
     loadFlower(initial);
-    upsert(createRootNode(initial));
-  }, [initial, loadFlower, upsert, isFlowerLoading, isFlowerLoaded]);
+    upsertNode({ ...createRootNode(initial), fx: 0, fy: 0 });
+  }, [initial, loadFlower, upsertNode, isFlowerLoading, isFlowerLoaded]);
 
-  /* On Correlations Error: Error 정보를 전파합니다. */
+  /* Event: Flower를 불러오는 중 Error 발생 */
   useEffect(() => {
     onFlowerError(({ extra }) => {
       const paperID = extra?.paperID ?? "unknown";
@@ -362,7 +376,7 @@ export default function FlowerGraphView() {
     });
   }, [initial, onFlowerError]);
 
-  /* On Correlations Loaded: Paper 정보를 추가 후, Child Node를 생성합니다. */
+  /* Event: Flower가 Load되었을 때 */
   useEffect(() => {
     onFlowerLoaded(({ paper, data: childData }) => {
       // 1. Node 가져오기
@@ -376,8 +390,9 @@ export default function FlowerGraphView() {
 
       const [currentNode] = nodes;
 
+      /* 처음 노드를 로드할 경우 */
       if (isRootNode(currentNode)) {
-        upsertPaper(paper);
+        upsertPaper(paper, (p) => setPaperInfo(p));
 
         childData
           .filter((child) => !hasPaper(child.id))
@@ -387,13 +402,16 @@ export default function FlowerGraphView() {
 
             setSimilarity(paper.id, childPaper.id, childPaper.similarity);
             upsertPaper(childPaper);
-            upsert(childNode);
-            upsert(link);
+            upsertNode(childNode);
+            upsertLink(link);
           });
 
-        setTimeout(() => select(currentNode.id, true), 500);
+        select(currentNode.id, true);
       } else if (isChildNode(currentNode)) {
+        /* Child Node를 로드할 경우 */
         const parentNode = get(currentNode.parentID);
+        const a = getNodeDynamicData(currentNode.parentID)!;
+        const b = getNodeDynamicData(currentNode.id)!;
 
         if (!parentNode || !isRootNode(parentNode))
           throw new Error("Error from Loading Flower: Parent node is invalid.");
@@ -401,11 +419,29 @@ export default function FlowerGraphView() {
         const rootNode = createRootNode(paper.id);
         const rootLink = createLink(parentNode, rootNode);
 
-        upsert(rootNode);
-        upsert(rootLink);
+        /* 위치 계산 */
+        const dx = b.x! - a.x!;
+        const dy = b.y! - a.y!;
 
-        remove(currentNode.id);
-        getLinksFromTarget(currentNode.id)?.forEach((link) => remove(link.id));
+        // 벡터의 길이 계산
+        const length = Math.sqrt(dx * dx + dy * dy);
+
+        // 방향 벡터를 distance만큼 이동
+        const locX = a.x! + (2400 * dx) / length;
+        const locY = a.y! + (2400 * dy) / length;
+
+        upsertNode(rootNode, (dynamic) => {
+          dynamic.fx = locX;
+          dynamic.fy = locY;
+
+          setTimeout(() => select(rootNode.id, true), 100);
+        });
+        upsertLink(rootLink);
+
+        removeNode(currentNode.id);
+        getLinksFromTarget(currentNode.id)?.forEach((link) =>
+          removeLink(link.id),
+        );
         upsertPaper(paper);
 
         childData
@@ -416,11 +452,13 @@ export default function FlowerGraphView() {
 
             setSimilarity(paper.id, childPaper.id, childPaper.similarity);
             upsertPaper(childPaper);
-            upsert(childNode);
-            upsert(link);
+            upsertLink(link);
+            upsertNode({
+              ...childNode,
+              x: locX,
+              y: locY,
+            });
           });
-
-        setTimeout(() => select(rootNode.id, true), 500);
       } else {
         throw new Error(
           "Error from Loading Flower: Target Node is not supported for flowering.",
@@ -430,13 +468,16 @@ export default function FlowerGraphView() {
   }, [
     get,
     getLinksFromTarget,
+    getNodeDynamicData,
     setSimilarity,
     getNodes,
     hasPaper,
     onFlowerLoaded,
     select,
-    upsert,
-    remove,
+    upsertNode,
+    upsertLink,
+    removeNode,
+    removeLink,
     upsertPaper,
   ]);
 
@@ -459,12 +500,34 @@ export default function FlowerGraphView() {
     );
   }, [handler?.event, selectedOne, select]);
 
-  /* Event: 특정 Node가 선택된 경우 Child Node를 표시합니다. */
+  /* Event: 특정 Root Node가 선택된 경우 */
   useEffect(() => {
     onSelect("RootNodeSelected", (nodeID) => {
-      focus({ nodeID, delay: 100 });
+      const node = get(nodeID);
+
+      if (!node || !isRootNode(node)) {
+        throw new Error(
+          "Error from Select Root Node: This node is not a root node.",
+        );
+      }
+
+      const paper = getPaper(node.paperID);
+      if (paper) setPaperInfo(paper);
     });
-  }, [onSelect, get, getNodes, upsert, focus]);
+  }, [onSelect, get, getNodes, focus, getPaper]);
+
+  /* Event: 특정 Root Node의 선택이 해제된 경우 */
+  useEffect(() => {
+    onUnselect("RootNodeUnselected", (nodeID) => {
+      const node = get(nodeID);
+
+      if (!node || !isRootNode(node)) {
+        throw new Error(
+          "Error from Select Root Node: This node is not a root node.",
+        );
+      }
+    });
+  }, [onUnselect, get, getNodes, upsertNode, focus, getNodeDynamicData]);
 
   /* Event: 특정 Root Node Click 시 Select합니다. */
   useEffect(() => {
@@ -473,14 +536,43 @@ export default function FlowerGraphView() {
       (node) => {
         if (!isRootNode(node) || isFlowerLoading(node.paperID)) return;
 
-        if (isSelected(node.id)) unselect();
-        else select(node.id, true);
+        if (!selectedOne || selectedOne !== node.id) {
+          select(node.id, true);
+        } else {
+          const paper = getPaper(node.paperID);
+          if (paper) setPaperInfo(paper);
+          focus({ nodeID: node.id, padding: 1200 });
+        }
       },
       "RootNodeClicked",
     );
-  }, [handler?.event, isSelected, select, unselect, isFlowerLoading]);
+  }, [
+    handler?.event,
+    isSelected,
+    select,
+    unselect,
+    focus,
+    isFlowerLoading,
+    getPaper,
+    selectedOne,
+  ]);
 
-  /* Event: 특정 Child Node 또는 Root-Child Click 시 Bloom합니다. */
+  /* Sidebar: Sidebar가 존재하(지 않으)면 Focus Offset을 바꿉니다. */
+  useEffect(() => {
+    if (paperInfo) {
+      setFocusOffsetX(width * 0.18);
+    } else {
+      setFocusOffsetX(0);
+    }
+  }, [paperInfo, width, setFocusOffsetX]);
+
+  useEffect(() => {
+    if (selectedOne) {
+      focus({ nodeID: selectedOne, padding: 1200 });
+    }
+  }, [focusOffsetX, focus, selectedOne]);
+
+  /* Event: 특정 Child Node Click 시 Bloom합니다. */
   useEffect(() => {
     handler?.event.onEvent(
       Graph.Event.Type.NODE_CLICK,
@@ -491,47 +583,7 @@ export default function FlowerGraphView() {
       },
       "ChildNodeClicked",
     );
-    handler?.event.onEvent(
-      Graph.Event.Type.LINK_CLICK,
-      ({ source, target }) => {
-        if (
-          !isRootNode(source) ||
-          !isChildNode(target) ||
-          isFlowerLoading(target.paperID)
-        )
-          return;
-
-        loadFlower(target.paperID);
-      },
-      "RootChildLinkClicked",
-    );
-  }, [
-    unselect,
-    isSelected,
-    isFlowerLoading,
-    handler?.event,
-    getLinksFromTarget,
-    select,
-    getPaper,
-    get,
-    upsert,
-    remove,
-    upsertPaper,
-    loadFlower,
-  ]);
-
-  /* Event: Root or Child Node Right Click 시 Paper Info를 보여줍니다. */
-  useEffect(() => {
-    handler?.event.onEvent(
-      Graph.Event.Type.NODE_RCLICK,
-      (node) => {
-        if (isGroupNode(node)) return;
-        const paper = getPaper(node.paperID);
-        setPaperInfo(paper ?? null);
-      },
-      "NodeRightClicked",
-    );
-  }, [handler?.event, getPaper]);
+  }, [isFlowerLoading, handler?.event, loadFlower]);
 
   return (
     <GraphView
@@ -541,37 +593,28 @@ export default function FlowerGraphView() {
       nodeConfig={nodeConfig}
       viewConfig={viewConfig}
     >
-      <SidebarWrapper>
+      <Sidebar>
         {paperInfo && (
           <PaperInfoSidebar
             paper={paperInfo}
             onClose={() => setPaperInfo(null)}
           />
         )}
-      </SidebarWrapper>
+      </Sidebar>
       <ToolbarWrapper>
         {/* Zoom 설정 */}
         <ZoomToolbar handler={handler} viewConfig={viewConfig} />
 
-        {/* Node 탐색 */}
+        {/* Node 유사도 표시 여부 */}
         <div className="absolute left-[50%] top-[50%] flex -translate-x-[50%] -translate-y-[50%] items-center gap-2">
           {selectedOne && (
             <ToolbarContainer>
-              <LabelButton
-                onClick={() => focus({ nodeID: selectedOne, delay: 100 })}
-              >
-                <ArrowUpIcon ui_size="small" />
-                Current Flower
+              <LabelButton>
+                <CheckIcon ui_size="small" />
+                Specific Similarity
               </LabelButton>
             </ToolbarContainer>
           )}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <SettingsToolbar
-            viewConfig={viewConfig}
-            setExtraConfig={setExtraViewConfig}
-          />
         </div>
       </ToolbarWrapper>
     </GraphView>

@@ -12,6 +12,7 @@ type InternalGraphViewConfiguration = ForceGraphMethods<
 type LinkConfigInstance = d3.ForceLink<Graph.Element.Node, Graph.Element.Link>;
 type CollideConfigInstance = d3.ForceCollide<Graph.Element.Node>;
 type ChargeConfigInstance = d3.ForceManyBody<Graph.Element.Node>;
+type CenterConfigInstance = d3.ForceCenter<Graph.Element.Node>;
 
 type ApplyConfigFn = <T>(
   applyConfigFn: (config: InternalGraphViewConfiguration) => T,
@@ -28,13 +29,17 @@ export default function useInternalGraphConfig() {
 
   const linkConfig: ConfigFn<LinkConfigInstance> = useCallback(
     (applyFn, name = "link") =>
-      applyConfig((config) => config.d3Force(name, applyFn(d3.forceLink()))),
+      applyConfig((config) =>
+        config.d3Force(name, applyFn(d3.forceLink()).iterations(20)),
+      ),
     [applyConfig],
   );
 
   const collideConfig: ConfigFn<CollideConfigInstance> = useCallback(
     (applyFn, name = "collide") =>
-      applyConfig((config) => config.d3Force(name, applyFn(d3.forceCollide()))),
+      applyConfig((config) =>
+        config.d3Force(name, applyFn(d3.forceCollide()).iterations(20)),
+      ),
     [applyConfig],
   );
 
@@ -46,11 +51,19 @@ export default function useInternalGraphConfig() {
     [applyConfig],
   );
 
+  const centerConfig: ConfigFn<CenterConfigInstance> = useCallback(
+    (applyFn, name = "center") => {
+      applyConfig((config) => config.d3Force(name, applyFn(d3.forceCenter())));
+    },
+    [applyConfig],
+  );
+
   return {
     internalRef,
     applyConfig,
     linkConfig,
     collideConfig,
     chargeConfig,
+    centerConfig,
   };
 }

@@ -7,7 +7,11 @@ import useInternalGraphFilter from "../internal/use-internal-graph-filter";
 export type GraphHandler = {
   config: Pick<
     ReturnType<typeof useInternalGraphConfig>,
-    "applyConfig" | "chargeConfig" | "collideConfig" | "linkConfig"
+    | "applyConfig"
+    | "chargeConfig"
+    | "collideConfig"
+    | "linkConfig"
+    | "centerConfig"
   >;
   event: Pick<ReturnType<typeof useInternalGraphEventHandler>, "onEvent"> &
     Pick<

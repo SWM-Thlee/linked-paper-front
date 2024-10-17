@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   WheelEventHandler,
 } from "react";
 import ForceGraph from "react-force-graph-2d";
@@ -13,6 +14,7 @@ import useFullscreen from "@/hooks/use-fullscreen";
 import useInternalGraphConfig from "@/features/graph/hooks/internal/use-internal-graph-config";
 import useInternalGraphEventHandler from "@/features/graph/hooks/internal/use-internal-graph-event-handler";
 import useInternalGraphFilter from "@/features/graph/hooks/internal/use-internal-graph-filter";
+import useInternalSidebar from "@/features/graph/hooks/internal/use-internal-sidebar";
 
 import { Graph } from "@/features/graph/types";
 import { GraphHandler } from "../hooks/default/use-graph-handler";
@@ -22,6 +24,7 @@ import {
   internalDrawNodeCircle,
   internalDrawNodeText,
 } from "../utils/draw";
+import { GraphViewSidebarContext } from "./sidebar/context";
 
 type Props = {
   /** Graph View 이외의 보조 UI를 구현할 때 사용됩니다. */
@@ -51,13 +54,24 @@ const GraphView = forwardRef<GraphHandler, Props>(
       applyConfig,
       chargeConfig,
       collideConfig,
+      centerConfig,
       linkConfig,
     } = useInternalGraphConfig();
 
     /** 그래프의 이벤트 핸들러를 관리합니다. */
     const { handleEvent, onEvent } = useInternalGraphEventHandler();
+
+    /** 그래프 노드의 필터링을 관리합니다. */
     const { onNodeFilter, onLinkFilter, handleNodeFilter, handleLinkFilter } =
       useInternalGraphFilter();
+
+    /** Sidebar를 관리합니다. */
+    const { hasSidebar, registerSidebar, unregisterSidebar, sidebarInfo } =
+      useInternalSidebar();
+
+    const sidebarProps = useMemo(() => {
+      return { hasSidebar, registerSidebar, unregisterSidebar, sidebarInfo };
+    }, [hasSidebar, registerSidebar, unregisterSidebar, sidebarInfo]);
 
     /* 외부에서 사용할 설정들을 정의합니다. */
     useImperativeHandle(
@@ -67,6 +81,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
           applyConfig,
           chargeConfig,
           collideConfig,
+          centerConfig,
           linkConfig,
         },
         event: {
@@ -79,6 +94,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
         applyConfig,
         chargeConfig,
         collideConfig,
+        centerConfig,
         linkConfig,
         onEvent,
         onNodeFilter,
@@ -86,28 +102,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
       ],
     );
 
-    /** 물리 엔진 초기화를 수행합니다. */
-    useEffect(() => {
-      linkConfig((config) =>
-        config.distance(({ source, target }) => {
-          return (
-            nodeConfig.link.distance[source.type]?.[target.type] ??
-            nodeConfig.link.distance.default
-          );
-        }),
-      );
-    }, [linkConfig, nodeConfig.link.distance]);
-
-    useEffect(() => {
-      collideConfig((config) =>
-        config.radius(
-          (node) =>
-            nodeConfig.collision[node.baseType]?.[node.type] ??
-            nodeConfig.collision[node.baseType].default,
-        ),
-      );
-    }, [collideConfig, nodeConfig.collision]);
-
+    /** 특정 노드의 인력/척력을 설정합니다. */
     useEffect(() => {
       chargeConfig((config) =>
         config.strength(
@@ -117,6 +112,23 @@ const GraphView = forwardRef<GraphHandler, Props>(
         ),
       );
     }, [chargeConfig, nodeConfig.charge]);
+
+    /** 특정 노드의 충돌 반경을 설정합니다. */
+    useEffect(() => {
+      collideConfig((config) =>
+        config.radius((node) => {
+          return (
+            nodeConfig.collision[node.baseType]?.[node.type] ??
+            nodeConfig.collision[node.baseType].default
+          );
+        }),
+      );
+    }, [collideConfig, nodeConfig.collision]);
+
+    /* 중앙 지점에 노드가 몰리지 않도록 합니다. */
+    useEffect(() => {
+      centerConfig((config) => config.strength(0));
+    }, [centerConfig]);
 
     const onDetermineNode: Graph.Render.DetermineNodeResolver = useCallback(
       (node, color, ctx, rawScale) => {
@@ -263,7 +275,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
     );
 
     return (
-      <>
+      <GraphViewSidebarContext.Provider value={sidebarProps}>
         {children}
         <div
           onWheel={(event) => {
@@ -281,7 +293,6 @@ const GraphView = forwardRef<GraphHandler, Props>(
             linkTarget="targetID"
             linkVisibility={handleLinkFilter}
             nodeVisibility={handleNodeFilter}
-            autoPauseRedraw
             enableZoomInteraction={false} /* Zoom은 별도로 관리합니다. */
             /* Config */
             enableNodeDrag={viewConfig.interaction.drag.node}
@@ -290,6 +301,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
             minZoom={viewConfig.zoom.min}
             maxZoom={viewConfig.zoom.max}
             d3AlphaDecay={nodeConfig.alphaDecay}
+            d3VelocityDecay={nodeConfig.velocityDecay}
             /* Renderer */
             nodePointerAreaPaint={onDetermineNode}
             linkPointerAreaPaint={onDetermineLink}
@@ -309,9 +321,11 @@ const GraphView = forwardRef<GraphHandler, Props>(
             onLinkRightClick={handleEvent(Graph.Event.Type.LINK_RCLICK)}
             onZoom={handleEvent(Graph.Event.Type.ZOOM_UPDATE)}
             onZoomEnd={handleEvent(Graph.Event.Type.ZOOM_END)}
+            onEngineTick={handleEvent(Graph.Event.Type.ENGINE_TICK)}
+            onEngineStop={handleEvent(Graph.Event.Type.ENGINE_STOP)}
           />
         </div>
-      </>
+      </GraphViewSidebarContext.Provider>
     );
   },
 );

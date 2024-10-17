@@ -1,30 +1,31 @@
 import { Graph } from "../types";
+import { DefaultNode } from "../types/element";
 
-const { BaseNodeType, DefaultNode } = Graph.Element;
+const { BaseNodeType } = Graph.Element;
 
 export const defaultNodeConfig: Graph.Config.Node = (() => {
   /* Default Config */
   const config: Graph.Config.Node = {
     collision: {
       [BaseNodeType.ROOT]: {
-        default: 200,
+        default: 115,
       },
       [BaseNodeType.GROUP]: {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: 155,
+        default: 115,
       },
     },
     charge: {
       [BaseNodeType.ROOT]: {
-        default: 200,
+        default: -500,
       },
       [BaseNodeType.GROUP]: {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: -100,
+        default: 0,
       },
     },
     radius: {
@@ -44,7 +45,7 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
       },
       distanceFromCenter: {
         [BaseNodeType.ROOT]: {
-          default: 130,
+          default: 160,
         },
         [BaseNodeType.GROUP]: {
           default: 0,
@@ -55,12 +56,13 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
       },
     },
     alphaDecay: 0.1,
+    velocityDecay: 0.1,
   };
 
   /* Default Link Config */
   config.link.distance[DefaultNode.ROOT] = {};
-  config.link.distance[DefaultNode.ROOT][DefaultNode.ROOT] = 100;
-  config.link.distance[DefaultNode.ROOT][DefaultNode.CHILD] = 200;
+  config.link.distance[DefaultNode.ROOT][DefaultNode.ROOT] = 5500;
+  config.link.distance[DefaultNode.ROOT][DefaultNode.CHILD] = 400;
 
   return config;
 })();
@@ -71,7 +73,6 @@ export const defaultViewConfig: Graph.Config.View = {
     max: 5,
     delta: 0.05,
     focus: {
-      zoom: 0.8,
       duration: 750,
       adjustDurationByZoom: false,
     },
@@ -88,10 +89,5 @@ export const defaultViewConfig: Graph.Config.View = {
     zoom: true,
     pointer: true,
     scroll: true,
-  },
-  panel: {
-    // TODO
-    centerPoint: false,
-    linkOfAdjacentRootNodeOnly: true,
   },
 };

@@ -50,6 +50,7 @@ export type Node = {
 
   /** Node 간 상호작용 시 감쇠율을 정의합니다. */
   alphaDecay: number;
+  velocityDecay: number;
 };
 
 export type NodePatcher = Optional<Node>;
@@ -63,7 +64,6 @@ export type View = {
 
     /** 특정 범위에 포커스할 때의 옵션입니다. */
     focus: {
-      zoom: number;
       duration: number;
       /** zoom 배율에 따라 유동적으로 duration을 조절합니다. */
       adjustDurationByZoom: boolean;
@@ -84,14 +84,6 @@ export type View = {
     zoom: boolean;
     pointer: boolean;
     scroll: boolean;
-  };
-
-  panel: {
-    /** 뷰의 중앙 지점(=시작 지점)을 별도의 점으로 표시할 지 결정합니다. */
-    centerPoint: boolean;
-
-    /** 선택된 Root Node의 인접한 Root Node만 간선을 표시합니다. */
-    linkOfAdjacentRootNodeOnly: boolean;
   };
 };
 
