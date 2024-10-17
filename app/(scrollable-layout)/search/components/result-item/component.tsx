@@ -22,7 +22,7 @@ export default function SearchResultItem({
   link,
 }: Search.Result.Data) {
   return (
-    <div className="grid animate-slideUpAndFade grid-cols-[auto_8rem] gap-8">
+    <div className="grid animate-slideUpAndFade grid-cols-[auto_10rem] gap-8">
       <div className="flex flex-1 flex-col gap-8">
         <div className="text-headline-small text-light-onSurface dark:text-dark-onSurface">
           {title}

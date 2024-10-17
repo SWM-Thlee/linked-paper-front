@@ -9,10 +9,8 @@ import LabelButton from "@/ui/label-button";
 
 export default function Error({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   useEffect(() => {
     Sentry.captureException(error);
@@ -28,7 +26,7 @@ export default function Error({
               ui_color="secondary"
               ui_size="large"
               ui_variant="light"
-              onClick={reset}
+              onClick={() => window.location.reload()}
             >
               Try again
             </LabelButton>

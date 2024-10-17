@@ -3,8 +3,8 @@
 import Link from "next/link";
 
 import { Search } from "@/features/search/types";
+import Button from "@/ui/button";
 import BloomIcon from "@/ui/icons/bloom";
-import LabelButton from "@/ui/label-button";
 import SearchResultOriginLink from "./origin";
 import SearchResultPdfLink from "./pdf";
 
@@ -17,10 +17,13 @@ export default function SearchResultItemLinks({
   return (
     <div className="flex flex-col justify-end gap-2">
       <Link href={{ pathname: "/flower", query: { id } }} prefetch={false}>
-        <LabelButton ui_size="medium" ui_variant="bordered" className="w-full">
-          <BloomIcon ui_size="small" />
-          <div>Bloom</div>
-        </LabelButton>
+        <Button
+          ui_size="large"
+          className="flex w-full flex-col items-center gap-2"
+        >
+          <BloomIcon ui_size="exlarge" />
+          <div className="text-label-large">Flower Graph</div>
+        </Button>
       </Link>
       {origin_link && <SearchResultOriginLink origin_link={origin_link} />}
       {pdf_link && <SearchResultPdfLink pdf_link={pdf_link} />}
