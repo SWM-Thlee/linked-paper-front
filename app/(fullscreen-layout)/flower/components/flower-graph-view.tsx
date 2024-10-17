@@ -39,7 +39,6 @@ import ToolbarWrapper from "./toolbar/toolbar-wrapper";
 import ToolbarContainer from "./toolbar/toolbar-container";
 import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
 
-// TODO: Node 중앙 고정 기능 추가
 export default function FlowerGraphView() {
   const { nodeConfig } = useGraphNodeConfig();
   const { viewConfig } = useGraphViewConfig();
@@ -67,7 +66,7 @@ export default function FlowerGraphView() {
     handler,
     viewConfig,
   );
-  const { select, unselect, isSelected, selectedOne, onSelect, onUnselect } =
+  const { select, unselect, isSelected, selectedOne, onSelect } =
     useNodeSelectionHandler();
 
   /* Flower Correlations */
@@ -515,19 +514,6 @@ export default function FlowerGraphView() {
       if (paper) setPaperInfo(paper);
     });
   }, [onSelect, get, getNodes, focus, getPaper]);
-
-  /* Event: 특정 Root Node의 선택이 해제된 경우 */
-  useEffect(() => {
-    onUnselect("RootNodeUnselected", (nodeID) => {
-      const node = get(nodeID);
-
-      if (!node || !isRootNode(node)) {
-        throw new Error(
-          "Error from Select Root Node: This node is not a root node.",
-        );
-      }
-    });
-  }, [onUnselect, get, getNodes, upsertNode, focus, getNodeDynamicData]);
 
   /* Event: 특정 Root Node Click 시 Select합니다. */
   useEffect(() => {
