@@ -8,7 +8,6 @@ import OthersChip from "@/features/search/components/chip/others";
 import JournalIcon from "@/ui/icons/journal";
 import SpliterIcon from "@/ui/icons/spliter";
 import DateIcon from "@/ui/icons/date";
-import ReferenceIcon from "@/ui/icons/reference";
 import SearchResultItemLinks from "./links/component";
 import Abstraction from "./abstraction";
 
@@ -20,8 +19,6 @@ export default function SearchResultItem({
   categories,
   journal,
   date,
-  reference_count,
-  citiation_count,
   link,
 }: Search.Result.Data) {
   return (
@@ -59,12 +56,7 @@ export default function SearchResultItem({
               </LabelButton>
             )}
           </CategoryChip>
-          <OthersChip
-            journal={journal}
-            date={date}
-            reference_count={reference_count}
-            citiation_count={citiation_count}
-          >
+          <OthersChip journal={journal} date={date}>
             <LabelButton
               ui_color="secondary"
               ui_size="small"
@@ -73,8 +65,8 @@ export default function SearchResultItem({
               <JournalIcon ui_size="small" /> {journal}
               <SpliterIcon />
               <DateIcon ui_size="small" /> {date}
-              <SpliterIcon />
-              <ReferenceIcon ui_size="small" /> {reference_count}
+              {/* <SpliterIcon />
+              <ReferenceIcon ui_size="small" /> {reference_count} */}
             </LabelButton>
           </OthersChip>
         </div>
