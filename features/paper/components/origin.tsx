@@ -5,24 +5,28 @@ import Link from "next/link";
 import Button from "@/ui/button";
 import OriginLinkIcon from "@/ui/icons/origin-link";
 import { Popover } from "@/ui/popover";
-import { Search } from "@/features/search/types";
 import LabelButton from "@/ui/label-button";
 import Badge from "@/ui/badge";
 
 type Props = {
-  origin_link: Search.Result.Data["link"]["origin_link"] & NonNullable<unknown>;
+  origin_link: string | string[];
+  onClick?: (origin_link: string) => void;
 };
 
 /**
  * 해당 논문의 원문 링크를 새로운 탭으로 열도록 합니다.
  */
-export default function SearchResultOriginLink({ origin_link }: Props) {
+export default function OriginLinkButton({ origin_link, onClick }: Props) {
   const linksToArray = Array.isArray(origin_link) ? origin_link : [origin_link];
   const hasSingleLink = linksToArray.length === 1;
 
   return hasSingleLink ? (
     // 링크가 하나만 존재하는 경우
-    <Link href={linksToArray[0]} target="_blank">
+    <Link
+      href={linksToArray[0]}
+      target="_blank"
+      onClick={() => onClick?.(linksToArray[0])}
+    >
       <LabelButton
         ui_variant="bordered"
         ui_color="secondary"
@@ -53,18 +57,17 @@ export default function SearchResultOriginLink({ origin_link }: Props) {
       <Popover.Content>
         <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
           {linksToArray.map((link) => (
-            <Button
+            <Link
+              href={link}
+              target="_blank"
+              className="w-full"
               key={link}
-              ui_color="secondary"
-              ui_variant="ghost"
-              ui_size="small"
+              onClick={() => onClick?.(link)}
             >
-              <li className="ml-2 text-left text-label-large">
-                <Link href={link} target="_blank" className="w-full">
-                  {link}
-                </Link>
-              </li>
-            </Button>
+              <Button ui_color="secondary" ui_variant="ghost" ui_size="small">
+                <li className="ml-2 text-left text-label-large">{link}</li>
+              </Button>
+            </Link>
           ))}
         </ul>
       </Popover.Content>
