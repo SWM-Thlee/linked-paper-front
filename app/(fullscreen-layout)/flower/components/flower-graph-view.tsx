@@ -473,7 +473,7 @@ export default function FlowerGraphView() {
           dynamic.fy = locY;
 
           // TODO: 수정 필요
-          setTimeout(() => select(rootNode.id, true), 10);
+          setTimeout(() => select(rootNode.id, true), 500);
         });
         upsertLink(rootLink);
 

@@ -188,30 +188,34 @@ export default function useGraphData() {
     );
 
     const staticNodes = nodes;
+    const resultNodes = [...staticNodes.values()].map((prevNode) => {
+      const dynamicData = dynamicPatchers.current.get(prevNode.id);
+
+      return makeExtensible({
+        ...(nodeIndexes.get(prevNode.id) ?? {}),
+        ...(dynamicData ?? {}),
+        ...prevNode,
+      });
+    });
 
     graphDataRef.current = makeExtensible({
       ...graphDataRef.current,
-      nodes: [...staticNodes.values()].map((prevNode) => {
-        const dynamicData = dynamicPatchers.current.get(prevNode.id);
-        const result = makeExtensible({
-          ...(nodeIndexes.get(prevNode.id) ?? {}),
-          ...(dynamicData ?? {}),
-          ...prevNode,
-        });
+      nodes: resultNodes,
+    });
 
-        /* 적용 후 바로 삭제합니다. */
-        if (dynamicData) dynamicPatchers.current.delete(prevNode.id);
+    resultNodes.forEach((result) => {
+      const dynamicData = dynamicPatchers.current.get(result.id);
 
-        if (upsertListeners.current.has(prevNode.id)) {
-          upsertListeners.current
-            .get(prevNode.id)
-            ?.forEach((listener) => listener(result));
+      /* 적용 후 바로 삭제합니다. */
+      if (dynamicData) dynamicPatchers.current.delete(result.id);
 
-          upsertListeners.current.delete(prevNode.id);
-        }
+      if (upsertListeners.current.has(result.id)) {
+        upsertListeners.current
+          .get(result.id)
+          ?.forEach((listener) => listener(result));
 
-        return result as Node;
-      }),
+        upsertListeners.current.delete(result.id);
+      }
     });
   }, [nodes]);
 
