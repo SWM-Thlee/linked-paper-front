@@ -35,6 +35,27 @@ export const variants = {
       "text-light-onSurface",
       "text-dark-onSurface",
     ],
+    highSimilarity: [
+      "text-title-small",
+      "bg-light-tertiary/75",
+      "bg-dark-tertiary/75",
+      "text-light-onTertiary",
+      "text-dark-onTertiary",
+    ],
+    mediumSimilarity: [
+      "text-title-small",
+      "bg-light-tertiary/45",
+      "bg-dark-tertiary/45",
+      "text-light-onSurface",
+      "text-dark-onSurface",
+    ],
+    lowSimilarity: [
+      "text-title-small",
+      "bg-light-tertiary/15",
+      "bg-dark-tertiary/15",
+      "text-light-onSurface",
+      "text-dark-onSurface",
+    ],
     hovered: [
       "text-title-small",
       "bg-light-tertiary",
@@ -70,6 +91,13 @@ export const variants = {
   },
   childLinkStyle: {
     base: ["border-4"],
+    defaultLink: [
+      "text-title-medium",
+      "bg-light-outlineVariant",
+      "bg-dark-outlineVariant",
+      "text-light-onSurface/75",
+      "text-dark-onSurface/75",
+    ],
     hovered: [
       "text-title-medium",
       "bg-light-tertiary",

@@ -81,6 +81,9 @@ export const defaultViewConfig: Graph.Config.View = {
     deltaX: 30,
     deltaY: 30,
   },
+  graph: {
+    viewSimilarity: false,
+  },
   interaction: {
     drag: {
       node: true,

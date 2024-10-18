@@ -33,6 +33,7 @@ import Sidebar from "@/features/graph/components/sidebar";
 import LabelButton from "@/ui/label-button";
 
 import CheckIcon from "@/ui/icons/check";
+import CloseIcon from "@/ui/icons/close";
 import { variants } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
 import ToolbarWrapper from "./toolbar/toolbar-wrapper";
@@ -41,7 +42,7 @@ import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
 
 export default function FlowerGraphView() {
   const { nodeConfig } = useGraphNodeConfig();
-  const { viewConfig } = useGraphViewConfig();
+  const { viewConfig, setExtraViewConfig } = useGraphViewConfig();
   const { handler, refHandler } = useGraphHandler();
   const {
     data,
@@ -153,9 +154,31 @@ export default function FlowerGraphView() {
 
   const renderChildNode: Graph.Render.RenderNode = useCallback(
     ({ node, drawCircle, drawText }) => {
-      const { blooming, hovered, defaultNode } = childStyle;
+      const {
+        blooming,
+        hovered,
+        highSimilarity,
+        mediumSimilarity,
+        lowSimilarity,
+      } = childStyle;
       const paper = getPaper(node.paperID);
       const links = getLinksFromTarget(node.id);
+
+      if (!node || !isChildNode(node)) {
+        throw new Error(
+          "Error from Rendering Child Node: This node is not a child node.",
+        );
+      }
+
+      const root = get(node.parentID);
+
+      if (!root || !isRootNode(root)) {
+        throw new Error(
+          "Error from Rendering Child Node: Root node is not valid.",
+        );
+      }
+
+      const similarity = (getSimilarity(node.paperID, root.paperID) ?? 0) * 100;
 
       /* Child Node Style */
       const style = isFlowerLoading(node.paperID)
@@ -163,7 +186,11 @@ export default function FlowerGraphView() {
         : isNodeHovered(node.id) ||
             links?.values().some((link) => isLinkHovered(link.id))
           ? hovered
-          : defaultNode;
+          : similarity >= 75.0
+            ? highSimilarity
+            : similarity >= 50.0
+              ? mediumSimilarity
+              : lowSimilarity;
 
       /* Draw Node */
       drawCircle({
@@ -200,6 +227,8 @@ export default function FlowerGraphView() {
       });
     },
     [
+      get,
+      getSimilarity,
       getPaper,
       getLinksFromTarget,
       isLinkHovered,
@@ -216,23 +245,27 @@ export default function FlowerGraphView() {
       const style = isLinkHovered(id) ? hovered : defaultLink;
       const radius = nodeConfig.link.distanceFromCenter;
 
-      const similarity =
-        (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
-
       drawLink({ style, radius, scale: { max: 0.5 } });
-      drawLinkText({
-        style,
-        height: 24,
-        text: `${similarity.toFixed(2)}%`,
-        scale: { max: 0.5 },
-        radius,
-      });
+
+      if (viewConfig.graph.viewSimilarity) {
+        const similarity =
+          (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
+
+        drawLinkText({
+          style,
+          height: 24,
+          text: `${similarity.toFixed(2)}%`,
+          scale: { max: 0.5 },
+          radius,
+        });
+      }
     },
     [
       getSimilarity,
       rootLinkStyle,
       isLinkHovered,
       nodeConfig.link.distanceFromCenter,
+      viewConfig.graph.viewSimilarity,
     ],
   );
 
@@ -244,32 +277,43 @@ export default function FlowerGraphView() {
         highSimilarity,
         mediumSimilarity,
         lowSimilarity,
+        defaultLink,
       } = childLinkStyle;
-
-      const similarity =
-        (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
-
-      /* Child Link Style */
-      const style = isFlowerLoading(target.paperID)
-        ? blooming
-        : isNodeHovered(target.id) || isLinkHovered(id)
-          ? hovered
-          : similarity >= 75.0
-            ? highSimilarity
-            : similarity >= 50.0
-              ? mediumSimilarity
-              : lowSimilarity;
 
       const radius = nodeConfig.link.distanceFromCenter;
 
-      drawLink({ style, radius });
-      drawLinkText({
-        style,
-        height: 24,
-        text: `${similarity.toFixed(2)}%`,
-        scale: { min: 1, max: 2 },
-        radius,
-      });
+      /* Child Link Style */
+      if (viewConfig.graph.viewSimilarity) {
+        const similarity =
+          (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
+
+        const style = isFlowerLoading(target.paperID)
+          ? blooming
+          : isNodeHovered(target.id) || isLinkHovered(id)
+            ? hovered
+            : similarity >= 75.0
+              ? highSimilarity
+              : similarity >= 50.0
+                ? mediumSimilarity
+                : lowSimilarity;
+
+        drawLink({ style, radius });
+        drawLinkText({
+          style,
+          height: 24,
+          text: `${similarity.toFixed(2)}%`,
+          scale: { min: 1, max: 2 },
+          radius,
+        });
+      } else {
+        const style = isFlowerLoading(target.paperID)
+          ? blooming
+          : isNodeHovered(target.id) || isLinkHovered(id)
+            ? hovered
+            : defaultLink;
+
+        drawLink({ style, radius });
+      }
     },
     [
       isNodeHovered,
@@ -278,6 +322,7 @@ export default function FlowerGraphView() {
       getSimilarity,
       childLinkStyle,
       nodeConfig.link.distanceFromCenter,
+      viewConfig.graph.viewSimilarity,
     ],
   );
 
@@ -543,6 +588,16 @@ export default function FlowerGraphView() {
     selectedOne,
   ]);
 
+  /* Event: Child Node RClick 시 논문 정보를 띄웁니다. */
+  useEffect(() => {
+    handler?.event.onEvent(Graph.Event.Type.NODE_RCLICK, (node) => {
+      if (!isChildNode(node)) return;
+
+      const paper = getPaper(node.paperID);
+      if (paper) setPaperInfo(paper);
+    });
+  }, [handler?.event, getPaper]);
+
   /* Sidebar: Sidebar가 존재하(지 않으)면 Focus Offset을 바꿉니다. */
   useEffect(() => {
     if (paperInfo) {
@@ -592,16 +647,24 @@ export default function FlowerGraphView() {
         <ZoomToolbar handler={handler} viewConfig={viewConfig} />
 
         {/* Node 유사도 표시 여부 */}
-        <div className="absolute left-[50%] top-[50%] flex -translate-x-[50%] -translate-y-[50%] items-center gap-2">
-          {selectedOne && (
-            <ToolbarContainer>
-              <LabelButton>
-                <CheckIcon ui_size="small" />
-                Specific Similarity
-              </LabelButton>
-            </ToolbarContainer>
-          )}
-        </div>
+        <div className="absolute left-[50%] top-[50%] flex -translate-x-[50%] -translate-y-[50%] items-center gap-2" />
+        <ToolbarContainer>
+          <LabelButton
+            ui_variant={viewConfig.graph.viewSimilarity ? "default" : "ghost"}
+            onClick={() =>
+              setExtraViewConfig({
+                graph: { viewSimilarity: !viewConfig.graph.viewSimilarity },
+              })
+            }
+          >
+            {viewConfig.graph.viewSimilarity ? (
+              <CloseIcon ui_size="small" />
+            ) : (
+              <CheckIcon ui_size="small" />
+            )}
+            View Similarity
+          </LabelButton>
+        </ToolbarContainer>
       </ToolbarWrapper>
     </GraphView>
   );

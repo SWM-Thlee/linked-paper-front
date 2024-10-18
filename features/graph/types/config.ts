@@ -75,6 +75,10 @@ export type View = {
     deltaY: number;
   };
 
+  graph: {
+    viewSimilarity: boolean;
+  };
+
   /** 사용자가 뷰와 상호작용할 때 적용되는 옵션입니다. */
   interaction: {
     drag: {
