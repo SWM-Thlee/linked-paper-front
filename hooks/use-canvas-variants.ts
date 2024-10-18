@@ -1,12 +1,35 @@
-import { useDeepCompareMemo } from "use-deep-compare";
-
-import cv, { CSSVariants } from "@/utils/style/canvas-variants";
-import useTheme from "@/features/theme/hooks/use-theme";
 import { useMemo } from "react";
 
-export default function useCanvasVariants<T extends CSSVariants>(variants: T) {
-  const { theme } = useTheme();
-  const memo = useDeepCompareMemo(() => variants, [variants]);
+import useTheme from "@/features/theme/hooks/use-theme";
+import {
+  canvasVariants,
+  CanvasVariantsWithTheme,
+  CSSBasedVariants,
+  Slot,
+  Variant,
+  VariantCombination,
+} from "@/utils/style/canvas-variants";
+import { useDeepCompareMemo } from "use-deep-compare";
 
-  return useMemo(() => cv(theme, memo), [memo, theme]);
+export default function useCanvasVariants<
+  SlotType extends Slot,
+  VariantType extends Variant<SlotType>,
+>(variants: CSSBasedVariants<SlotType, VariantType>) {
+  const { theme } = useTheme();
+  const memo = useDeepCompareMemo(() => canvasVariants(variants), [variants]);
+
+  const cv = useMemo(
+    () =>
+      Object.entries(memo).reduce(
+        (result, [slot, fn]) => ({
+          ...result,
+          [slot]: (combination: VariantCombination<SlotType, VariantType>) =>
+            fn(theme, combination),
+        }),
+        {} as CanvasVariantsWithTheme<SlotType, VariantType>,
+      ),
+    [theme, memo],
+  );
+
+  return cv;
 }

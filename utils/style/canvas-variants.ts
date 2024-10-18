@@ -1,7 +1,22 @@
 import { Theme } from "@/features/theme/types";
 
-export type CSSVariants = {
-  [component: string]: { base?: string[] } & { [variant: string]: string[] };
+export type Slot = { [component: string]: string[] };
+export type Variant<T extends Slot> = {
+  [variantName: string]: {
+    [variantType: string]: { [component in keyof T]?: string[] };
+  };
+};
+export type VariantCombination<
+  SlotType extends Slot,
+  VariantType extends Variant<SlotType>,
+> = { [variantName in keyof VariantType]: keyof VariantType[variantName] };
+
+export type CSSBasedVariants<
+  SlotType extends Slot,
+  VariantType extends Variant<SlotType>,
+> = {
+  slots: SlotType;
+  variants: VariantType;
 };
 
 export type CanvasVariant = {
@@ -13,10 +28,23 @@ export type CanvasVariant = {
   fontWith: ({ scale }: { scale?: number }) => string;
 };
 
-export type CanvasVariants<T extends CSSVariants> = {
-  [component in keyof T]: {
-    [variant in keyof T[component]]: CanvasVariant;
-  };
+export type CanvasVariants<
+  SlotType extends Slot,
+  VariantType extends Variant<SlotType>,
+> = {
+  [slot in keyof SlotType]: (
+    theme: Theme.Preset.Type,
+    combination: VariantCombination<SlotType, VariantType>,
+  ) => CanvasVariant;
+};
+
+export type CanvasVariantsWithTheme<
+  SlotType extends Slot,
+  VariantType extends Variant<SlotType>,
+> = {
+  [slot in keyof SlotType]: (
+    combination: VariantCombination<SlotType, VariantType>,
+  ) => CanvasVariant;
 };
 
 /**
@@ -70,52 +98,80 @@ function resolveCSSByTheme(theme: Theme.Preset.Type, rawStyle: string[]) {
  *
  * **주의**: Class는 반드시 한 문자열에 하나씩 작성되어야 합니다.
  */
-export default function cv<T extends CSSVariants>(
-  theme: Theme.Preset.Type,
-  variants: T,
-): CanvasVariants<T> {
-  return Object.entries(variants).reduce<CanvasVariants<T>>(
-    (resultOfVariants, [variant, components]) => ({
-      ...resultOfVariants,
-      [variant]: Object.entries(components).reduce(
-        (resultOfComponents, [component, rawStyle]) => {
-          const [bgColor, textColor, borderColor, font, borderWidth] =
-            extractStyleFromCSS({
-              classNames: resolveCSSByTheme(theme, [
-                ...(components.base ?? []),
-                ...rawStyle,
-              ]),
-              properties: [
-                "background-color",
-                "color",
-                "border-color",
-                "font",
-                "border-width",
-              ],
-            });
+function convert(theme: Theme.Preset.Type, classes: string[]): CanvasVariant {
+  const [bgColor, textColor, borderColor, font, borderWidth] =
+    extractStyleFromCSS({
+      classNames: resolveCSSByTheme(theme, classes),
+      properties: [
+        "background-color",
+        "color",
+        "border-color",
+        "font",
+        "border-width",
+      ],
+    });
 
-          return {
-            ...resultOfComponents,
-            [component]: {
-              bgColor,
-              textColor,
-              borderColor,
-              font,
-              borderWidth: parseInt(borderWidth, 10),
-              fontWith: ({ scale }: { scale?: number }) => {
-                if (scale === undefined) return font;
+  return {
+    bgColor,
+    textColor,
+    borderColor,
+    font,
+    borderWidth: parseInt(borderWidth, 10),
+    fontWith: ({ scale }: { scale?: number }) => {
+      if (scale === undefined) return font;
 
-                return font.replace(
-                  /\d+px/g,
-                  (a) => `${parseInt(a, 10) / scale}px`,
-                );
-              },
-            } satisfies CanvasVariant,
-          };
-        },
-        {},
-      ),
-    }),
-    {} as CanvasVariants<T>,
+      return font.replace(/\d+px/g, (a) => `${parseInt(a, 10) / scale}px`);
+    },
+  } satisfies CanvasVariant;
+}
+
+export function baseVariants<
+  SlotType extends Slot,
+  VariantType extends Variant<SlotType>,
+>(variants: CSSBasedVariants<SlotType, VariantType>) {
+  return variants;
+}
+
+export function canvasVariants<
+  SlotType extends Slot,
+  VariantType extends Variant<SlotType>,
+>(cssVariants: CSSBasedVariants<SlotType, VariantType>) {
+  return Object.entries(cssVariants.slots).reduce(
+    (result, [slot, base]) => {
+      result[slot as keyof SlotType] = (function internalCreateFn() {
+        const memo = new Map<string, CanvasVariant>();
+
+        const resolve = (
+          theme: Theme.Preset.Type,
+          combination: VariantCombination<SlotType, VariantType>,
+        ) => {
+          const classes = [
+            ...base,
+            ...Object.entries(combination)
+              .map(
+                ([variantName, variantType]) =>
+                  (cssVariants.variants[variantName]?.[variantType]?.[slot] ??
+                    []) as string[],
+              )
+              .flat(),
+          ].sort();
+
+          const id = [theme, ...classes].join(".");
+          if (memo.has(id)) {
+            return memo.get(id)!;
+          }
+
+          const canvasVariant = convert(theme, classes);
+          memo.set(id, canvasVariant);
+
+          return canvasVariant;
+        };
+
+        return resolve;
+      })();
+
+      return result;
+    },
+    {} as CanvasVariants<SlotType, VariantType>,
   );
 }

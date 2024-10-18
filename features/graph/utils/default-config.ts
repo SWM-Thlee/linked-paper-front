@@ -8,13 +8,13 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
   const config: Graph.Config.Node = {
     collision: {
       [BaseNodeType.ROOT]: {
-        default: 115,
+        default: 150,
       },
       [BaseNodeType.GROUP]: {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: 115,
+        default: 150,
       },
     },
     charge: {
@@ -30,13 +30,13 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
     },
     radius: {
       [BaseNodeType.ROOT]: {
-        default: 115,
+        default: 150,
       },
       [BaseNodeType.GROUP]: {
         default: 0,
       },
       [BaseNodeType.CHILD]: {
-        default: 115,
+        default: 150,
       },
     },
     link: {
@@ -45,13 +45,13 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
       },
       distanceFromCenter: {
         [BaseNodeType.ROOT]: {
-          default: 160,
+          default: 180,
         },
         [BaseNodeType.GROUP]: {
           default: 0,
         },
         [BaseNodeType.CHILD]: {
-          default: 130,
+          default: 165,
         },
       },
     },
@@ -62,7 +62,7 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
   /* Default Link Config */
   config.link.distance[DefaultNode.ROOT] = {};
   config.link.distance[DefaultNode.ROOT][DefaultNode.ROOT] = 5500;
-  config.link.distance[DefaultNode.ROOT][DefaultNode.CHILD] = 400;
+  config.link.distance[DefaultNode.ROOT][DefaultNode.CHILD] = 450;
 
   return config;
 })();

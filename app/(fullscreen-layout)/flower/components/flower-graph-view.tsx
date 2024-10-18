@@ -34,7 +34,12 @@ import LabelButton from "@/ui/label-button";
 
 import CheckIcon from "@/ui/icons/check";
 import CloseIcon from "@/ui/icons/close";
-import { variants } from "../utils/variants";
+import {
+  rootNode as rootNodeStyle,
+  rootLink as rootLinkStyle,
+  childLink as childLinkStyle,
+  childNode as childNodeStyle,
+} from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
 import ToolbarWrapper from "./toolbar/toolbar-wrapper";
 import ToolbarContainer from "./toolbar/toolbar-container";
@@ -59,8 +64,11 @@ export default function FlowerGraphView() {
   const { width } = useFullscreen();
 
   /* Extra Node Handler */
-  const { rootLinkStyle, childLinkStyle, rootStyle, childStyle } =
-    useCanvasVariants(variants);
+  const rootNodeCv = useCanvasVariants(rootNodeStyle);
+  const childNodeCv = useCanvasVariants(childNodeStyle);
+  const rootLinkCv = useCanvasVariants(rootLinkStyle);
+  const childLinkCv = useCanvasVariants(childLinkStyle);
+
   const { isHovered: isNodeHovered } = useNodeHoverHandler(handler);
   const { isHovered: isLinkHovered } = useLinkHoverHandler(handler);
   const { focus, focusOffsetX, setFocusOffsetX } = useNodeFocus(
@@ -90,77 +98,69 @@ export default function FlowerGraphView() {
   /* Node Renderer */
   const renderRootNode: Graph.Render.RenderNode = useCallback(
     ({ node, drawCircle, drawText }) => {
-      const { selected, hovered, defaultNode } = rootStyle;
       const paper = getPaper(node.paperID);
       const loading = isFlowerLoading(node.paperID);
-      const style = loading
-        ? defaultNode
+      const variant = loading
+        ? "default"
         : isSelected(node.id)
-          ? selected
+          ? "selected"
           : isNodeHovered(node.id)
-            ? hovered
-            : defaultNode;
+            ? "hovered"
+            : "default";
 
       /* Draw Node */
       drawCircle({
-        style,
+        style: rootNodeCv.node({ ui_variant: variant }),
         radius: nodeConfig.radius.root.default,
-        scale: { min: 0.2, max: 1 },
+        scale: { min: 0.3, max: 1 },
       });
 
       /* Draw Title */
       drawText({
-        style,
+        style: rootNodeCv.title({ ui_variant: variant }),
         text: paper?.title ?? "Loading Node",
-        maxWidth: 175,
+        maxWidth: 260,
         height: 24,
         maxLines: 3,
         offsetY: isFlowerLoading(node.paperID) ? 0 : -24,
-        scale: { min: 0.2, max: 1 },
+        scale: { min: 0.3, max: 1 },
       });
 
       /* Draw if loaded */
       if (!isFlowerLoading(node.paperID)) {
         /* Draw Date */
         drawText({
-          style,
+          style: rootNodeCv.info({ ui_variant: variant }),
           text: paper?.date ?? "Unknown Date",
-          maxWidth: 175,
+          maxWidth: 260,
           height: 24,
           offsetY: 36,
-          scale: { min: 0.2, max: 1 },
+          scale: { min: 0.3, max: 1 },
         });
 
         /* Draw Author */
         drawText({
-          style,
+          style: rootNodeCv.info({ ui_variant: variant }),
           text: `${paper?.authors?.[0] ?? "Unknown"}`,
-          maxWidth: 175,
+          maxWidth: 260,
           height: 24,
           offsetY: 72,
-          scale: { min: 0.2, max: 1 },
+          scale: { min: 0.3, max: 1 },
         });
       }
     },
     [
       getPaper,
+      rootNodeCv,
       isSelected,
       isNodeHovered,
       isFlowerLoading,
-      rootStyle,
       nodeConfig.radius.root.default,
     ],
   );
 
   const renderChildNode: Graph.Render.RenderNode = useCallback(
     ({ node, drawCircle, drawText }) => {
-      const {
-        blooming,
-        hovered,
-        highSimilarity,
-        mediumSimilarity,
-        lowSimilarity,
-      } = childStyle;
       const paper = getPaper(node.paperID);
       const links = getLinksFromTarget(node.id);
 
@@ -181,28 +181,28 @@ export default function FlowerGraphView() {
       const similarity = (getSimilarity(node.paperID, root.paperID) ?? 0) * 100;
 
       /* Child Node Style */
-      const style = isFlowerLoading(node.paperID)
-        ? blooming
+      const variant = isFlowerLoading(node.paperID)
+        ? "blooming"
         : isNodeHovered(node.id) ||
             [...(links?.values() ?? [])].some((link) => isLinkHovered(link.id))
-          ? hovered
+          ? "hovered"
           : similarity >= 75.0
-            ? highSimilarity
+            ? "highSimilarity"
             : similarity >= 50.0
-              ? mediumSimilarity
-              : lowSimilarity;
+              ? "mediumSimilarity"
+              : "lowSimilarity";
 
       /* Draw Node */
       drawCircle({
-        style,
+        style: childNodeCv.node({ ui_variant: variant }),
         radius: nodeConfig.radius.child.default,
       });
 
       /* Draw Title */
       drawText({
-        style,
+        style: childNodeCv.title({ ui_variant: variant }),
         text: paper?.title ?? "Loading Node",
-        maxWidth: 175,
+        maxWidth: 260,
         height: 24,
         maxLines: 3,
         offsetY: -24,
@@ -210,29 +210,29 @@ export default function FlowerGraphView() {
 
       /* Draw Date */
       drawText({
-        style,
+        style: childNodeCv.info({ ui_variant: variant }),
         text: paper?.date ?? "Unknown Date",
-        maxWidth: 175,
+        maxWidth: 260,
         height: 24,
         offsetY: 36,
       });
 
       /* Draw Author */
       drawText({
-        style,
+        style: childNodeCv.info({ ui_variant: variant }),
         text: `${paper?.authors?.[0] ?? "Unknown"}`,
-        maxWidth: 175,
+        maxWidth: 260,
         height: 24,
         offsetY: 72,
       });
     },
     [
       get,
+      childNodeCv,
       getSimilarity,
       getPaper,
       getLinksFromTarget,
       isLinkHovered,
-      childStyle,
       isFlowerLoading,
       isNodeHovered,
       nodeConfig.radius.child.default,
@@ -241,18 +241,21 @@ export default function FlowerGraphView() {
 
   const renderRootLink: Graph.Render.RenderLink = useCallback(
     ({ link: { id, source, target }, drawLink, drawLinkText }) => {
-      const { defaultLink, hovered } = rootLinkStyle;
-      const style = isLinkHovered(id) ? hovered : defaultLink;
+      const variant = isLinkHovered(id) ? "hovered" : "default";
       const radius = nodeConfig.link.distanceFromCenter;
 
-      drawLink({ style, radius, scale: { max: 0.5 } });
+      drawLink({
+        style: rootLinkCv.link({ ui_variant: variant }),
+        radius,
+        scale: { max: 0.5 },
+      });
 
       if (viewConfig.graph.viewSimilarity) {
         const similarity =
           (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
 
         drawLinkText({
-          style,
+          style: rootLinkCv.container({ ui_variant: variant }),
           height: 24,
           text: `${similarity.toFixed(2)}%`,
           scale: { max: 0.5 },
@@ -262,8 +265,8 @@ export default function FlowerGraphView() {
     },
     [
       getSimilarity,
-      rootLinkStyle,
       isLinkHovered,
+      rootLinkCv,
       nodeConfig.link.distanceFromCenter,
       viewConfig.graph.viewSimilarity,
     ],
@@ -271,15 +274,6 @@ export default function FlowerGraphView() {
 
   const renderChildLink: Graph.Render.RenderLink = useCallback(
     ({ link: { id, source, target }, drawLink, drawLinkText }) => {
-      const {
-        hovered,
-        blooming,
-        highSimilarity,
-        mediumSimilarity,
-        lowSimilarity,
-        defaultLink,
-      } = childLinkStyle;
-
       const radius = nodeConfig.link.distanceFromCenter;
 
       /* Child Link Style */
@@ -287,32 +281,32 @@ export default function FlowerGraphView() {
         const similarity =
           (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
 
-        const style = isFlowerLoading(target.paperID)
-          ? blooming
+        const variant = isFlowerLoading(target.paperID)
+          ? "blooming"
           : isNodeHovered(target.id) || isLinkHovered(id)
-            ? hovered
+            ? "hovered"
             : similarity >= 75.0
-              ? highSimilarity
+              ? "highSimilarity"
               : similarity >= 50.0
-                ? mediumSimilarity
-                : lowSimilarity;
+                ? "mediumSimilarity"
+                : "lowSimilarity";
 
-        drawLink({ style, radius });
+        drawLink({ style: childLinkCv.link({ ui_variant: variant }), radius });
         drawLinkText({
-          style,
+          style: childLinkCv.container({ ui_variant: variant }),
           height: 24,
           text: `${similarity.toFixed(2)}%`,
           scale: { min: 1, max: 2 },
           radius,
         });
       } else {
-        const style = isFlowerLoading(target.paperID)
-          ? blooming
+        const variant = isFlowerLoading(target.paperID)
+          ? "blooming"
           : isNodeHovered(target.id) || isLinkHovered(id)
-            ? hovered
-            : defaultLink;
+            ? "hovered"
+            : "default";
 
-        drawLink({ style, radius });
+        drawLink({ style: childLinkCv.link({ ui_variant: variant }), radius });
       }
     },
     [
@@ -320,7 +314,7 @@ export default function FlowerGraphView() {
       isLinkHovered,
       isFlowerLoading,
       getSimilarity,
-      childLinkStyle,
+      childLinkCv,
       nodeConfig.link.distanceFromCenter,
       viewConfig.graph.viewSimilarity,
     ],
@@ -573,7 +567,7 @@ export default function FlowerGraphView() {
         } else {
           const paper = getPaper(node.paperID);
           if (paper) setPaperInfo(paper);
-          focus({ nodeID: node.id, padding: 1200 });
+          focus({ nodeID: node.id, padding: 1400 });
         }
       },
       "RootNodeClicked",
@@ -610,7 +604,7 @@ export default function FlowerGraphView() {
 
   useEffect(() => {
     if (selectedOne) {
-      focus({ nodeID: selectedOne, padding: 1200 });
+      focus({ nodeID: selectedOne, padding: 1400 });
     }
   }, [focusOffsetX, focus, selectedOne]);
 
