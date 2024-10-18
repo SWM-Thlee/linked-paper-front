@@ -2,7 +2,7 @@
 
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 
-import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 
 export const iconButtonVariant = tv({
   base: ["transition-colors", "duration-200"],

@@ -75,7 +75,7 @@ export default function EditorPreview() {
           }}
         >
           <CloseIcon ui_size="small" />
-          Cancel
+          Cancel Edit
         </LabelButton>
       </Settings.Tab.Options>
     </Settings.Tab.Root>

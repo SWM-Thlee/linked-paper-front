@@ -288,9 +288,7 @@ export default function EditorDate() {
                       ui_variant="light"
                       className="text-nowrap text-label-large"
                       key={id}
-                      onClick={() =>
-                        setDate(resolve({ min: date?.min, max: date?.max }))
-                      }
+                      onClick={() => setDate(resolve())}
                     >
                       {option}
                     </Button>

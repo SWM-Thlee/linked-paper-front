@@ -32,5 +32,5 @@ export default function useSearchRequest() {
     [router, defaultFilter],
   );
 
-  return { request };
+  return { defaultFilter, request };
 }

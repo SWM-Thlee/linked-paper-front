@@ -8,6 +8,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+import AnalyticsProvider from "@/features/analytics/components/analytics-provider";
 
 // QueryClient를 생성합니다.
 function createQueryClient() {
@@ -30,10 +31,12 @@ export default function StateProvider({ children }: React.PropsWithChildren) {
   const queryClient = getQueryClient();
 
   return (
-    <JotaiProvider>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryStreamedHydration>{children}</ReactQueryStreamedHydration>
-      </QueryClientProvider>
-    </JotaiProvider>
+    <AnalyticsProvider>
+      <JotaiProvider>
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryStreamedHydration>{children}</ReactQueryStreamedHydration>
+        </QueryClientProvider>
+      </JotaiProvider>
+    </AnalyticsProvider>
   );
 }

@@ -2,7 +2,7 @@
 
 import { ComponentPropsWithoutRef } from "react";
 
-import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 import { Tooltip, TooltipProvider, tooltipVariant } from "./tooltip";
 
 export const infoTooltipVariant = tv({

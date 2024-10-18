@@ -16,9 +16,9 @@ export default function createSearchFilter({
     dataID: generateFilterDataID(Search.Filter.Type),
     attributes: {
       // 초기 값은 모두 빈 값으로 초기화됩니다.
-      date: { type: Filter.Attribute.DataRange },
-      category: { type: Filter.Attribute.MultiSelect },
-      journal: { type: Filter.Attribute.MultiSelect },
+      date: { type: Filter.Attribute.DataRange, value: {} },
+      category: { type: Filter.Attribute.MultiSelect, value: {} },
+      journal: { type: Filter.Attribute.MultiSelect, value: {} },
     },
   };
 }

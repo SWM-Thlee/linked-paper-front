@@ -3,8 +3,8 @@
 import { createPortal } from "react-dom";
 
 import useIsClient from "@/hooks/use-is-client";
-import { tv } from "@/utils/tailwind-variants";
-import { sem } from "@/utils/semantic-styles";
+import { tv } from "@/utils/style/tailwind-variants";
+import { sem } from "@/utils/style/semantic-styles";
 import { GroupContainerID } from "./types";
 import { GroupContainerContext } from "./context";
 import useTabContainer from "./hooks/use-tab-container";

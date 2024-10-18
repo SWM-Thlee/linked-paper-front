@@ -1,9 +1,9 @@
-import { MdArrowDownward } from "react-icons/md";
+import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import IconWrapper from "./wrapper";
 
 const ArrowDownIcon = IconWrapper({
   type: "react-icons",
-  baseComponent: MdArrowDownward,
+  baseComponent: MdOutlineKeyboardArrowDown,
 });
 
 export default ArrowDownIcon;

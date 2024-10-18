@@ -2,7 +2,7 @@
 
 import * as Primitive from "@radix-ui/react-radio-group";
 
-import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 
 export const selectVariant = tv({
   slots: {

@@ -1,11 +1,4 @@
-import {
-  closestTo,
-  compareDesc,
-  endOfYear,
-  startOfMonth,
-  startOfYear,
-  subYears,
-} from "date-fns";
+import { startOfMonth, startOfYear, subMonths, subYears } from "date-fns";
 
 import { convertDateToString } from "@/utils/date";
 import { signature } from "@/utils/signature";
@@ -18,6 +11,21 @@ export type DateOption = {
 };
 
 type DateRange = NonNullable<Search.Filter.Data["attributes"]["date"]["value"]>;
+
+// 현재 시점을 기준으로 몇 개월 전까지의 날짜 구간을 나타냅니다.
+function LastMonthModule(target: number[]): DateOption[] {
+  const today = new Date();
+  return target.map((diff) => ({
+    id: signature(),
+    option: `Last ${diff === 1 ? "month" : `${diff} months`}`,
+    resolve() {
+      return {
+        min: convertDateToString(subMonths(today, diff)),
+        max: convertDateToString(today),
+      };
+    },
+  }));
+}
 
 // 현재 시점을 기준으로 몇 년 전까지의 날짜 구간을 나타냅니다.
 function LastYearModule(target: number[]): DateOption[] {
@@ -34,30 +42,6 @@ function LastYearModule(target: number[]): DateOption[] {
   }));
 }
 
-// 시작 지점부터 현재까지의 10년 별 날짜 구간을 나타냅니다.
-function DecadesModule(start: number): DateOption[] {
-  const today = new Date();
-  const startYear = startOfYear(new Date(start, 1));
-  const endYear = endOfYear(new Date(start + 9, 1));
-  const closestYear = closestTo(startYear, [today, endYear]);
-
-  if (compareDesc(today, startYear) > 0) return [];
-
-  return [
-    {
-      id: signature(),
-      option: `${start}s`,
-      resolve() {
-        return {
-          min: convertDateToString(startYear),
-          max: closestYear ? convertDateToString(closestYear) : undefined,
-        };
-      },
-    },
-    ...DecadesModule(start + 10),
-  ];
-}
-
 export const DateOptions = {
   // 기본 옵션 (모든 구간, 오늘만, 10년 단위 구간)
   DEFAULT: [
@@ -68,20 +52,9 @@ export const DateOptions = {
         return {};
       },
     },
-    {
-      id: signature(),
-      option: "Today",
-      resolve() {
-        const today = convertDateToString(new Date());
-        return { min: today, max: today };
-      },
-    },
-    // 1960년대부터
-    ...DecadesModule(1960),
   ],
 
-  // 지금으로부터 몇 년 전까지의 정보를 가져옵니다.
-  UNTIL: LastYearModule([1, 3, 5, 10]),
+  UNTIL: [...LastMonthModule([1, 6]), ...LastYearModule([1, 3, 5, 10, 20])],
 
   // 시작하는 지점에 대해 설정합니다.
   START: [

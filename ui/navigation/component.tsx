@@ -4,8 +4,8 @@ import React from "react";
 import Link from "next/link";
 import * as Primitive from "@radix-ui/react-navigation-menu";
 
-import { tv, VariantProps } from "@/utils/tailwind-variants";
-import { sem } from "@/utils/semantic-styles";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
+import { sem } from "@/utils/style/semantic-styles";
 import { NavigationModule } from "./types";
 
 export const navigationVariant = tv({

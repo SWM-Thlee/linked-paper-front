@@ -4,10 +4,11 @@ import { useCallback } from "react";
 
 import { Search } from "@/features/search/types";
 import { Filter } from "@/features/filter/types";
-import Button from "@/ui/button";
 import EditIcon from "@/ui/icons/edit";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import useTabDirection from "@/ui/settings/hooks/use-tab-direction";
+import IconButton from "@/ui/icon-button";
+import { Tooltip } from "@/ui/tooltip";
 
 type Props = {
   titleEditable?: boolean;
@@ -41,16 +42,28 @@ export default function EditFilterOption({
     }
   }, [begin, status, dataID, request, titleEditable]);
 
-  return status !== Search.Edit.Status.UNSPECIFIED ? (
-    <Button
-      ui_color="secondary"
-      className="flex items-center justify-between gap-2 text-nowrap"
-      onClick={onClick}
-    >
-      <EditIcon />
-      {status === Search.Edit.Status.NOT_EDITING
-        ? "Edit Filter"
-        : "Continue Editing"}
-    </Button>
-  ) : null;
+  const available = status !== Search.Edit.Status.UNSPECIFIED;
+
+  return (
+    available && (
+      <Tooltip
+        title={
+          status === Search.Edit.Status.NOT_EDITING
+            ? "Edit Filter"
+            : "Continue Editing"
+        }
+      >
+        <IconButton
+          ui_size="large"
+          ui_variant={
+            status === Search.Edit.Status.NOT_EDITING ? "bordered" : "default"
+          }
+          ui_color="secondary"
+          onClick={onClick}
+        >
+          <EditIcon ui_size="small" />
+        </IconButton>
+      </Tooltip>
+    )
+  );
 }

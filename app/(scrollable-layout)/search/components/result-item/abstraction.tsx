@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { tv } from "@/utils/tailwind-variants";
+import { tv } from "@/utils/style/tailwind-variants";
 import Badge from "@/ui/badge";
 import IconButton from "@/ui/icon-button";
 import AddIcon from "@/ui/icons/add";

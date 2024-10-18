@@ -56,7 +56,7 @@ export default function SearchQueryResolver({
   );
 
   if (!validation) {
-    redirect("/search/error/400?reason=Invalid Queries");
+    redirect("/error/400?from=Semantic Search&reason=Invalid Queries");
   }
 
   // Search Query를 Atom과 연동합니다.

@@ -9,8 +9,9 @@ import { toPreset } from "@/features/filter/utils/converter/preset";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
-import Button from "@/ui/button";
 import CheckIcon from "@/ui/icons/check";
+import IconButton from "@/ui/icon-button";
+import { Tooltip } from "@/ui/tooltip";
 
 type Props = {
   dataID: Search.Filter.DataID;
@@ -59,14 +60,16 @@ export default function SetDefaultFilterOption({ dataID }: Props) {
 
   return (
     available && (
-      <Button
-        ui_color="primary"
-        className="flex items-center justify-between gap-2 text-nowrap"
-        onClick={onClick}
-      >
-        <CheckIcon />
-        Set Default Filter
-      </Button>
+      <Tooltip title="Set Default Filter">
+        <IconButton
+          ui_size="large"
+          ui_variant="bordered"
+          ui_color="primary"
+          onClick={onClick}
+        >
+          <CheckIcon ui_size="small" />
+        </IconButton>
+      </Tooltip>
     )
   );
 }

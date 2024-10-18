@@ -8,8 +8,8 @@ import React, {
 import * as Primitive from "@radix-ui/react-dialog";
 
 import useIsClient from "@/hooks/use-is-client";
-import { tv } from "@/utils/tailwind-variants";
-import { sem } from "@/utils/semantic-styles";
+import { tv } from "@/utils/style/tailwind-variants";
+import { sem } from "@/utils/style/semantic-styles";
 import { Search } from "@/features/search/types";
 import {
   SettingsContainer,
