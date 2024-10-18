@@ -66,7 +66,7 @@ const abstractionVariant = tv({
           "dark:group-hover/abs:text-dark-secondaryContainer",
         ],
         content: [
-          "line-clamp-4",
+          "line-clamp-3",
           "text-light-onSurface",
           "group-hover/abs:text-light-onSecondaryContainer",
           "dark:text-dark-onSurface",
