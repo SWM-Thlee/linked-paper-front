@@ -184,7 +184,7 @@ export default function FlowerGraphView() {
       const style = isFlowerLoading(node.paperID)
         ? blooming
         : isNodeHovered(node.id) ||
-            links?.values().some((link) => isLinkHovered(link.id))
+            [...(links?.values() ?? [])].some((link) => isLinkHovered(link.id))
           ? hovered
           : similarity >= 75.0
             ? highSimilarity
@@ -478,7 +478,8 @@ export default function FlowerGraphView() {
           dynamic.fx = locX;
           dynamic.fy = locY;
 
-          setTimeout(() => select(rootNode.id, true), 100);
+          // TODO: 수정 필요
+          setTimeout(() => select(rootNode.id, true), 10);
         });
         upsertLink(rootLink);
 

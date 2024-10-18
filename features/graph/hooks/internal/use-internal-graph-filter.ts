@@ -36,14 +36,14 @@ export default function useInternalGraphFilter() {
 
   const handleNodeFilter = useCallback(
     (node: Graph.Element.Node) => {
-      return nodeFilters.values().every((filter) => filter(node));
+      return [...nodeFilters.values()].every((filter) => filter(node));
     },
     [nodeFilters],
   );
 
   const handleLinkFilter = useCallback(
     (link: Graph.Element.Link) => {
-      return linkFilters.values().every((filter) => filter(link));
+      return [...linkFilters.values()].every((filter) => filter(link));
     },
     [linkFilters],
   );
