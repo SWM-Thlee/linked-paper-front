@@ -22,6 +22,7 @@ import CloseIcon from "@/ui/icons/close";
 import WarningIcon from "@/ui/icons/warning";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 import { FilterSettings } from "./filter-settings";
 
 function Attributes({
@@ -240,6 +241,7 @@ export default function SearchResultHeader() {
   const { log } = useAnalytics();
   const { update } = useSearchUpdate();
   const { requiredQuery, stale } = useSearchQueryInfo();
+  const filter = useSearchQueryFilter();
   const [text, setText] = useState("");
 
   useEffect(() => {
@@ -274,9 +276,13 @@ export default function SearchResultHeader() {
       if (!(text && event.key === "Enter")) return;
       event.preventDefault();
 
+      log(Analytics.Event.SEARCH_QUERY_RESULT, {
+        query: text,
+        ...searchFilterForAnalytics(filter),
+      });
       update({ ...requiredQuery, query: text });
     },
-    [update, requiredQuery, text],
+    [update, requiredQuery, log, filter, text],
   );
 
   return (

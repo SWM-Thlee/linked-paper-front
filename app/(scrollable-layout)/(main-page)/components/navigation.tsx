@@ -14,9 +14,13 @@ import SearchIcon from "@/ui/icons/search";
 import FieldContainer from "@/ui/container/field-container";
 import useSearchRequest from "@/features/search/hooks/query/use-search-request";
 import { defaultQueryValue } from "@/features/search/stores/query";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import DefaultFilterInfo from "./default-filter-info";
 
 function Content() {
+  const { log } = useAnalytics();
   const router = useSearchRequest();
   const [text, setText] = useState("");
 
@@ -24,8 +28,12 @@ function Content() {
   const onRequestQuery = useCallback(() => {
     if (!text) return;
 
+    log(Analytics.Event.SEARCH_QUERY_NAV, {
+      query: text,
+      ...searchFilterForAnalytics(router.defaultFilter),
+    });
     router.request({ ...defaultQueryValue, query: text });
-  }, [router, text]);
+  }, [router, log, text]);
 
   const searchPlaceholder = useMemo(
     () => "describe what you’re looking for, not just keywords.",
