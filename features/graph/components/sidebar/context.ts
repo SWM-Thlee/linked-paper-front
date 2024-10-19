@@ -11,5 +11,5 @@ const defaultValue = {
   sidebarInfo: {},
 } satisfies Graph.Sidebar.Context;
 
-export const GraphViewSidebarContext =
+export const SidebarContext =
   createContext<Graph.Sidebar.Context>(defaultValue);
