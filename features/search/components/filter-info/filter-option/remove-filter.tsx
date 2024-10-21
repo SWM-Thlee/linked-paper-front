@@ -6,7 +6,8 @@ import { Search } from "@/features/search/types";
 import { Filter } from "@/features/filter/types";
 import useSearchFilterEditor from "@/features/search/hooks/filter/use-search-filter-editor";
 import DeleteIcon from "@/ui/icons/delete";
-import Button from "@/ui/button";
+import IconButton from "@/ui/icon-button";
+import { Tooltip } from "@/ui/tooltip";
 
 type Props = {
   dataID: Search.Filter.DataID;
@@ -29,13 +30,20 @@ export default function RemoveFilterOption({ dataID, store }: Props) {
     remove(true);
   }, [status, remove]);
 
-  return status === Search.Edit.Status.NOT_EDITING ? (
-    <Button
-      ui_color="tertiary"
-      className="flex items-center justify-between gap-2 text-nowrap"
-      onClick={onClick}
-    >
-      <DeleteIcon /> Remove This Filter
-    </Button>
-  ) : null;
+  const available = status === Search.Edit.Status.NOT_EDITING;
+
+  return (
+    available && (
+      <Tooltip title="Remove Filter">
+        <IconButton
+          ui_size="large"
+          ui_variant="bordered"
+          ui_color="tertiary"
+          onClick={onClick}
+        >
+          <DeleteIcon ui_size="small" />
+        </IconButton>
+      </Tooltip>
+    )
+  );
 }

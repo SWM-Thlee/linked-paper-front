@@ -3,7 +3,8 @@ const path = require("path");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  // Webpack production configure with path alias
+
+  // Webpack Production Configure with Path Alias
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -11,7 +12,8 @@ const nextConfig = {
     };
     return config;
   },
-  // Client-Side Request
+
+  // Proxy Server on Client-Side Request
   async rewrites() {
     return [
       {
@@ -24,8 +26,7 @@ const nextConfig = {
 
 module.exports = nextConfig;
 
-// Injected content via Sentry wizard below
-
+/* 1. Apply Sentry Configuration */
 const { withSentryConfig } = require("@sentry/nextjs");
 
 module.exports = withSentryConfig(module.exports, {
@@ -68,3 +69,12 @@ module.exports = withSentryConfig(module.exports, {
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
 });
+
+/* 2. Apply Next.JS Bundle Analyzer */
+const analyzer = require("@next/bundle-analyzer");
+
+const withBundleAnalyzer = analyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
+module.exports = withBundleAnalyzer(module.exports);

@@ -13,10 +13,10 @@ import LabelButton from "@/ui/label-button";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useBidirectionalState from "@/hooks/use-bidirectional-state";
-import useCategories from "@/hooks/use-categories";
-import { Subject } from "@/utils/category";
+import useCategories from "@/features/paper/hooks/use-categories";
 import { matcher } from "@/features/search/utils/matcher";
 import { Search } from "@/features/search/types";
+import { Category, Subject } from "@/features/paper/utils/cs-category";
 import { EditorContext } from "./context";
 
 function CategoryElement({
@@ -71,7 +71,10 @@ function CategoryElement({
 
 export default function EditorCategory() {
   const tabID = useTabID(Search.Settings.CATEGORY.ID);
-  const { getCategories, getSubjects } = useCategories();
+  const { getCategories, getSubjects } = useCategories({
+    category: Category,
+    subject: Subject,
+  });
 
   const [text, setText] = useState("");
   const [checkedOnly, setCheckedOnly] = useState(false);

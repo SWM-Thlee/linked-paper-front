@@ -1,5 +1,5 @@
 import { sample, repeat, random, select } from "@/utils/sample";
-import { Category } from "@/utils/category";
+import { Category } from "@/features/paper/utils/category";
 import { Search } from "../types";
 
 // 모든 필드를 가져옵니다.

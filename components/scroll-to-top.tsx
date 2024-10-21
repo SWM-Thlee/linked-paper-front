@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 
-import { tv } from "@/utils/tailwind-variants";
+import { tv } from "@/utils/style/tailwind-variants";
 import useIsClient from "@/hooks/use-is-client";
 import ArrowUpIcon from "@/ui/icons/arrow-up";
 import { Tooltip, TooltipProvider } from "@/ui/tooltip";

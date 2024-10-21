@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from "react";
 
-import useCategories, { CategoryGroup } from "@/hooks/use-categories";
+import useCategories, {
+  CategoryGroup,
+} from "@/features/paper/hooks/use-categories";
 import { matcher } from "@/features/search/utils/matcher";
-import { Category } from "@/utils/category";
+import { Category } from "@/features/paper/utils/category";
 import CategoryIcon from "@/ui/icons/category";
 import ArrowDownIcon from "@/ui/icons/arrow-down";
 import SearchField from "@/ui/search-field";

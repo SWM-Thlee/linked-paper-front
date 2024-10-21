@@ -55,7 +55,7 @@ export function JournalChip({ nameOfJournals, children }: Props) {
               onChange={(e) => setMatchText(e.target.value)}
               ui_size="medium"
               ui_color="secondary"
-              defaultPlaceholder="Find Journals..."
+              defaultPlaceholder="Find Sources..."
             />
           )}
           {hasMatchedResult && (

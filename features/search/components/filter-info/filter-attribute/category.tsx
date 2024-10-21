@@ -3,7 +3,9 @@
 import { useMemo } from "react";
 
 import { Search } from "@/features/search/types";
-import useCategories, { CategoryUnknown } from "@/hooks/use-categories";
+import useCategories, {
+  CategoryUnknown,
+} from "@/features/paper/hooks/use-categories";
 import Button from "@/ui/button";
 import CategoryIcon from "@/ui/icons/category";
 import { ContentContainer, KeyContainer } from "./common";

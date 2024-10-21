@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useAtom } from "jotai";
 
-import { scrollLockAtom } from "@/components/body-with-scroll-lock";
+import { scrollLockAtom } from "@/components/layout/body-with-scroll-lock";
 
 export default function useScrollLock(tag: string) {
   const [, setLockDeps] = useAtom(scrollLockAtom);

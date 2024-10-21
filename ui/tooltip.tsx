@@ -2,8 +2,8 @@
 
 import * as Primitive from "@radix-ui/react-tooltip";
 
-import { sem } from "@/utils/semantic-styles";
-import { tv, VariantProps } from "@/utils/tailwind-variants";
+import { sem } from "@/utils/style/semantic-styles";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 
 export const tooltipVariant = tv({
   slots: {
