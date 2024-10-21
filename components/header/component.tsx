@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import Link from "next/link";
+import Image from "next/image";
 
 import { tv } from "@/utils/style/tailwind-variants";
 import { Navigation } from "@/ui/navigation";
@@ -34,10 +35,14 @@ export const headerVariant = tv({
       "text-nowrap",
       "select-none",
       "z-10",
-      "text-headline-medium",
+      "text-headline-small",
       "transition-[font-size,_line-height] duration-300",
       "text-light-onSurface",
       "dark:text-dark-onSurface",
+      "flex",
+      "items-center",
+      "leading-none",
+      "gap-4",
     ],
     navigation: [
       "absolute top-0 left-0",
@@ -87,6 +92,20 @@ export default function Header() {
         <div className={container()}>
           {/* Title */}
           <Link href="/" className={header()}>
+            <Image
+              src="./logo.svg"
+              alt="Logo"
+              width={32}
+              height={32}
+              className="animate-fadeIn dark:hidden"
+            />
+            <Image
+              src="./logo-dark.svg"
+              alt="Logo"
+              width={32}
+              height={32}
+              className="hidden animate-fadeIn dark:block"
+            />
             Linked Paper
           </Link>
           {/* Navigation */}
