@@ -5,7 +5,6 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
-  useMemo,
   WheelEventHandler,
 } from "react";
 import ForceGraph from "react-force-graph-2d";
@@ -14,7 +13,6 @@ import useFullscreen from "@/hooks/use-fullscreen";
 import useInternalGraphConfig from "@/features/graph/hooks/internal/use-internal-graph-config";
 import useInternalGraphEventHandler from "@/features/graph/hooks/internal/use-internal-graph-event-handler";
 import useInternalGraphFilter from "@/features/graph/hooks/internal/use-internal-graph-filter";
-import useInternalSidebar from "@/features/graph/hooks/internal/use-internal-sidebar";
 
 import { Graph } from "@/features/graph/types";
 import { GraphHandler } from "../hooks/default/use-graph-handler";
@@ -24,7 +22,6 @@ import {
   internalDrawNodeCircle,
   internalDrawNodeText,
 } from "../utils/draw";
-import { GraphViewSidebarContext } from "./sidebar/context";
 
 type Props = {
   /** Graph View 이외의 보조 UI를 구현할 때 사용됩니다. */
@@ -64,14 +61,6 @@ const GraphView = forwardRef<GraphHandler, Props>(
     /** 그래프 노드의 필터링을 관리합니다. */
     const { onNodeFilter, onLinkFilter, handleNodeFilter, handleLinkFilter } =
       useInternalGraphFilter();
-
-    /** Sidebar를 관리합니다. */
-    const { hasSidebar, registerSidebar, unregisterSidebar, sidebarInfo } =
-      useInternalSidebar();
-
-    const sidebarProps = useMemo(() => {
-      return { hasSidebar, registerSidebar, unregisterSidebar, sidebarInfo };
-    }, [hasSidebar, registerSidebar, unregisterSidebar, sidebarInfo]);
 
     /* 외부에서 사용할 설정들을 정의합니다. */
     useImperativeHandle(
@@ -275,7 +264,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
     );
 
     return (
-      <GraphViewSidebarContext.Provider value={sidebarProps}>
+      <>
         {children}
         <div
           onWheel={(event) => {
@@ -314,8 +303,6 @@ const GraphView = forwardRef<GraphHandler, Props>(
             onNodeRightClick={handleEvent(Graph.Event.Type.NODE_RCLICK)}
             onNodeHover={handleEvent(Graph.Event.Type.NODE_HOVER)}
             onNodeDrag={handleEvent(Graph.Event.Type.NODE_DRAG)}
-            onBackgroundClick={handleEvent(Graph.Event.Type.BG_CLICK)}
-            onBackgroundRightClick={handleEvent(Graph.Event.Type.BG_RCLICK)}
             onLinkClick={handleEvent(Graph.Event.Type.LINK_CLICK)}
             onLinkHover={handleEvent(Graph.Event.Type.LINK_HOVER)}
             onLinkRightClick={handleEvent(Graph.Event.Type.LINK_RCLICK)}
@@ -325,7 +312,7 @@ const GraphView = forwardRef<GraphHandler, Props>(
             onEngineStop={handleEvent(Graph.Event.Type.ENGINE_STOP)}
           />
         </div>
-      </GraphViewSidebarContext.Provider>
+      </>
     );
   },
 );

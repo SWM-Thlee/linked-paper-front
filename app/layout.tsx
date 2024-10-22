@@ -1,7 +1,6 @@
-import { Metadata, Viewport } from "next";
+import { Viewport } from "next";
 import { Toaster } from "react-hot-toast";
 
-import { siteConfig } from "@/config/site";
 import { playfair, urbanist } from "@/config/fonts";
 
 import "@/globals.css";
@@ -9,18 +8,10 @@ import Header from "@/components/header";
 import StateProvider from "@/components/state-provider";
 import BodyWithScrollLock from "@/components/layout/body-with-scroll-lock";
 import ThemeProvider from "@/features/theme/components/theme-provider";
+import { DefaultMetadata } from "@/features/seo/metadata/default";
 
-// 웹 페이지의 기본 메타데이터이다.
-export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+/* 메인 페이지의 메타데이터이자 기본 메타데이터를 나타냅니다. */
+export const metadata = DefaultMetadata;
 
 export const viewport: Viewport = {
   themeColor: [

@@ -3,7 +3,7 @@
 import React, { useContext, useEffect } from "react";
 
 import useSignature from "@/hooks/use-signature";
-import { GraphViewSidebarContext } from "./context";
+import { SidebarContext } from "./context";
 
 type Props = {
   children?: React.ReactNode;
@@ -11,9 +11,7 @@ type Props = {
 
 export default function SidebarContainer({ children }: Props) {
   const id = useSignature("Sidebar");
-  const { registerSidebar, unregisterSidebar } = useContext(
-    GraphViewSidebarContext,
-  );
+  const { registerSidebar, unregisterSidebar } = useContext(SidebarContext);
 
   useEffect(() => {
     registerSidebar(id);

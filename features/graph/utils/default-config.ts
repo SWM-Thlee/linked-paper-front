@@ -70,7 +70,7 @@ export const defaultNodeConfig: Graph.Config.Node = (() => {
 export const defaultViewConfig: Graph.Config.View = {
   zoom: {
     min: 0.1,
-    max: 5,
+    max: 3,
     delta: 0.05,
     focus: {
       duration: 750,

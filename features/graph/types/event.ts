@@ -26,10 +26,6 @@ export const Type = {
   NODE_DRAG: "nodeDrag",
   NODE_DRAG_END: "nodeDragEnd",
 
-  /* Background Event */
-  BG_CLICK: "backgroundClick",
-  BG_RCLICK: "backgroundRightClick",
-
   /* Link Event */
   LINK_CLICK: "linkClick",
   LINK_RCLICK: "linkRightClick",
@@ -53,10 +49,6 @@ const Mapper = {
   [Type.NODE_HOVER]: "onNodeHover",
   [Type.NODE_DRAG]: "onNodeDrag",
   [Type.NODE_DRAG_END]: "onNodeDragEnd",
-
-  /* Background Event */
-  [Type.BG_CLICK]: "onBackgroundClick",
-  [Type.BG_RCLICK]: "onBackgroundRightClick",
 
   /* Link Event */
   [Type.LINK_CLICK]: "onLinkClick",
