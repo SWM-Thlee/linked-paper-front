@@ -11,11 +11,15 @@ import RestoreIcon from "@/ui/icons/restore";
 import LabelButton from "@/ui/label-button";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
 import useTabDirectionObserver from "@/ui/settings/hooks/use-tab-direction-observer";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
+import { Analytics } from "@/features/analytics/types";
 import { Search } from "@/features/search/types";
 import { EditorContext } from "./context";
 import { EditSearchFilterInfo } from "../../filter-info/edit-info";
 
 export default function EditorPreview() {
+  const { log } = useAnalytics();
   const tabID = useTabID(Search.Settings.PREVIEW.ID);
   const settings = useSettings();
   const edit = useContext(EditorContext);
@@ -30,6 +34,23 @@ export default function EditorPreview() {
   const backToPreview = useCallback(() => {
     settings.setTabID(null);
   }, [settings]);
+
+  const onCancelModify = useCallback(() => {
+    edit?.remove();
+    backToPreview();
+  }, [edit, backToPreview]);
+
+  /* User Event: Filter의 수정 사항을 적용합니다. */
+  const onModifyFilter = useCallback(() => {
+    const target = edit?.editor;
+
+    if (!target) return;
+
+    log(Analytics.Event.CREATE_FILTER, searchFilterForAnalytics(target));
+    edit?.apply(true);
+
+    backToPreview();
+  }, [edit, backToPreview, log]);
 
   return edit?.editor && edit.filter ? (
     <Settings.Tab.Root
@@ -51,12 +72,7 @@ export default function EditorPreview() {
       <Settings.Tab.Options>
         {edit.isModified && (
           <>
-            <LabelButton
-              onClick={() => {
-                edit.apply(true);
-                backToPreview();
-              }}
-            >
+            <LabelButton onClick={onModifyFilter}>
               <CheckIcon ui_size="small" />
               Save
             </LabelButton>
@@ -67,13 +83,7 @@ export default function EditorPreview() {
           </>
         )}
 
-        <LabelButton
-          ui_color="tertiary"
-          onClick={() => {
-            edit.remove();
-            backToPreview();
-          }}
-        >
+        <LabelButton ui_color="tertiary" onClick={onCancelModify}>
           <CloseIcon ui_size="small" />
           Cancel Edit
         </LabelButton>

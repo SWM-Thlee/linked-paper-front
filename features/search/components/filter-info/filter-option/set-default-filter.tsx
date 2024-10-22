@@ -12,12 +12,17 @@ import useSearchFilters from "@/features/search/hooks/filter/use-search-filters"
 import CheckIcon from "@/ui/icons/check";
 import IconButton from "@/ui/icon-button";
 import { Tooltip } from "@/ui/tooltip";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
+import { Analytics } from "@/features/analytics/types";
 
 type Props = {
   dataID: Search.Filter.DataID;
 };
 
 export default function SetDefaultFilterOption({ dataID }: Props) {
+  const { log } = useAnalytics();
+
   // 기존에 Default Filter가 존재하는지 확인합니다.
   const { filter: defaultFilter } = useSearchFilters({
     store: Filter.Store.PERSIST,
@@ -40,6 +45,7 @@ export default function SetDefaultFilterOption({ dataID }: Props) {
   // Default Filter는 Persistent Store에 존재해야 합니다.
   const dispatch = useSearchFilterDispatcher({ store: Filter.Store.PERSIST });
 
+  /* User Event: Preset Filter를 Default Filter로 설정합니다. */
   const onClick = useCallback(() => {
     // 기존에 Default Filter가 존재하는 경우 Preset으로 바꿉니다.
     if (defaultFilter) {
@@ -48,9 +54,15 @@ export default function SetDefaultFilterOption({ dataID }: Props) {
 
     // Preset Filter를 Default Filter로 바꿉니다.
     if (filter) {
-      dispatch(toDefault<Search.Filter.Type>({ data: filter }));
+      const newDefaultFilter = toDefault<Search.Filter.Type>({ data: filter });
+      dispatch(newDefaultFilter);
+
+      log(
+        Analytics.Event.FILTER_APPLY,
+        searchFilterForAnalytics(newDefaultFilter),
+      );
     }
-  }, [filter, defaultFilter, dispatch]);
+  }, [filter, defaultFilter, dispatch, log]);
 
   const available = !!(
     status === Search.Edit.Status.NOT_EDITING &&

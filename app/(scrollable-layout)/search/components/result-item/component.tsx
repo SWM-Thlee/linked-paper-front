@@ -44,7 +44,7 @@ export default function SearchResultItem(data: Search.Result.Data) {
     (originLink: string) => {
       log(Analytics.Event.CLICK_ORIGIN_LINK, {
         ...paper,
-        ...info.query,
+        query: info.requiredQuery.query,
         origin_link: originLink,
         pdf_link: Array.isArray(link.pdf_link)
           ? link.pdf_link.join(",")
@@ -52,7 +52,7 @@ export default function SearchResultItem(data: Search.Result.Data) {
         view: Analytics.Track.View.SEARCH,
       });
     },
-    [info.query, log, paper, link.pdf_link],
+    [log, paper, link.pdf_link, info.requiredQuery.query],
   );
 
   /* User Event: 검색 결과의 PDF 링크로 들어갑니다. */
@@ -60,7 +60,7 @@ export default function SearchResultItem(data: Search.Result.Data) {
     (pdfLink: string) => {
       log(Analytics.Event.CLICK_PDF_LINK, {
         ...paper,
-        ...info.query,
+        query: info.requiredQuery.query,
         origin_link: Array.isArray(link.origin_link)
           ? link.origin_link.join(",")
           : link.origin_link,
@@ -68,14 +68,14 @@ export default function SearchResultItem(data: Search.Result.Data) {
         view: Analytics.Track.View.SEARCH,
       });
     },
-    [info.query, log, paper, link.origin_link],
+    [info.requiredQuery.query, log, paper, link.origin_link],
   );
 
   /* User Event: 검색 결과 기반의 그래프 뷰 페이지로 이동합니다. */
   const onMoveToGraphView = useCallback(() => {
     log(Analytics.Event.CLICK_GRAPH_VIEW, {
       ...paper,
-      ...info.query,
+      query: info.requiredQuery.query,
       origin_link: Array.isArray(link.origin_link)
         ? link.origin_link.join(",")
         : link.origin_link,
@@ -83,7 +83,7 @@ export default function SearchResultItem(data: Search.Result.Data) {
         ? link.pdf_link.join(",")
         : link.pdf_link,
     });
-  }, [info.query, log, paper, link.pdf_link, link.origin_link]);
+  }, [info.requiredQuery.query, log, paper, link.pdf_link, link.origin_link]);
 
   return (
     <div className="grid animate-slideUpAndFade grid-cols-[auto_10rem] gap-8">

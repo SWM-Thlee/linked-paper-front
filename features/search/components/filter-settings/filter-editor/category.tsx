@@ -17,6 +17,9 @@ import useCategories from "@/features/paper/hooks/use-categories";
 import { matcher } from "@/features/search/utils/matcher";
 import { Search } from "@/features/search/types";
 import { Category, Subject } from "@/features/paper/utils/cs-category";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 import { EditorContext } from "./context";
 
 function CategoryElement({
@@ -70,6 +73,7 @@ function CategoryElement({
 }
 
 export default function EditorCategory() {
+  const { log } = useAnalytics();
   const tabID = useTabID(Search.Settings.CATEGORY.ID);
   const { getCategories, getSubjects } = useCategories({
     category: Category,
@@ -158,6 +162,18 @@ export default function EditorCategory() {
     settings.setTabID(null);
   }, [settings]);
 
+  /* User Event: Filter의 수정 사항을 적용합니다. */
+  const onModifyFilter = useCallback(() => {
+    const target = edit?.editor;
+
+    if (!target) return;
+
+    log(Analytics.Event.CREATE_FILTER, searchFilterForAnalytics(target));
+    edit?.apply(true);
+
+    backToPreview();
+  }, [edit, backToPreview, log]);
+
   return (
     <Settings.Tab.Root
       name={Search.Settings.CATEGORY.ID}
@@ -230,12 +246,7 @@ export default function EditorCategory() {
       <Settings.Tab.Options>
         {edit?.isModified && (
           <>
-            <LabelButton
-              onClick={() => {
-                edit?.apply(true);
-                backToPreview();
-              }}
-            >
+            <LabelButton onClick={onModifyFilter}>
               <CheckIcon ui_size="small" />
               Save
             </LabelButton>

@@ -10,12 +10,15 @@ import SearchField from "@/ui/search-field";
 import CheckBox from "@/ui/check-box";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
 import useBidirectionalState from "@/hooks/use-bidirectional-state";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import useJournals from "@/features/paper/hooks/use-journals";
 import JournalIcon from "@/ui/icons/journal";
 import { matches } from "@/features/search/utils/matcher";
 import LabelButton from "@/ui/label-button";
 import useSettings from "@/ui/settings/hooks/use-settings-container";
 import { Search } from "@/features/search/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
+import { Analytics } from "@/features/analytics/types";
 import { EditorContext } from "./context";
 
 function JournalElement({ journal }: { journal: string }) {
@@ -61,6 +64,7 @@ function JournalElement({ journal }: { journal: string }) {
 }
 
 export default function EditorJournal() {
+  const { log } = useAnalytics();
   const tabID = useTabID(Search.Settings.JOURNAL.ID);
   const edit = useContext(EditorContext);
   const settings = useSettings();
@@ -112,6 +116,18 @@ export default function EditorJournal() {
   const backToPreview = useCallback(() => {
     settings.setTabID(null);
   }, [settings]);
+
+  /* User Event: Filter의 수정 사항을 적용합니다. */
+  const onModifyFilter = useCallback(() => {
+    const target = edit?.editor;
+
+    if (!target) return;
+
+    log(Analytics.Event.CREATE_FILTER, searchFilterForAnalytics(target));
+    edit?.apply(true);
+
+    backToPreview();
+  }, [edit, backToPreview, log]);
 
   // TODO: 이후에 각 Subject를 열고 닫을 수 있도록 (TreeView) 추가해보자.
   return (
@@ -175,12 +191,7 @@ export default function EditorJournal() {
       <Settings.Tab.Options>
         {edit?.isModified && (
           <>
-            <LabelButton
-              onClick={() => {
-                edit?.apply(true);
-                backToPreview();
-              }}
-            >
+            <LabelButton onClick={onModifyFilter}>
               <CheckIcon ui_size="small" />
               Save
             </LabelButton>

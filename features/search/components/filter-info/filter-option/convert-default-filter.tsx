@@ -14,9 +14,14 @@ import useSearchFilters from "@/features/search/hooks/filter/use-search-filters"
 import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import { revertQuery } from "@/features/filter/utils/converter/query";
 import { toDefault } from "@/features/filter/utils/converter/default";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 
 // Search Query를 기반으로 Default Filter를 생성합니다.
 export default function ConvertDefaultFilterOption() {
+  const { log } = useAnalytics();
+
   /* Default Filter */
   const { filter: defaultFilter } = useSearchFilters({
     store: Filter.Store.PERSIST,
@@ -29,6 +34,7 @@ export default function ConvertDefaultFilterOption() {
   // Search Query Filter는 "/search" Page 내에서만 존재합니다.
   const query = useSearchQueryFilter();
 
+  /* User Event: Search Query를 기반으로 한 Filter를 Default Filter로 만듭니다. */
   const onClick = useCallback(() => {
     if (!query)
       throw new Error(
@@ -42,13 +48,18 @@ export default function ConvertDefaultFilterOption() {
       }),
     });
 
-    dispatch(
-      produce(filter, (draft) => {
-        // Default Name
-        draft.name = "Preset From Search Query";
-      }),
+    const newDefaultFilter = produce(filter, (draft) => {
+      // Default Name
+      draft.name = "Preset From Search Query";
+    });
+
+    log(
+      Analytics.Event.CREATE_FILTER,
+      searchFilterForAnalytics(newDefaultFilter),
     );
-  }, [dispatch, query]);
+
+    dispatch(newDefaultFilter);
+  }, [dispatch, query, log]);
 
   return (
     !defaultFilter && (

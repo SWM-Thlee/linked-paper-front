@@ -1,12 +1,14 @@
 "use client";
 
-import { Fragment, useEffect } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 
+import { Analytics } from "@/features/analytics/types";
 import ViewTrigger from "@/components/view-trigger";
 import { queryOptions } from "@/features/search/server/queries";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
 import useScrollLock from "@/hooks/use-scroll-lock";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import { SearchResultItem } from "./result-item";
 import {
   EndOfPage,
@@ -59,8 +61,10 @@ function FooterSection({
   return <NextLoading />;
 }
 
-// TODO: 동일한 검색 결과가 존재할 시 Duplicate 처리를 어떻게 할까?
 export default function SearchResultContents() {
+  const { log } = useAnalytics();
+  const [checked, setChecked] = useState(false);
+
   const { query } = useSearchQueryInfo();
   const {
     data: { pages, fail },
@@ -91,12 +95,50 @@ export default function SearchResultContents() {
     return () => setScrollLock(false);
   }, [setScrollLock]);
 
+  /* User Event: 검색 결과 페이지에 진입합니다. (초기 진입) */
+  useEffect(() => {
+    if (checked) return;
+
+    setChecked(true);
+    log(Analytics.Event.SEARCH_RESULTS_VIEW, {
+      query: query.query,
+      filter_category: query.filter_category,
+      filter_date_start: query.filter_start_date,
+      filter_date_end: query.filter_end_date,
+      filter_journal: query.filter_journal,
+    });
+  }, [query, log, checked]);
+
+  /* User Event: 다음 검색 결과를 불러옵니다. */
+  const onRequestNextResult = useCallback(async () => {
+    const info = {
+      query: query.query,
+      filter_category: query.filter_category,
+      filter_date_start: query.filter_start_date,
+      filter_date_end: query.filter_end_date,
+      filter_journal: query.filter_journal,
+    };
+
+    const { data } = await fetchNextPage();
+
+    if (data?.fail) return;
+
+    const size = data?.pageParams.length;
+
+    if (!size || size === 0) return;
+
+    log(Analytics.Event.RESULTS_NEXT_PAGE, {
+      ...info,
+      index: data?.pageParams[size - 1],
+    });
+  }, [fetchNextPage, query, log]);
+
   return (
     <>
       <ResultSection
         isLoading={isInitialLoading}
         isFailed={isInitialFailed}
-        onRefetch={fetchNextPage}
+        onRefetch={onRequestNextResult}
       >
         {pages.map(({ data, index }) => (
           <Fragment key={index}>
@@ -114,14 +156,14 @@ export default function SearchResultContents() {
       <ViewTrigger
         trigger={!isFetchingNextPage && !isFailed && hasNextPage}
         restore={!isFailed && !isFetchingNextPage}
-        onTrigger={fetchNextPage}
+        onTrigger={onRequestNextResult}
       />
 
       <FooterSection
         isEndOfPage={isEndOfPage}
         hasSimilarityLimit={hasSimilarityLimit}
         isFailed={!isFetchingNextPage && isNextFailed}
-        onRefetch={fetchNextPage}
+        onRefetch={onRequestNextResult}
       />
     </>
   );

@@ -16,9 +16,11 @@ import useFlowerQueries from "@/features/flower/hooks/use-flower-queries";
 import usePapers from "@/features/paper/hooks/use-papers";
 import usePaperSimilarities from "@/features/paper/hooks/use-paper-similarities";
 import useFullscreen from "@/hooks/use-fullscreen";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 
 import { Paper } from "@/features/paper/types";
 import { Graph } from "@/features/graph/types";
+import { Analytics } from "@/features/analytics/types";
 import { merge } from "@/utils/merge";
 import { defaultRenderer } from "@/features/graph/utils/default-renderer";
 import {
@@ -46,6 +48,10 @@ import ToolbarContainer from "./toolbar/toolbar-container";
 import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
 
 export default function FlowerGraphView() {
+  /* Analytics */
+  const { log } = useAnalytics();
+
+  /* Graph Handler */
   const { nodeConfig } = useGraphNodeConfig();
   const { viewConfig, setExtraViewConfig } = useGraphViewConfig();
   const { handler, refHandler } = useGraphHandler();
@@ -614,12 +620,38 @@ export default function FlowerGraphView() {
       Graph.Event.Type.NODE_CLICK,
       (node) => {
         if (!isChildNode(node) || isFlowerLoading(node.paperID)) return;
-
         loadFlower(node.paperID);
       },
       "ChildNodeClicked",
     );
   }, [isFlowerLoading, handler?.event, loadFlower]);
+
+  /* User Event: 특정 Root Node의 Child Node를 클릭하여 Bloom을 수행합니다. */
+  useEffect(() => {
+    handler?.event.onEvent(
+      Graph.Event.Type.NODE_CLICK,
+      (node) => {
+        if (!isChildNode(node) || isFlowerLoading(node.paperID)) return;
+
+        /* Event 호출 */
+        const childPaper = getPaper(node.paperID);
+        const parentPaper = getPaper(get(node.parentID)?.paperID);
+
+        if (!(childPaper && parentPaper)) return;
+
+        const similarity = getSimilarity(childPaper.id, parentPaper.id);
+
+        if (!similarity) return;
+
+        log(Analytics.Event.CLICK_GRAPH_NODE, {
+          paper: childPaper,
+          parent_paper: parentPaper,
+          similarity,
+        });
+      },
+      "NodeClickTransition",
+    );
+  }, [isFlowerLoading, handler?.event, get, getPaper, getSimilarity, log]);
 
   return (
     <GraphView
