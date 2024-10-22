@@ -6,13 +6,13 @@ import DateIcon from "@/ui/icons/date";
 import LabelButton from "@/ui/label-button";
 import Button from "@/ui/button";
 import ReferenceIcon from "@/ui/icons/reference";
-import CitiationIcon from "@/ui/icons/citiation";
+import CitationIcon from "@/ui/icons/citation";
 
 type Props = {
   journal: string;
   date: string;
   reference_count: number;
-  citiation_count: number;
+  citation_count: number;
   children?: React.ReactNode;
 };
 
@@ -21,7 +21,7 @@ export default function OthersChip({
   date,
   children,
   reference_count,
-  citiation_count,
+  citation_count,
 }: Props) {
   return (
     <Popover.Root>
@@ -32,7 +32,7 @@ export default function OthersChip({
             <SpliterIcon />
             <DateIcon ui_size="small" /> {date}
             <SpliterIcon />
-            <ReferenceIcon ui_size="small" /> {reference_count}
+            <CitationIcon ui_size="small" /> {citation_count}
           </LabelButton>
         )}
       </Popover.Trigger>
@@ -78,9 +78,9 @@ export default function OthersChip({
             className="flex items-center justify-between gap-24"
           >
             <div className="flex items-center gap-2">
-              <CitiationIcon ui_size="small" /> Citiation
+              <CitationIcon ui_size="small" /> Citation
             </div>
-            <div className="text-label-large">{citiation_count}</div>
+            <div className="text-label-large">{citation_count}</div>
           </Button>
         </div>
       </Popover.Content>

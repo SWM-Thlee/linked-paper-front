@@ -19,7 +19,7 @@ import PdfLinkButton from "@/features/paper/components/pdf";
 import BloomIcon from "@/ui/icons/bloom";
 import { Analytics } from "@/features/analytics/types";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
-import ReferenceIcon from "@/ui/icons/reference";
+import CitationIcon from "@/ui/icons/citation";
 import Abstraction from "./abstraction";
 
 export default function SearchResultItem(data: Search.Result.Data) {
@@ -35,7 +35,7 @@ export default function SearchResultItem(data: Search.Result.Data) {
     journal,
     date,
     reference_count: reference,
-    citiation_count: citiation,
+    citation_count: citation,
   } = data;
   const { similarity, link, ...paper } = data;
 
@@ -124,7 +124,7 @@ export default function SearchResultItem(data: Search.Result.Data) {
             journal={journal}
             date={date}
             reference_count={reference}
-            citiation_count={citiation}
+            citation_count={citation}
           >
             <LabelButton
               ui_color="secondary"
@@ -135,7 +135,7 @@ export default function SearchResultItem(data: Search.Result.Data) {
               <SpliterIcon />
               <DateIcon ui_size="small" /> {date}
               <SpliterIcon />
-              <ReferenceIcon ui_size="small" /> {reference}
+              <CitationIcon ui_size="small" /> {citation}
             </LabelButton>
           </OthersChip>
         </div>

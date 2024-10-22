@@ -28,7 +28,7 @@ export async function SearchResult(
       authors: res.authors,
       categories: res.categories,
       reference_count: res.reference_count,
-      citiation_count: res.citiation_count,
+      citation_count: res.citiation_count,
       link: {
         origin_link: res.origin_link,
         pdf_link: res.pdf_link,

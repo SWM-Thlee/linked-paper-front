@@ -15,7 +15,7 @@ export function searchResult(): Search.Result.Data {
     journal: sample.company.name(),
     abstraction: sample.lorem.lines({ min: 2, max: 6 }),
     reference_count: random(1, 99),
-    citiation_count: random(1, 99999),
+    citation_count: random(1, 99999),
     link: {
       origin_link: repeat(random(1, 5), sample.internet.url),
       pdf_link: repeat(random(1, 5), sample.internet.url),

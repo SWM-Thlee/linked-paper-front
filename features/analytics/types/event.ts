@@ -8,10 +8,15 @@ import {
 } from "./scheme";
 
 const Type = {
-  CHANGE_FILTER_SORTING: "change_filter_sorting",
+  /* Search Query Request */
   SEARCH_QUERY_MAIN: "search_query_main",
   SEARCH_QUERY_NAV: "search_query_nav",
   SEARCH_QUERY_RESULT: "search_query_result",
+
+  /* Filter */
+  CHANGE_FILTER_SORTING: "change_filter_sorting",
+
+  /* Page Transition */
   CLICK_ORIGIN_LINK: "click_origin_link",
   CLICK_PDF_LINK: "click_pdf_link",
   CLICK_GRAPH_VIEW: "click_graph_view",
