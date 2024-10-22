@@ -1,8 +1,8 @@
 export type Sorting = (typeof Sorting)[keyof typeof Sorting];
 export const Sorting = {
-  RECENCY: "recency",
   SIMILARITY: "similarity",
-  // *미구현* CITIATION: "citiation",
+  RECENCY: "recency",
+  CITIATION: "citiation",
 } as const;
 
 /** 검색 결과의 크기를 나타냅니다. */

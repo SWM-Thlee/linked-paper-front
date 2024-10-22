@@ -19,13 +19,24 @@ import PdfLinkButton from "@/features/paper/components/pdf";
 import BloomIcon from "@/ui/icons/bloom";
 import { Analytics } from "@/features/analytics/types";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
+import ReferenceIcon from "@/ui/icons/reference";
 import Abstraction from "./abstraction";
 
 export default function SearchResultItem(data: Search.Result.Data) {
   const { log } = useAnalytics();
   const info = useSearchQueryInfo();
 
-  const { id, title, abstraction, authors, categories, journal, date } = data;
+  const {
+    id,
+    title,
+    abstraction,
+    authors,
+    categories,
+    journal,
+    date,
+    reference_count: reference,
+    citiation_count: citiation,
+  } = data;
   const { similarity, link, ...paper } = data;
 
   /* User Event: 검색 결과의 원문(Origin) 링크로 들어갑니다. */
@@ -109,7 +120,12 @@ export default function SearchResultItem(data: Search.Result.Data) {
               </LabelButton>
             )}
           </CategoryChip>
-          <OthersChip journal={journal} date={date}>
+          <OthersChip
+            journal={journal}
+            date={date}
+            reference_count={reference}
+            citiation_count={citiation}
+          >
             <LabelButton
               ui_color="secondary"
               ui_size="small"
@@ -118,8 +134,8 @@ export default function SearchResultItem(data: Search.Result.Data) {
               <JournalIcon ui_size="small" /> {journal}
               <SpliterIcon />
               <DateIcon ui_size="small" /> {date}
-              {/* <SpliterIcon />
-              <ReferenceIcon ui_size="small" /> {reference_count} */}
+              <SpliterIcon />
+              <ReferenceIcon ui_size="small" /> {reference}
             </LabelButton>
           </OthersChip>
         </div>
