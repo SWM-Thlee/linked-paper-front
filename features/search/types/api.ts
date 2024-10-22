@@ -37,6 +37,8 @@ export interface ResultDataResponse {
   authors: string[];
   categories: string[];
   reference_count: number;
+
+  // TODO: 오타
   citiation_count: number;
   origin_link?: string;
   pdf_link?: string;

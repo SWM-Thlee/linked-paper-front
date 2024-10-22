@@ -16,7 +16,7 @@ export type Metadata = {
   journal: string;
   abstraction: string;
   reference_count: number;
-  citiation_count: number;
+  citation_count: number;
   date: string;
 
   // Original Link와 PDF Link 각각 하나씩만 존재합니다.
