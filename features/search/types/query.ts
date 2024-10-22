@@ -26,6 +26,12 @@ export type FilterInfo = {
 
 export type Info = RequiredInfo & FilterInfo;
 
+export type Params = {
+  readonly [key in keyof Info]-?:
+    | (NonNullable<Info[key]> extends unknown[] ? string[] : string)
+    | undefined;
+};
+
 /** Query String에서 바로 가져온 값을 나타냅니다. */
 export type RawInfo = {
   readonly [key in keyof Info]-?:
