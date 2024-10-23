@@ -14,6 +14,9 @@ import IconButton from "@/ui/icon-button";
 import { Tooltip } from "@/ui/tooltip";
 import { toPreset } from "@/features/filter/utils/converter/preset";
 import { toDefault } from "@/features/filter/utils/converter/default";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 
 type Props = {
   dataID: Search.Filter.DataID;
@@ -23,6 +26,8 @@ type Props = {
 // C1. Default Filter가 존재하는 경우, 기존 Default Filter를 Preset으로 되돌린 후 위의 과정을 수행합니다.
 // C2. Default Filter가 존재하지 않는 경우, Default Filter로 설정됨과 동시에 Search Query Filter에도 적용됩니다.
 export default function ApplyToSearchOption({ dataID, store }: Props) {
+  const { log } = useAnalytics();
+
   /* Target Filter */
   const { filter, status } = useSearchFilterEditor({
     store,
@@ -56,6 +61,7 @@ export default function ApplyToSearchOption({ dataID, store }: Props) {
     store: Filter.Store.TEMPORARY,
   });
 
+  /* User Event: Default Filter를 Search Query에 적용합니다. */
   const onClick = useCallback(() => {
     if (!(filter && query)) return;
 
@@ -66,6 +72,7 @@ export default function ApplyToSearchOption({ dataID, store }: Props) {
 
     // Preset Filter를 Default Filter로 바꿉니다.
     dispatchPersist(toDefault<Search.Filter.Type>({ data: filter }));
+    log(Analytics.Event.FILTER_APPLY, searchFilterForAnalytics(filter));
 
     // Search Query에 Filter 정보를 적용합니다.
     dispatchTemporary(
@@ -73,7 +80,7 @@ export default function ApplyToSearchOption({ dataID, store }: Props) {
         draft.attributes = filter.attributes;
       }),
     );
-  }, [dispatchTemporary, dispatchPersist, filter, defaultFilter, query]);
+  }, [dispatchTemporary, dispatchPersist, filter, defaultFilter, query, log]);
 
   const available =
     !searchQueryEditor &&

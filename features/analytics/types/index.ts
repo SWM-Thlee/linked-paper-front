@@ -1,5 +1,5 @@
 import * as EventTypes from "./event";
-import * as SchemeTypes from "./scheme";
+import * as SchemeTypes from "./payload";
 import * as TrackTypes from "./track";
 
 export namespace Analytics {

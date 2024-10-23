@@ -8,19 +8,22 @@ import useCategories, {
 import { matcher } from "@/features/search/utils/matcher";
 import { Category } from "@/features/paper/utils/category";
 import CategoryIcon from "@/ui/icons/category";
-import ArrowDownIcon from "@/ui/icons/arrow-down";
 import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import { Popover } from "@/ui/popover";
 import FieldContainer from "@/ui/container/field-container";
 import Button from "@/ui/button";
+import { useDeepCompareMemo } from "use-deep-compare";
+import { toArray } from "@/utils/array";
 
-type Props = {
-  categoryIDs: string[];
-  children?: (titleOfChip: string) => React.ReactNode;
-};
+export interface CategoryChipProps extends React.ComponentPropsWithRef<"div"> {
+  value?: string | string[];
+}
 
-export function CategoryChip({ categoryIDs, children }: Props) {
+export default function CategoryChip({
+  value,
+  ...titleProps
+}: CategoryChipProps) {
   const { getGroups, getRepresentative } = useCategories();
   const [matchText, setMatchText] = useState("");
 
@@ -30,13 +33,15 @@ export function CategoryChip({ categoryIDs, children }: Props) {
     [matchText],
   );
 
+  const categoryIDs = useDeepCompareMemo(() => toArray(value), [value]);
+
   const groupsOfCategories = useMemo(
     () => getGroups(categoryIDs),
     [categoryIDs, getGroups],
   );
 
-  const titleOfChip = useMemo(
-    () => getRepresentative(groupsOfCategories) ?? "Not Selected",
+  const title = useMemo(
+    () => getRepresentative(groupsOfCategories) ?? "None",
     [groupsOfCategories, getRepresentative],
   );
 
@@ -81,25 +86,23 @@ export function CategoryChip({ categoryIDs, children }: Props) {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        {children?.(titleOfChip) ?? (
-          <LabelButton>
-            <CategoryIcon ui_size="small" /> {titleOfChip}
-            <ArrowDownIcon ui_size="small" />
-          </LabelButton>
-        )}
+        <LabelButton>
+          <CategoryIcon ui_size="small" />
+          <div {...titleProps}>{title}</div>
+        </LabelButton>
       </Popover.Trigger>
-      <Popover.Content>
-        <div className="flex flex-col gap-6">
-          {visibleSearch && (
-            <SearchField
-              value={matchText}
-              onChange={(e) => setMatchText(e.target.value)}
-              ui_size="medium"
-              ui_color="secondary"
-              defaultPlaceholder="Find Categories..."
-            />
-          )}
-          {hasMatchedResult && (
+      {hasMatchedResult && (
+        <Popover.Content>
+          <div className="flex flex-col gap-6">
+            {visibleSearch && (
+              <SearchField
+                value={matchText}
+                onChange={(e) => setMatchText(e.target.value)}
+                ui_size="medium"
+                ui_color="secondary"
+                defaultPlaceholder="Find Categories..."
+              />
+            )}
             <div className="flex max-h-[20rem] flex-col gap-6 overflow-y-auto scrollbar">
               {Object.entries(matchedResult).map(([subject, categories]) => (
                 <FieldContainer key={subject} title={subject} ui_size="medium">
@@ -128,9 +131,9 @@ export function CategoryChip({ categoryIDs, children }: Props) {
                 </FieldContainer>
               ))}
             </div>
-          )}
-        </div>
-      </Popover.Content>
+          </div>
+        </Popover.Content>
+      )}
     </Popover.Root>
   );
 }

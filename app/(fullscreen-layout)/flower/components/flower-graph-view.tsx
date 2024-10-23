@@ -16,9 +16,11 @@ import useFlowerQueries from "@/features/flower/hooks/use-flower-queries";
 import usePapers from "@/features/paper/hooks/use-papers";
 import usePaperSimilarities from "@/features/paper/hooks/use-paper-similarities";
 import useFullscreen from "@/hooks/use-fullscreen";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 
 import { Paper } from "@/features/paper/types";
 import { Graph } from "@/features/graph/types";
+import { Analytics } from "@/features/analytics/types";
 import { merge } from "@/utils/merge";
 import { defaultRenderer } from "@/features/graph/utils/default-renderer";
 import {
@@ -46,6 +48,10 @@ import ToolbarContainer from "./toolbar/toolbar-container";
 import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
 
 export default function FlowerGraphView() {
+  /* Analytics */
+  const { log } = useAnalytics();
+
+  /* Graph Handler */
   const { nodeConfig } = useGraphNodeConfig();
   const { viewConfig, setExtraViewConfig } = useGraphViewConfig();
   const { handler, refHandler } = useGraphHandler();
@@ -88,7 +94,7 @@ export default function FlowerGraphView() {
     onFlowerError,
   } = useFlowerQueries();
   const { get: getSimilarity, set: setSimilarity } = usePaperSimilarities();
-  const { getPaper, upsertPaper, hasPaper } = usePapers();
+  const { getPaper, upsertPaper, hasPaper, hasPaperFromSource } = usePapers();
 
   /* Flower Handler */
   const [paperInfo, setPaperInfo] = useState<Paper.Scheme.Metadata | null>(
@@ -130,7 +136,7 @@ export default function FlowerGraphView() {
       if (!isFlowerLoading(node.paperID)) {
         /* Draw Date */
         drawText({
-          style: rootNodeCv.info({ ui_variant: variant }),
+          style: rootNodeCv.date({ ui_variant: variant }),
           text: paper?.date ?? "Unknown Date",
           maxWidth: 260,
           height: 24,
@@ -138,10 +144,10 @@ export default function FlowerGraphView() {
           scale: { min: 0.3, max: 1 },
         });
 
-        /* Draw Author */
+        /* Draw Citation */
         drawText({
-          style: rootNodeCv.info({ ui_variant: variant }),
-          text: `${paper?.authors?.[0] ?? "Unknown"}`,
+          style: rootNodeCv.citation({ ui_variant: variant }),
+          text: `↗️ ${paper?.citationCount ?? "Unknown"} Citations`,
           maxWidth: 260,
           height: 24,
           offsetY: 72,
@@ -210,17 +216,17 @@ export default function FlowerGraphView() {
 
       /* Draw Date */
       drawText({
-        style: childNodeCv.info({ ui_variant: variant }),
+        style: childNodeCv.date({ ui_variant: variant }),
         text: paper?.date ?? "Unknown Date",
         maxWidth: 260,
         height: 24,
         offsetY: 36,
       });
 
-      /* Draw Author */
+      /* Draw Citation */
       drawText({
-        style: childNodeCv.info({ ui_variant: variant }),
-        text: `${paper?.authors?.[0] ?? "Unknown"}`,
+        style: childNodeCv.citation({ ui_variant: variant }),
+        text: `↗️ ${paper?.citationCount ?? "Unknown"} Citations`,
         maxWidth: 260,
         height: 24,
         offsetY: 72,
@@ -432,8 +438,19 @@ export default function FlowerGraphView() {
       if (isRootNode(currentNode)) {
         upsertPaper(paper, (p) => setPaperInfo(p));
 
+        /* Child Node 중복 제거 및 등록 */
         childData
-          .filter((child) => !hasPaper(child.id))
+          .filter(
+            (child) =>
+              !(
+                paper.extraID.arxiv === child.extraID.arxiv ||
+                hasPaper(child.id) ||
+                hasPaperFromSource(
+                  Paper.Scheme.Source.ARXIV,
+                  child.extraID.arxiv,
+                )
+              ),
+          )
           .forEach((childPaper) => {
             const childNode = createChildNode(childPaper.id, currentNode.id);
             const link = createLink(currentNode, childNode);
@@ -483,8 +500,18 @@ export default function FlowerGraphView() {
         );
         upsertPaper(paper);
 
+        /* Child Node 중복 제거 및 등록 */
         childData
-          .filter((child) => !hasPaper(child.id))
+          .filter(
+            (child) =>
+              !(
+                hasPaper(child.id) ||
+                hasPaperFromSource(
+                  Paper.Scheme.Source.ARXIV,
+                  child.extraID.arxiv,
+                )
+              ),
+          )
           .forEach((childPaper) => {
             const childNode = createChildNode(childPaper.id, rootNode.id);
             const link = createLink(rootNode, childNode);
@@ -511,6 +538,7 @@ export default function FlowerGraphView() {
     setSimilarity,
     getNodes,
     hasPaper,
+    hasPaperFromSource,
     onFlowerLoaded,
     select,
     upsertNode,
@@ -567,7 +595,7 @@ export default function FlowerGraphView() {
         } else {
           const paper = getPaper(node.paperID);
           if (paper) setPaperInfo(paper);
-          focus({ nodeID: node.id, padding: 1400 });
+          focus({ nodeID: node.id, padding: 1200 });
         }
       },
       "RootNodeClicked",
@@ -604,7 +632,7 @@ export default function FlowerGraphView() {
 
   useEffect(() => {
     if (selectedOne) {
-      focus({ nodeID: selectedOne, padding: 1400 });
+      focus({ nodeID: selectedOne, padding: 1200 });
     }
   }, [focusOffsetX, focus, selectedOne]);
 
@@ -614,12 +642,40 @@ export default function FlowerGraphView() {
       Graph.Event.Type.NODE_CLICK,
       (node) => {
         if (!isChildNode(node) || isFlowerLoading(node.paperID)) return;
-
         loadFlower(node.paperID);
       },
       "ChildNodeClicked",
     );
   }, [isFlowerLoading, handler?.event, loadFlower]);
+
+  /* User Event: 특정 Root Node의 Child Node를 클릭하여 Bloom을 수행합니다. */
+  useEffect(() => {
+    handler?.event.onEvent(
+      Graph.Event.Type.NODE_CLICK,
+      (node) => {
+        if (!isChildNode(node) || isFlowerLoading(node.paperID)) return;
+
+        /* Event 호출 */
+        const childPaper = getPaper(node.paperID);
+        const parentPaperID = get(node.parentID)?.paperID;
+
+        if (!(childPaper && parentPaperID)) return;
+
+        const similarity = getSimilarity(childPaper.id, parentPaperID);
+
+        if (!similarity) return;
+
+        const { extraID, ...payload } = childPaper;
+
+        log(Analytics.Event.CLICK_GRAPH_NODE, {
+          ...payload,
+          parent_paper_id: parentPaperID,
+          similarity,
+        });
+      },
+      "NodeClickTransition",
+    );
+  }, [isFlowerLoading, handler?.event, get, getPaper, getSimilarity, log]);
 
   return (
     <GraphView

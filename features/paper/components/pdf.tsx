@@ -7,12 +7,16 @@ import PdfLinkIcon from "@/ui/icons/pdf-link";
 import { Popover } from "@/ui/popover";
 import Badge from "@/ui/badge";
 import LabelButton from "@/ui/label-button";
+import { toArray } from "@/utils/array";
 
-type Props = { pdf_link: string | string[]; onClick?: (link: string) => void };
+type Props = {
+  pdfLink: string | string[];
+  onClick?: (pdfLink: string) => void;
+};
 
 // 해당 논문의 PDF 링크를 새 탭으로 열도록 합니다.
-export default function PdfLinkButton({ pdf_link, onClick }: Props) {
-  const linksToArray = Array.isArray(pdf_link) ? pdf_link : [pdf_link];
+export default function PdfLinkButton({ pdfLink, onClick }: Props) {
+  const linksToArray = toArray(pdfLink);
   const hasSingleLink = linksToArray.length === 1;
 
   return hasSingleLink ? (
@@ -45,7 +49,7 @@ export default function PdfLinkButton({ pdf_link, onClick }: Props) {
           <PdfLinkIcon ui_size="small" />
           <div>PDF</div>
           <Badge ui_color="secondary" ui_variant="topRight">
-            {pdf_link.length}
+            {pdfLink.length}
           </Badge>
         </LabelButton>
       </Popover.Trigger>

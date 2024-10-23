@@ -7,17 +7,18 @@ import OriginLinkIcon from "@/ui/icons/origin-link";
 import { Popover } from "@/ui/popover";
 import LabelButton from "@/ui/label-button";
 import Badge from "@/ui/badge";
+import { toArray } from "@/utils/array";
 
 type Props = {
-  origin_link: string | string[];
-  onClick?: (origin_link: string) => void;
+  originLink: string | string[];
+  onClick?: (originLink: string) => void;
 };
 
 /**
  * 해당 논문의 원문 링크를 새로운 탭으로 열도록 합니다.
  */
-export default function OriginLinkButton({ origin_link, onClick }: Props) {
-  const linksToArray = Array.isArray(origin_link) ? origin_link : [origin_link];
+export default function OriginLinkButton({ originLink, onClick }: Props) {
+  const linksToArray = toArray(originLink);
   const hasSingleLink = linksToArray.length === 1;
 
   return hasSingleLink ? (
@@ -50,7 +51,7 @@ export default function OriginLinkButton({ origin_link, onClick }: Props) {
           <OriginLinkIcon ui_size="small" />
           <div>Origin</div>
           <Badge ui_variant="topRight" ui_color="secondary">
-            {origin_link.length}
+            {originLink.length}
           </Badge>
         </LabelButton>
       </Popover.Trigger>

@@ -1,6 +1,7 @@
 import { ErrorResponse, api } from "@/utils/api";
-import { Search } from "../types";
+import { convertToResult } from "@/features/paper/utils/converter";
 import { convertToQueryString } from "../utils/filter/query";
+import { Search } from "../types";
 
 export async function SearchResult(
   info: Search.Query.Info,
@@ -20,23 +21,7 @@ export async function SearchResult(
   return {
     ...info,
     count,
-    data: data.map((res) => ({
-      id: res.id,
-      title: res.title,
-      abstraction: res.abstraction,
-      journal: res.journal,
-      authors: res.authors,
-      categories: res.categories,
-      reference_count: res.reference_count,
-      citation_count: res.citiation_count,
-      link: {
-        origin_link: res.origin_link,
-        pdf_link: res.pdf_link,
-      },
-      date: res.date,
-      similarity: res.weight,
-      version: "v1",
-    })),
+    data: data.map(convertToResult),
     status: Search.Api.ResponseToResult[status],
   };
 }

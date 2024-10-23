@@ -8,12 +8,12 @@ import AddIcon from "@/ui/icons/add";
 import FilterIcon from "@/ui/icons/filter";
 import LabelButton from "@/ui/label-button";
 
-import { CategoryChip } from "@/features/search/components/chip/category";
-import { JournalChip } from "@/features/search/components/chip/journal";
+import CategoryChip from "@/features/search/components/chip/category";
+import JournalChip from "@/features/search/components/chip/journal";
+import DateChip from "@/features/search/components/chip/date";
 
 import { Search } from "@/features/search/types";
 import { Filter } from "@/features/filter/types";
-import { DateChip } from "@/features/search/components/chip/date";
 import { FilterSettings } from "./filter-settings";
 
 function Attributes({
@@ -48,9 +48,9 @@ function Attributes({
 
   return (
     <>
-      {hasCategory && <CategoryChip categoryIDs={categoryIDs} />}
-      {hasJournal && <JournalChip nameOfJournals={nameOfJournals} />}
-      {hasDate && <DateChip dateRange={dateRange} />}
+      {hasCategory && <CategoryChip value={categoryIDs} />}
+      {hasJournal && <JournalChip value={nameOfJournals} />}
+      {hasDate && <DateChip value={dateRange} />}
     </>
   );
 }

@@ -20,8 +20,11 @@ import {
   convertStringToDate as convertToDate,
 } from "@/utils/date";
 import { DateOptions } from "@/features/search/utils/date-option";
-import { EditorContext } from "./context";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 import "react-day-picker/style.css";
+import { EditorContext } from "./context";
 
 type FilterDate = NonNullable<
   Search.Filter.Data["attributes"]["date"]["value"]
@@ -232,6 +235,7 @@ function EndDateEditor({
 
 // TODO: 논문 정보의 시간대 (Timezone)도 설정할 필요가 있다.
 export default function EditorDate() {
+  const { log } = useAnalytics();
   const tabID = useTabID(Search.Settings.DATE.ID);
   const edit = useContext(EditorContext);
   const settings = useSettings();
@@ -252,6 +256,18 @@ export default function EditorDate() {
   const backToPreview = useCallback(() => {
     settings.setTabID(null);
   }, [settings]);
+
+  /* User Event: Filter의 수정 사항을 적용합니다. */
+  const onModifyFilter = useCallback(() => {
+    const target = edit?.editor;
+
+    if (!target) return;
+
+    log(Analytics.Event.CREATE_FILTER, searchFilterForAnalytics(target));
+    edit?.apply(true);
+
+    backToPreview();
+  }, [edit, backToPreview, log]);
 
   return (
     <Settings.Tab.Root
@@ -320,12 +336,7 @@ export default function EditorDate() {
       <Settings.Tab.Options>
         {edit?.isModified && (
           <>
-            <LabelButton
-              onClick={() => {
-                edit?.apply(true);
-                backToPreview();
-              }}
-            >
+            <LabelButton onClick={onModifyFilter}>
               <CheckIcon ui_size="small" />
               Save
             </LabelButton>

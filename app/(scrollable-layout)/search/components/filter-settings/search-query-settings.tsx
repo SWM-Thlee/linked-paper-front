@@ -11,6 +11,8 @@ import SearchField from "@/ui/search-field";
 import useSearchFilters from "@/features/search/hooks/filter/use-search-filters";
 import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import useSearchFilterDispatcher from "@/features/search/hooks/filter/use-search-filter-dispatcher";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { Analytics } from "@/features/analytics/types";
 import { Filter } from "@/features/filter/types";
 import { Search } from "@/features/search/types";
 import AddPreset from "@/features/filter/components/add-preset";
@@ -24,6 +26,7 @@ import { toDefault } from "@/features/filter/utils/converter/default";
 import { toPreset } from "@/features/filter/utils/converter/preset";
 import { revertQuery } from "@/features/filter/utils/converter/query";
 import { RawSearchFilterInfo } from "@/features/search/components/filter-info/raw-info";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 import PresetFilterNotFound from "./preset-filter-not-found";
 import { SearchQueryPresetFilterInfo } from "../filter-info/search-query-preset-info";
 
@@ -31,6 +34,9 @@ import { SearchQueryPresetFilterInfo } from "../filter-info/search-query-preset-
 // Case 2. Search Filter != Default Filter (O): Mismatch 알림, Merge 여부 추가
 // Case 3. Search Filter == Default Filter (O): Default Filter만 표시
 export default function SearchQuery() {
+  /* Analytics */
+  const { log } = useAnalytics();
+
   /* Tab */
   const tabID = useTabID(Search.Settings.SEARCH_QUERY.ID);
 
@@ -109,14 +115,19 @@ export default function SearchQuery() {
     )
       return;
 
-    dispatchTemporary(
-      produce(searchQueryFilter, (draft) => {
-        draft.attributes = defaultFilter.attributes;
-      }),
+    const newSearchQueryFilter = produce(searchQueryFilter, (draft) => {
+      draft.attributes = defaultFilter.attributes;
+    });
+
+    log(
+      Analytics.Event.FILTER_APPLY,
+      searchFilterForAnalytics(newSearchQueryFilter),
     );
+    dispatchTemporary(newSearchQueryFilter);
 
     setDefaultFilterEditing(false);
   }, [
+    log,
     isFilterMatched,
     isDefaultFilterEditing,
     editingDefaultFilter,

@@ -7,9 +7,9 @@ import { Search } from "@/features/search/types";
 import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
 import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
-import { CategoryChip } from "@/features/search/components/chip/category";
-import { JournalChip } from "@/features/search/components/chip/journal";
-import { DateChip } from "@/features/search/components/chip/date";
+import CategoryChip from "@/features/search/components/chip/category";
+import JournalChip from "@/features/search/components/chip/journal";
+import DateChip from "@/features/search/components/chip/date";
 import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import FilterIcon from "@/ui/icons/filter";
@@ -58,9 +58,9 @@ function Attributes({
 
   return hasData ? (
     <div className="flex flex-wrap items-center gap-2">
-      {hasCategory && <CategoryChip categoryIDs={categoryIDs} />}
-      {hasJournal && <JournalChip nameOfJournals={nameOfJournals} />}
-      {hasDate && <DateChip dateRange={dateRange} />}
+      {hasCategory && <CategoryChip value={categoryIDs} />}
+      {hasJournal && <JournalChip value={nameOfJournals} />}
+      {hasDate && <DateChip value={dateRange} />}
     </div>
   ) : null;
 }

@@ -7,7 +7,8 @@ import IconButton from "@/ui/icon-button";
 import CloseIcon from "@/ui/icons/close";
 import { Paper } from "@/features/paper/types";
 import AuthorChip from "@/features/search/components/chip/author";
-import { CategoryChip } from "@/features/search/components/chip/category";
+import CategoryChip from "@/features/search/components/chip/category";
+import JournalChip from "@/features/search/components/chip/journal";
 import OthersChip from "@/features/search/components/chip/others";
 import SidebarContainer from "@/features/graph/components/sidebar/sidebar-container";
 import OriginLinkButton from "@/features/paper/components/origin";
@@ -29,14 +30,9 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
     (originLink: string) => {
       if (!paper) return;
 
-      const { link, ...others } = paper;
-
       log(Analytics.Event.CLICK_ORIGIN_LINK, {
-        ...others,
-        origin_link: originLink,
-        pdf_link: Array.isArray(link.pdf_link)
-          ? link.pdf_link.join(",")
-          : link.pdf_link,
+        ...paper,
+        originLink: [originLink],
         view: Analytics.Track.View.CORRELATION,
       });
     },
@@ -48,14 +44,9 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
     (pdfLink: string) => {
       if (!paper) return;
 
-      const { link, ...others } = paper;
-
       log(Analytics.Event.CLICK_PDF_LINK, {
-        ...others,
-        origin_link: Array.isArray(link.origin_link)
-          ? link.origin_link.join(",")
-          : link.origin_link,
-        pdf_link: pdfLink,
+        ...paper,
+        pdfLink: [pdfLink],
         view: Analytics.Track.View.CORRELATION,
       });
     },
@@ -72,18 +63,23 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
       <div className="flex max-h-[80vh] flex-col gap-8 overflow-y-auto p-8 scrollbar-none">
         {/* Header */}
         <div className="flex items-center gap-2">
-          {paper?.link.origin_link && (
-            <OriginLinkButton
-              origin_link={paper?.link.origin_link}
-              onClick={onClickOriginLink}
-            />
+          {!!paper && (
+            <>
+              {paper.originLink.length > 0 && (
+                <OriginLinkButton
+                  originLink={paper.originLink}
+                  onClick={onClickOriginLink}
+                />
+              )}
+              {paper.pdfLink.length > 0 && (
+                <PdfLinkButton
+                  pdfLink={paper.pdfLink}
+                  onClick={onClickPdfLink}
+                />
+              )}
+            </>
           )}
-          {paper?.link.pdf_link && (
-            <PdfLinkButton
-              pdf_link={paper?.link.pdf_link}
-              onClick={onClickPdfLink}
-            />
-          )}
+
           {children}
         </div>
         {/* Content */}
@@ -91,9 +87,19 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
           <>
             <div className="text-headline-small">{paper.title}</div>
             <div className="flex flex-wrap items-center gap-2">
-              <AuthorChip authors={paper.authors} />
-              <CategoryChip categoryIDs={paper.categories} />
+              <AuthorChip
+                value={paper.authors}
+                className="max-w-[20rem] overflow-hidden text-ellipsis"
+              />
               <OthersChip {...paper} />
+              <CategoryChip
+                value={paper.categories}
+                className="max-w-[20rem] overflow-hidden text-ellipsis"
+              />
+              <JournalChip
+                value={paper.journal}
+                className="max-w-[20rem] overflow-hidden text-ellipsis"
+              />
             </div>
             <div className="flex flex-col gap-4">
               <Badge ui_color="secondary" className="self-start">
