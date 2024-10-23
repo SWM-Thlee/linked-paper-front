@@ -3,7 +3,6 @@
 import { useCallback } from "react";
 import Link from "next/link";
 
-import { Search } from "@/features/search/types";
 import AuthorChip from "@/features/search/components/chip/author";
 import CategoryChip from "@/features/search/components/chip/category";
 import JournalChip from "@/features/search/components/chip/journal";
@@ -12,12 +11,13 @@ import LabelButton from "@/ui/label-button";
 import OriginLinkButton from "@/features/paper/components/origin";
 import PdfLinkButton from "@/features/paper/components/pdf";
 import BloomIcon from "@/ui/icons/bloom";
+import { Paper } from "@/features/paper/types";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
 import Abstraction from "./abstraction";
 
-export default function SearchResultItem(data: Search.Result.Data) {
+export default function SearchResultItem(data: Paper.Scheme.ResultMetadata) {
   const { log } = useAnalytics();
   const info = useSearchQueryInfo();
 
@@ -29,41 +29,37 @@ export default function SearchResultItem(data: Search.Result.Data) {
     categories,
     date,
     journal,
-    reference_count: reference,
-    citation_count: citation,
+    referenceCount,
+    citationCount,
+    originLink,
+    pdfLink,
   } = data;
-  const { similarity, link, ...paper } = data;
+  const { similarity, ...paper } = data;
 
   /* User Event: 검색 결과의 원문(Origin) 링크로 들어갑니다. */
   const onClickOriginLink = useCallback(
-    (originLink: string) => {
+    (origin: string) => {
       log(Analytics.Event.CLICK_ORIGIN_LINK, {
         ...paper,
+        originLink: [origin],
         query: info.requiredQuery.query,
-        origin_link: originLink,
-        pdf_link: Array.isArray(link.pdf_link)
-          ? link.pdf_link.join(",")
-          : link.pdf_link,
         view: Analytics.Track.View.SEARCH,
       });
     },
-    [log, paper, link.pdf_link, info.requiredQuery.query],
+    [log, paper, info.requiredQuery.query],
   );
 
   /* User Event: 검색 결과의 PDF 링크로 들어갑니다. */
   const onClickPdfLink = useCallback(
-    (pdfLink: string) => {
+    (pdf: string) => {
       log(Analytics.Event.CLICK_PDF_LINK, {
         ...paper,
         query: info.requiredQuery.query,
-        origin_link: Array.isArray(link.origin_link)
-          ? link.origin_link.join(",")
-          : link.origin_link,
-        pdf_link: pdfLink,
+        pdfLink: [pdf],
         view: Analytics.Track.View.SEARCH,
       });
     },
-    [info.requiredQuery.query, log, paper, link.origin_link],
+    [info.requiredQuery.query, log, paper],
   );
 
   /* User Event: 검색 결과 기반의 그래프 뷰 페이지로 이동합니다. */
@@ -71,14 +67,8 @@ export default function SearchResultItem(data: Search.Result.Data) {
     log(Analytics.Event.CLICK_GRAPH_VIEW, {
       ...paper,
       query: info.requiredQuery.query,
-      origin_link: Array.isArray(link.origin_link)
-        ? link.origin_link.join(",")
-        : link.origin_link,
-      pdf_link: Array.isArray(link.pdf_link)
-        ? link.pdf_link.join(",")
-        : link.pdf_link,
     });
-  }, [info.requiredQuery.query, log, paper, link.pdf_link, link.origin_link]);
+  }, [info.requiredQuery.query, log, paper]);
 
   return (
     <div className="grid animate-slideUpAndFade grid-cols-[auto_10rem] gap-8">
@@ -101,8 +91,8 @@ export default function SearchResultItem(data: Search.Result.Data) {
           />
           <OthersChip
             date={date}
-            reference_count={reference}
-            citation_count={citation}
+            referenceCount={referenceCount}
+            citationCount={citationCount}
           />
         </div>
         <Abstraction>{abstraction}</Abstraction>
@@ -117,14 +107,14 @@ export default function SearchResultItem(data: Search.Result.Data) {
             Graph
           </LabelButton>
         </Link>
-        {link.origin_link && (
+        {originLink.length > 0 && (
           <OriginLinkButton
-            origin_link={link.origin_link}
+            originLink={originLink}
             onClick={onClickOriginLink}
           />
         )}
-        {link.pdf_link && (
-          <PdfLinkButton pdf_link={link.pdf_link} onClick={onClickPdfLink} />
+        {pdfLink.length > 0 && (
+          <PdfLinkButton pdfLink={pdfLink} onClick={onClickPdfLink} />
         )}
       </div>
     </div>

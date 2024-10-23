@@ -30,14 +30,9 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
     (originLink: string) => {
       if (!paper) return;
 
-      const { link, ...others } = paper;
-
       log(Analytics.Event.CLICK_ORIGIN_LINK, {
-        ...others,
-        origin_link: originLink,
-        pdf_link: Array.isArray(link.pdf_link)
-          ? link.pdf_link.join(",")
-          : link.pdf_link,
+        ...paper,
+        originLink: [originLink],
         view: Analytics.Track.View.CORRELATION,
       });
     },
@@ -49,14 +44,9 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
     (pdfLink: string) => {
       if (!paper) return;
 
-      const { link, ...others } = paper;
-
       log(Analytics.Event.CLICK_PDF_LINK, {
-        ...others,
-        origin_link: Array.isArray(link.origin_link)
-          ? link.origin_link.join(",")
-          : link.origin_link,
-        pdf_link: pdfLink,
+        ...paper,
+        pdfLink: [pdfLink],
         view: Analytics.Track.View.CORRELATION,
       });
     },
@@ -73,18 +63,23 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
       <div className="flex max-h-[80vh] flex-col gap-8 overflow-y-auto p-8 scrollbar-none">
         {/* Header */}
         <div className="flex items-center gap-2">
-          {paper?.link.origin_link && (
-            <OriginLinkButton
-              origin_link={paper?.link.origin_link}
-              onClick={onClickOriginLink}
-            />
+          {!!paper && (
+            <>
+              {paper.originLink.length > 0 && (
+                <OriginLinkButton
+                  originLink={paper.originLink}
+                  onClick={onClickOriginLink}
+                />
+              )}
+              {paper.pdfLink.length > 0 && (
+                <PdfLinkButton
+                  pdfLink={paper.pdfLink}
+                  onClick={onClickPdfLink}
+                />
+              )}
+            </>
           )}
-          {paper?.link.pdf_link && (
-            <PdfLinkButton
-              pdf_link={paper?.link.pdf_link}
-              onClick={onClickPdfLink}
-            />
-          )}
+
           {children}
         </div>
         {/* Content */}

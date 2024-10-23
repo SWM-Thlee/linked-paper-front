@@ -1,5 +1,3 @@
-import { Data } from "@/features/search/types/result";
-import { ResultDataResponse } from "@/features/search/types/api";
 import { Paper } from "@/features/paper/types";
 import { Info } from "./query";
 
@@ -14,15 +12,14 @@ export interface Result extends Info {
   count: number;
   status: Status;
   paper: Paper.Scheme.Metadata;
-  data: Data[];
+  data: Paper.Scheme.ResultMetadata[];
 }
 
 /** Server 응답의 데이터 스키마입니다. */
-// TODO: Paper Feature을 따로 분리할 것
 export interface Response {
   count: number;
   status: Status;
-  data: ResultDataResponse[];
+  data: Paper.Scheme.ResponseMetadata[];
 }
 
 export type Error = {

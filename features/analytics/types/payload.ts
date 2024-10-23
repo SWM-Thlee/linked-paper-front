@@ -1,4 +1,5 @@
 import { Search } from "@/features/search/types";
+import { Metadata as PaperMetadata } from "@/features/paper/types/scheme";
 import * as Track from "./track";
 
 export type SearchFilter = {
@@ -24,22 +25,9 @@ export type SearchIndex = {
   index: number;
 };
 
-export type FlowerTransition = {
-  paper: Paper;
-  parent_paper: Paper;
+export type FlowerTransition = Paper & {
+  parent_paper_id: string;
   similarity: number;
 };
 
-export type Paper = {
-  id: string;
-  title: string;
-  abstraction: string;
-  journal: string;
-  authors: string[];
-  categories: string[];
-  reference_count: number;
-  citation_count: number;
-  origin_link?: string;
-  pdf_link?: string;
-  date: string;
-};
+export type Paper = Omit<PaperMetadata, "extraID">;

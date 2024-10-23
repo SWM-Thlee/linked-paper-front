@@ -1,5 +1,5 @@
+import { convertToResult } from "@/features/paper/utils/converter";
 import { ErrorResponse, api } from "@/utils/api";
-import { Data } from "@/features/search/types/result";
 import { Flower } from "../types";
 
 /**
@@ -23,24 +23,7 @@ export async function Correlations({
   // Convert Response to Result
   const { count, data } = response.data;
 
-  const correlations = data.map((res) => ({
-    id: res.id,
-    title: res.title,
-    abstraction: res.abstraction,
-    journal: res.journal,
-    authors: res.authors,
-    categories: res.categories,
-    reference_count: res.reference_count,
-    citation_count: res.citiation_count,
-    link: {
-      origin_link: res.origin_link,
-      pdf_link: res.pdf_link,
-    },
-    date: res.date,
-    similarity: res.weight,
-    version: "v1",
-  })) satisfies Data[];
-
+  const correlations = data.map(convertToResult);
   const targetPaper = correlations.find((paper) => paper.id === paperID);
 
   // 연관 논문 결과에 Target도 반드시 포함되어야 합니다.

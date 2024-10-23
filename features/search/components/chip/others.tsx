@@ -9,14 +9,14 @@ import CitationIcon from "@/ui/icons/citation";
 
 export interface OthersChipProps {
   date: string;
-  reference_count: number;
-  citation_count: number;
+  referenceCount: number;
+  citationCount: number;
 }
 
 export default function OthersChip({
   date,
-  reference_count,
-  citation_count,
+  referenceCount,
+  citationCount,
 }: OthersChipProps) {
   return (
     <Popover.Root>
@@ -24,7 +24,7 @@ export default function OthersChip({
         <LabelButton>
           <DateIcon ui_size="small" /> {date}
           <SpliterIcon />
-          <CitationIcon ui_size="small" /> {citation_count}
+          <CitationIcon ui_size="small" /> {citationCount}
         </LabelButton>
       </Popover.Trigger>
       <Popover.Content>
@@ -49,7 +49,7 @@ export default function OthersChip({
             <div className="flex items-center gap-2">
               <ReferenceIcon ui_size="small" /> Reference
             </div>
-            <div className="text-label-large">{reference_count}</div>
+            <div className="text-label-large">{referenceCount}</div>
           </Button>
           <Button
             ui_color="secondary"
@@ -60,7 +60,7 @@ export default function OthersChip({
             <div className="flex items-center gap-2">
               <CitationIcon ui_size="small" /> Citation
             </div>
-            <div className="text-label-large">{citation_count}</div>
+            <div className="text-label-large">{citationCount}</div>
           </Button>
         </div>
       </Popover.Content>
