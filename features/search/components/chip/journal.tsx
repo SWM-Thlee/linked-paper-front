@@ -8,15 +8,18 @@ import SearchField from "@/ui/search-field";
 import JournalIcon from "@/ui/icons/journal";
 import LabelButton from "@/ui/label-button";
 import { Popover } from "@/ui/popover";
-import ArrowDownIcon from "@/ui/icons/arrow-down";
+import { toArray } from "@/utils/array";
 
-type Props = {
-  nameOfJournals: string[];
-  children?: (titleOfChip: string) => React.ReactNode;
-};
+export interface JournalChipProps extends React.ComponentPropsWithRef<"div"> {
+  value?: string | string[];
+}
 
-export function JournalChip({ nameOfJournals, children }: Props) {
+export default function JournalChip({
+  value,
+  ...titleProps
+}: JournalChipProps) {
   const [matchText, setMatchText] = useState("");
+  const nameOfJournals = useMemo(() => toArray(value), [value]);
 
   const matchedResult = useMemo(
     () =>
@@ -31,7 +34,7 @@ export function JournalChip({ nameOfJournals, children }: Props) {
     [nameOfJournals, matchText],
   );
 
-  const titleOfChip = nameOfJournals[0] ?? "Not Selected";
+  const title = nameOfJournals[0] ?? "None";
 
   // Journal의 개수가 10개를 초과할 경우 검색 필드를 보이게 합니다.
   const visibleSearch = nameOfJournals.length > 10;
@@ -40,25 +43,23 @@ export function JournalChip({ nameOfJournals, children }: Props) {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        {children?.(titleOfChip) ?? (
-          <LabelButton>
-            <JournalIcon ui_size="small" /> {titleOfChip}
-            <ArrowDownIcon ui_size="small" />
-          </LabelButton>
-        )}
+        <LabelButton>
+          <JournalIcon ui_size="small" />
+          <div {...titleProps}>{title}</div>
+        </LabelButton>
       </Popover.Trigger>
-      <Popover.Content className="w-[25rem]">
-        <div className="flex flex-col gap-4">
-          {visibleSearch && (
-            <SearchField
-              value={matchText}
-              onChange={(e) => setMatchText(e.target.value)}
-              ui_size="medium"
-              ui_color="secondary"
-              defaultPlaceholder="Find Sources..."
-            />
-          )}
-          {hasMatchedResult && (
+      {hasMatchedResult && (
+        <Popover.Content className="w-[25rem]">
+          <div className="flex flex-col gap-4">
+            {visibleSearch && (
+              <SearchField
+                value={matchText}
+                onChange={(e) => setMatchText(e.target.value)}
+                ui_size="medium"
+                ui_color="secondary"
+                defaultPlaceholder="Find Sources..."
+              />
+            )}
             <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
               {matchedResult.map((journal) => (
                 <Button
@@ -72,9 +73,9 @@ export function JournalChip({ nameOfJournals, children }: Props) {
                 </Button>
               ))}
             </ul>
-          )}
-        </div>
-      </Popover.Content>
+          </div>
+        </Popover.Content>
+      )}
     </Popover.Root>
   );
 }

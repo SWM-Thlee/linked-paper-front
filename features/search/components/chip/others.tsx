@@ -1,6 +1,5 @@
 import { Popover } from "@/ui/popover";
 
-import JournalIcon from "@/ui/icons/journal";
 import SpliterIcon from "@/ui/icons/spliter";
 import DateIcon from "@/ui/icons/date";
 import LabelButton from "@/ui/label-button";
@@ -8,47 +7,28 @@ import Button from "@/ui/button";
 import ReferenceIcon from "@/ui/icons/reference";
 import CitationIcon from "@/ui/icons/citation";
 
-type Props = {
-  journal: string;
+export interface OthersChipProps {
   date: string;
   reference_count: number;
   citation_count: number;
-  children?: React.ReactNode;
-};
+}
 
 export default function OthersChip({
-  journal,
   date,
-  children,
   reference_count,
   citation_count,
-}: Props) {
+}: OthersChipProps) {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        {children ?? (
-          <LabelButton>
-            <JournalIcon ui_size="small" /> {journal}
-            <SpliterIcon />
-            <DateIcon ui_size="small" /> {date}
-            <SpliterIcon />
-            <CitationIcon ui_size="small" /> {citation_count}
-          </LabelButton>
-        )}
+        <LabelButton>
+          <DateIcon ui_size="small" /> {date}
+          <SpliterIcon />
+          <CitationIcon ui_size="small" /> {citation_count}
+        </LabelButton>
       </Popover.Trigger>
       <Popover.Content>
         <div className="flex flex-col">
-          <Button
-            ui_color="secondary"
-            ui_size="small"
-            ui_variant="ghost"
-            className="flex items-center justify-between gap-24"
-          >
-            <div className="flex items-center gap-2">
-              <JournalIcon ui_size="small" /> Source
-            </div>
-            <div className="text-label-large">{journal}</div>
-          </Button>
           <Button
             ui_color="secondary"
             ui_size="small"

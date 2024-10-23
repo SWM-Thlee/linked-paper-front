@@ -3,23 +3,18 @@
 import { useCallback } from "react";
 import Link from "next/link";
 
-import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import { Search } from "@/features/search/types";
 import AuthorChip from "@/features/search/components/chip/author";
-import { CategoryChip } from "@/features/search/components/chip/category";
-import CategoryIcon from "@/ui/icons/category";
-import LabelButton from "@/ui/label-button";
-import AuthorIcon from "@/ui/icons/author";
+import CategoryChip from "@/features/search/components/chip/category";
+import JournalChip from "@/features/search/components/chip/journal";
 import OthersChip from "@/features/search/components/chip/others";
-import JournalIcon from "@/ui/icons/journal";
-import SpliterIcon from "@/ui/icons/spliter";
-import DateIcon from "@/ui/icons/date";
+import LabelButton from "@/ui/label-button";
 import OriginLinkButton from "@/features/paper/components/origin";
 import PdfLinkButton from "@/features/paper/components/pdf";
 import BloomIcon from "@/ui/icons/bloom";
 import { Analytics } from "@/features/analytics/types";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
-import CitationIcon from "@/ui/icons/citation";
 import Abstraction from "./abstraction";
 
 export default function SearchResultItem(data: Search.Result.Data) {
@@ -32,8 +27,8 @@ export default function SearchResultItem(data: Search.Result.Data) {
     abstraction,
     authors,
     categories,
-    journal,
     date,
+    journal,
     reference_count: reference,
     citation_count: citation,
   } = data;
@@ -92,52 +87,23 @@ export default function SearchResultItem(data: Search.Result.Data) {
           {title}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <AuthorChip authors={authors}>
-            {(titleOfChip) => (
-              <LabelButton
-                ui_size="small"
-                ui_color="secondary"
-                ui_variant="light"
-              >
-                <AuthorIcon ui_size="small" />
-                <div className="max-w-[10rem] overflow-hidden text-ellipsis">
-                  {titleOfChip}
-                </div>
-              </LabelButton>
-            )}
-          </AuthorChip>
-          <CategoryChip categoryIDs={categories}>
-            {(titleOfChip) => (
-              <LabelButton
-                ui_size="small"
-                ui_color="secondary"
-                ui_variant="light"
-              >
-                <CategoryIcon ui_size="small" />
-                <div className="max-w-[15rem] overflow-hidden text-ellipsis">
-                  {titleOfChip}
-                </div>
-              </LabelButton>
-            )}
-          </CategoryChip>
+          <AuthorChip
+            value={authors}
+            className="max-w-[20rem] overflow-hidden text-ellipsis"
+          />
+          <CategoryChip
+            value={categories}
+            className="max-w-[20rem] overflow-hidden text-ellipsis"
+          />
+          <JournalChip
+            value={journal}
+            className="max-w-[20rem] overflow-hidden text-ellipsis"
+          />
           <OthersChip
-            journal={journal}
             date={date}
             reference_count={reference}
             citation_count={citation}
-          >
-            <LabelButton
-              ui_color="secondary"
-              ui_size="small"
-              ui_variant="light"
-            >
-              <JournalIcon ui_size="small" /> {journal}
-              <SpliterIcon />
-              <DateIcon ui_size="small" /> {date}
-              <SpliterIcon />
-              <CitationIcon ui_size="small" /> {citation}
-            </LabelButton>
-          </OthersChip>
+          />
         </div>
         <Abstraction>{abstraction}</Abstraction>
       </div>

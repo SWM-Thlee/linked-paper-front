@@ -7,7 +7,8 @@ import IconButton from "@/ui/icon-button";
 import CloseIcon from "@/ui/icons/close";
 import { Paper } from "@/features/paper/types";
 import AuthorChip from "@/features/search/components/chip/author";
-import { CategoryChip } from "@/features/search/components/chip/category";
+import CategoryChip from "@/features/search/components/chip/category";
+import JournalChip from "@/features/search/components/chip/journal";
 import OthersChip from "@/features/search/components/chip/others";
 import SidebarContainer from "@/features/graph/components/sidebar/sidebar-container";
 import OriginLinkButton from "@/features/paper/components/origin";
@@ -91,9 +92,19 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
           <>
             <div className="text-headline-small">{paper.title}</div>
             <div className="flex flex-wrap items-center gap-2">
-              <AuthorChip authors={paper.authors} />
-              <CategoryChip categoryIDs={paper.categories} />
+              <AuthorChip
+                value={paper.authors}
+                className="max-w-[20rem] overflow-hidden text-ellipsis"
+              />
               <OthersChip {...paper} />
+              <CategoryChip
+                value={paper.categories}
+                className="max-w-[20rem] overflow-hidden text-ellipsis"
+              />
+              <JournalChip
+                value={paper.journal}
+                className="max-w-[20rem] overflow-hidden text-ellipsis"
+              />
             </div>
             <div className="flex flex-col gap-4">
               <Badge ui_color="secondary" className="self-start">

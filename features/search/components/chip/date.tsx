@@ -6,19 +6,21 @@ import LabelButton from "@/ui/label-button";
 import DateIcon from "@/ui/icons/date";
 import { convertStringToDate } from "@/utils/date";
 
-type Props = {
-  dateRange: { min?: string; max?: string };
-  children?: (titleOfChip: string) => React.ReactNode;
-};
+export interface DateChipProps extends React.ComponentPropsWithRef<"div"> {
+  value: { min?: string; max?: string };
+}
 
-export function DateChip({ dateRange: { min, max }, children }: Props) {
+export default function DateChip({
+  value: { min, max },
+  ...titleProps
+}: DateChipProps) {
   const [startDate, endDate] = useMemo(
     () => [convertStringToDate(min), convertStringToDate(max)],
     [min, max],
   );
 
   // TODO: Date의 검증 방식을 좀 더 고려해볼 것
-  const titleOfChip = useMemo(() => {
+  const title = useMemo(() => {
     if (!startDate && !endDate) return "All Dates";
     if (!startDate && endDate) return `~ ${max}`;
     if (startDate && !endDate) return `${min} ~`;
@@ -27,10 +29,8 @@ export function DateChip({ dateRange: { min, max }, children }: Props) {
   }, [startDate, endDate, min, max]);
 
   return (
-    children?.(titleOfChip) ?? (
-      <LabelButton>
-        <DateIcon ui_size="small" /> {titleOfChip}
-      </LabelButton>
-    )
+    <LabelButton>
+      <DateIcon ui_size="small" /> <div {...titleProps}>{title}</div>
+    </LabelButton>
   );
 }
