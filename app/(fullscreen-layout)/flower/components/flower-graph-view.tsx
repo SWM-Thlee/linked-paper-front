@@ -94,7 +94,7 @@ export default function FlowerGraphView() {
     onFlowerError,
   } = useFlowerQueries();
   const { get: getSimilarity, set: setSimilarity } = usePaperSimilarities();
-  const { getPaper, upsertPaper, hasPaper } = usePapers();
+  const { getPaper, upsertPaper, hasPaper, hasPaperFromSource } = usePapers();
 
   /* Flower Handler */
   const [paperInfo, setPaperInfo] = useState<Paper.Scheme.Metadata | null>(
@@ -438,8 +438,19 @@ export default function FlowerGraphView() {
       if (isRootNode(currentNode)) {
         upsertPaper(paper, (p) => setPaperInfo(p));
 
+        /* Child Node 중복 제거 및 등록 */
         childData
-          .filter((child) => !hasPaper(child.id))
+          .filter(
+            (child) =>
+              !(
+                paper.extraID.arxiv === child.extraID.arxiv ||
+                hasPaper(child.id) ||
+                hasPaperFromSource(
+                  Paper.Scheme.Source.ARXIV,
+                  child.extraID.arxiv,
+                )
+              ),
+          )
           .forEach((childPaper) => {
             const childNode = createChildNode(childPaper.id, currentNode.id);
             const link = createLink(currentNode, childNode);
@@ -489,8 +500,18 @@ export default function FlowerGraphView() {
         );
         upsertPaper(paper);
 
+        /* Child Node 중복 제거 및 등록 */
         childData
-          .filter((child) => !hasPaper(child.id))
+          .filter(
+            (child) =>
+              !(
+                hasPaper(child.id) ||
+                hasPaperFromSource(
+                  Paper.Scheme.Source.ARXIV,
+                  child.extraID.arxiv,
+                )
+              ),
+          )
           .forEach((childPaper) => {
             const childNode = createChildNode(childPaper.id, rootNode.id);
             const link = createLink(rootNode, childNode);
@@ -517,6 +538,7 @@ export default function FlowerGraphView() {
     setSimilarity,
     getNodes,
     hasPaper,
+    hasPaperFromSource,
     onFlowerLoaded,
     select,
     upsertNode,
