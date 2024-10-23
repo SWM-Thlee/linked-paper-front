@@ -3,7 +3,7 @@ import { Analytics } from "../types";
 
 export function searchFilterForAnalytics(
   data: Search.Filter.Data | null,
-): Analytics.Scheme.SearchFilterPayload {
+): Analytics.Scheme.SearchFilter {
   if (!data) return {};
 
   const {
