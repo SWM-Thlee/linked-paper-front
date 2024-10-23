@@ -4,7 +4,8 @@ export const rootNode = baseVariants({
   slots: {
     node: [],
     title: ["text-title-large"],
-    info: ["text-body-large"],
+    citation: ["text-label-large", "text-lg"],
+    date: ["text-body-large"],
   },
   variants: {
     ui_variant: {
@@ -16,7 +17,8 @@ export const rootNode = baseVariants({
           "text-dark-onSecondary",
         ],
         title: ["text-light-onSecondary", "text-dark-onSecondary"],
-        info: ["text-light-onSecondary", "text-dark-onSecondary"],
+        date: ["text-light-onSecondary", "text-dark-onSecondary"],
+        citation: ["text-light-onSecondary", "text-dark-onSecondary"],
       },
       hovered: {
         node: [
@@ -27,12 +29,14 @@ export const rootNode = baseVariants({
           "bg-dark-secondary",
         ],
         title: ["text-light-onSecondary", "text-dark-onSecondary"],
-        info: ["text-light-onSecondary", "text-dark-onSecondary"],
+        date: ["text-light-onSecondary", "text-dark-onSecondary"],
+        citation: ["text-light-onSecondary", "text-dark-onSecondary"],
       },
       selected: {
         node: ["bg-light-primary", "bg-dark-primaryContainer"],
         title: ["text-light-onPrimary", "text-dark-onPrimaryContainer"],
-        info: ["text-light-onPrimary", "text-dark-onPrimaryContainer"],
+        date: ["text-light-onPrimary", "text-dark-onPrimaryContainer"],
+        citation: ["text-light-onPrimary", "text-dark-onPrimaryContainer"],
       },
     },
   },
@@ -42,34 +46,40 @@ export const childNode = baseVariants({
   slots: {
     node: [],
     title: ["text-title-large"],
-    info: ["text-body-large"],
+    date: ["text-body-large"],
+    citation: ["text-label-large", "text-lg"],
   },
   variants: {
     ui_variant: {
       default: {
         node: ["bg-light-tertiary/25", "bg-dark-tertiary/25"],
         title: ["text-light-onSurface", "text-dark-onSurface"],
-        info: ["text-light-onSurface", "text-dark-onSurface"],
+        date: ["text-light-onSurface", "text-dark-onSurface"],
+        citation: ["text-light-onSurface", "text-dark-onSurface"],
       },
       highSimilarity: {
         node: ["bg-light-tertiary/75", "bg-dark-tertiary/75"],
         title: ["text-light-onTertiary", "text-dark-onTertiary"],
-        info: ["text-light-onTertiary", "text-dark-onTertiary"],
+        date: ["text-light-onTertiary", "text-dark-onTertiary"],
+        citation: ["text-light-onTertiary", "text-dark-onTertiary"],
       },
       mediumSimilarity: {
         node: ["bg-light-tertiary/45", "bg-dark-tertiary/45"],
         title: ["text-light-onSurface", "text-dark-onSurface"],
-        info: ["text-light-onSurface", "text-dark-onSurface"],
+        date: ["text-light-onSurface", "text-dark-onSurface"],
+        citation: ["text-light-onSurface", "text-dark-onSurface"],
       },
       lowSimilarity: {
         node: ["bg-light-tertiary/15", "bg-dark-tertiary/15"],
         title: ["text-light-onSurface", "text-dark-onSurface"],
-        info: ["text-light-onSurface", "text-dark-onSurface"],
+        date: ["text-light-onSurface", "text-dark-onSurface"],
+        citation: ["text-light-onSurface", "text-dark-onSurface"],
       },
       hovered: {
         node: ["bg-light-tertiary", "bg-dark-tertiary"],
         title: ["text-light-onTertiary", "text-dark-onTertiary"],
-        info: ["text-light-onTertiary", "text-dark-onTertiary"],
+        date: ["text-light-onTertiary", "text-dark-onTertiary"],
+        citation: ["text-light-onTertiary", "text-dark-onTertiary"],
       },
       blooming: {
         node: [
@@ -78,7 +88,8 @@ export const childNode = baseVariants({
           "border-dark-tertiary/25",
         ],
         title: ["text-light-onSurface", "text-dark-onSurface"],
-        info: ["text-light-onSurface", "text-dark-onSurface"],
+        date: ["text-light-onSurface", "text-dark-onSurface"],
+        citation: ["text-light-onSurface", "text-dark-onSurface"],
       },
     },
   },

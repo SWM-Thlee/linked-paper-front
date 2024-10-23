@@ -136,7 +136,7 @@ export default function FlowerGraphView() {
       if (!isFlowerLoading(node.paperID)) {
         /* Draw Date */
         drawText({
-          style: rootNodeCv.info({ ui_variant: variant }),
+          style: rootNodeCv.date({ ui_variant: variant }),
           text: paper?.date ?? "Unknown Date",
           maxWidth: 260,
           height: 24,
@@ -144,10 +144,10 @@ export default function FlowerGraphView() {
           scale: { min: 0.3, max: 1 },
         });
 
-        /* Draw Author */
+        /* Draw Citation */
         drawText({
-          style: rootNodeCv.info({ ui_variant: variant }),
-          text: `${paper?.authors?.[0] ?? "Unknown"}`,
+          style: rootNodeCv.citation({ ui_variant: variant }),
+          text: `↗️ ${paper?.citationCount ?? "Unknown"} Citations`,
           maxWidth: 260,
           height: 24,
           offsetY: 72,
@@ -216,17 +216,17 @@ export default function FlowerGraphView() {
 
       /* Draw Date */
       drawText({
-        style: childNodeCv.info({ ui_variant: variant }),
+        style: childNodeCv.date({ ui_variant: variant }),
         text: paper?.date ?? "Unknown Date",
         maxWidth: 260,
         height: 24,
         offsetY: 36,
       });
 
-      /* Draw Author */
+      /* Draw Citation */
       drawText({
-        style: childNodeCv.info({ ui_variant: variant }),
-        text: `${paper?.authors?.[0] ?? "Unknown"}`,
+        style: childNodeCv.citation({ ui_variant: variant }),
+        text: `↗️ ${paper?.citationCount ?? "Unknown"} Citations`,
         maxWidth: 260,
         height: 24,
         offsetY: 72,
@@ -595,7 +595,7 @@ export default function FlowerGraphView() {
         } else {
           const paper = getPaper(node.paperID);
           if (paper) setPaperInfo(paper);
-          focus({ nodeID: node.id, padding: 1400 });
+          focus({ nodeID: node.id, padding: 1200 });
         }
       },
       "RootNodeClicked",
@@ -632,7 +632,7 @@ export default function FlowerGraphView() {
 
   useEffect(() => {
     if (selectedOne) {
-      focus({ nodeID: selectedOne, padding: 1400 });
+      focus({ nodeID: selectedOne, padding: 1200 });
     }
   }, [focusOffsetX, focus, selectedOne]);
 
