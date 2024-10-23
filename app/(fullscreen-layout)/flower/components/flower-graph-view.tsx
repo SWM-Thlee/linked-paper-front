@@ -635,17 +635,17 @@ export default function FlowerGraphView() {
 
         /* Event 호출 */
         const childPaper = getPaper(node.paperID);
-        const parentPaper = getPaper(get(node.parentID)?.paperID);
+        const parentPaperID = get(node.parentID)?.paperID;
 
-        if (!(childPaper && parentPaper)) return;
+        if (!(childPaper && parentPaperID)) return;
 
-        const similarity = getSimilarity(childPaper.id, parentPaper.id);
+        const similarity = getSimilarity(childPaper.id, parentPaperID);
 
         if (!similarity) return;
 
         log(Analytics.Event.CLICK_GRAPH_NODE, {
-          paper: childPaper,
-          parent_paper: parentPaper,
+          ...childPaper,
+          parent_paper_id: parentPaperID,
           similarity,
         });
       },

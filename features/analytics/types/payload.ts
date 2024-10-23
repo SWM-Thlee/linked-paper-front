@@ -24,9 +24,8 @@ export type SearchIndex = {
   index: number;
 };
 
-export type FlowerTransition = {
-  paper: Paper;
-  parent_paper: Paper;
+export type FlowerTransition = Paper & {
+  parent_paper_id: string;
   similarity: number;
 };
 
