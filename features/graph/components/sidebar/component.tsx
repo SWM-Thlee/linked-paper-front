@@ -12,7 +12,7 @@ const sidebarVariant = tv({
     "fixed right-0 top-[45%]",
     "z-dialog",
     "mr-[2rem]",
-    "max-h-[calc(90vh-4rem)] w-[30vw]",
+    "max-h-[calc(90vh-4rem)] w-[30vw] md:w-[40vw]",
     "-translate-y-[50%]",
     "overflow-y-auto",
     "rounded-6",

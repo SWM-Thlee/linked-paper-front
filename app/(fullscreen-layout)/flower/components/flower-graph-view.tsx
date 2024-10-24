@@ -603,7 +603,7 @@ export default function FlowerGraphView() {
         } else {
           const paper = getPaper(node.paperID);
           if (paper) setPaperInfo(paper);
-          requestFocus({ nodeID: node.id, padding: 1200 });
+          requestFocus({ nodeID: node.id, padding: 1500 });
         }
       },
       "RootNodeClicked",
@@ -628,7 +628,7 @@ export default function FlowerGraphView() {
   /* Sidebar: Sidebar가 존재하(지 않으)면 Focus Offset을 바꿉니다. */
   useEffect(() => {
     if (paperInfo || guide) {
-      setFocusOffsetX(width * 0.2);
+      setFocusOffsetX(width * 0.3);
     } else {
       setFocusOffsetX(0);
     }
@@ -636,7 +636,7 @@ export default function FlowerGraphView() {
 
   useEffect(() => {
     if (selectedOne) {
-      requestFocus({ nodeID: selectedOne, padding: 1200 });
+      requestFocus({ nodeID: selectedOne, padding: 1500 });
     }
   }, [focusOffsetX, requestFocus, selectedOne]);
 

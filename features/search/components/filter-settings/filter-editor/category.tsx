@@ -223,6 +223,7 @@ export default function EditorCategory() {
               onChange={(e) => setText(e.target.value)}
               ui_color="tertiary"
               ui_size="medium"
+              disableSubmit
             />
             <div className="flex flex-col gap-12 overflow-y-auto rounded-2 p-4 ring-2 ring-inset ring-light-outlineVariant scrollbar dark:ring-dark-outlineVariant">
               {Object.entries(selection).map(([subject, category]) => (

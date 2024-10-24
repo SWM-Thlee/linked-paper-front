@@ -99,6 +99,7 @@ export default function DefaultSearchFilter() {
                 <SearchField
                   ui_color="tertiary"
                   ui_size="medium"
+                  disableSubmit
                   defaultPlaceholder="find presets by name."
                   value={text}
                   onChange={(event) => setText(event.target.value)}
