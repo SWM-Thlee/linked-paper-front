@@ -232,8 +232,8 @@ const GraphView = forwardRef<GraphHandler, Props>(
 
     /* Zoom By [Ctrl] + Wheel */
     const onDefaultWheelZoom: WheelEventHandler<HTMLDivElement> = useCallback(
-      ({ deltaY, ctrlKey }) => {
-        if (!(viewConfig.interaction.zoom && ctrlKey)) return;
+      ({ deltaY }) => {
+        if (!viewConfig.interaction.zoom) return;
 
         const { delta } = viewConfig.zoom;
         const scale = deltaY > 0 ? 1 - delta : 1 + delta;
@@ -242,36 +242,10 @@ const GraphView = forwardRef<GraphHandler, Props>(
       [applyConfig, viewConfig.zoom, viewConfig.interaction.zoom],
     );
 
-    /* Scroll By Wheel */
-    const onDefaultWheelScroll: WheelEventHandler<HTMLDivElement> = useCallback(
-      ({ deltaX, deltaY, ctrlKey }) => {
-        if (!viewConfig.interaction.scroll || ctrlKey) return;
-
-        const { deltaX: dh, deltaY: dv } = viewConfig.scroll;
-        const isHorizonScroll = deltaX !== 0;
-        const scrollX = deltaX > 0 ? dh : -dh;
-        const scrollY = deltaY > 0 ? dv : -dv;
-
-        applyConfig((config) => {
-          const { x, y } = config.centerAt();
-          const scale = config.zoom();
-
-          if (isHorizonScroll) config.centerAt(x + scrollX / scale, y);
-          else config.centerAt(x, y + scrollY / scale);
-        });
-      },
-      [applyConfig, viewConfig.interaction.scroll, viewConfig.scroll],
-    );
-
     return (
       <>
         {children}
-        <div
-          onWheel={(event) => {
-            onDefaultWheelScroll(event);
-            onDefaultWheelZoom(event);
-          }}
-        >
+        <div onWheel={onDefaultWheelZoom}>
           <ForceGraph
             /* Default Data */
             graphData={data}
