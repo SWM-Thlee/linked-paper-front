@@ -9,10 +9,10 @@ import { Graph } from "../../types";
 
 const sidebarVariant = tv({
   base: [
-    "fixed right-0 top-[45%]",
+    "fixed right-0 top-[47%]",
     "z-dialog",
     "mr-[2rem]",
-    "max-h-[calc(90vh-4rem)] w-[30vw] md:w-[40vw]",
+    "max-h-[calc(94vh-4rem)] w-[35vw]",
     "-translate-y-[50%]",
     "overflow-y-auto",
     "rounded-6",

@@ -84,10 +84,8 @@ export default function FlowerGraphView() {
 
   const { isHovered: isNodeHovered } = useNodeHoverHandler(handler);
   const { isHovered: isLinkHovered } = useLinkHoverHandler(handler);
-  const { requestFocus, focusOffsetX, setFocusOffsetX } = useNodeFocus(
-    handler,
-    viewConfig,
-  );
+  const { requestFocus, focusOffsetX, setFocusOffsetX, focusResolver } =
+    useNodeFocus(handler, viewConfig);
   const { select, isSelected, selectedOne, onSelect } =
     useNodeSelectionHandler();
 
@@ -126,7 +124,7 @@ export default function FlowerGraphView() {
       drawCircle({
         style: rootNodeCv.node({ ui_variant: variant }),
         radius: nodeConfig.radius.root.default,
-        scale: { min: 0.3, max: 1 },
+        scale: { start: 0.3, end: 0.7, multiplier: 2 },
       });
 
       /* Draw Title */
@@ -137,7 +135,7 @@ export default function FlowerGraphView() {
         height: 24,
         maxLines: 3,
         offsetY: isFlowerLoading(node.paperID) ? 0 : -24,
-        scale: { min: 0.3, max: 1 },
+        scale: { start: 0.3, end: 0.7, multiplier: 2 },
       });
 
       /* Draw if loaded */
@@ -149,7 +147,7 @@ export default function FlowerGraphView() {
           maxWidth: 260,
           height: 24,
           offsetY: 36,
-          scale: { min: 0.3, max: 1 },
+          scale: { start: 0.3, end: 0.7, multiplier: 2 },
         });
 
         /* Draw Citation */
@@ -159,7 +157,7 @@ export default function FlowerGraphView() {
           maxWidth: 260,
           height: 24,
           offsetY: 72,
-          scale: { min: 0.3, max: 1 },
+          scale: { start: 0.3, end: 0.7, multiplier: 2 },
         });
       }
     },
@@ -260,8 +258,8 @@ export default function FlowerGraphView() {
 
       drawLink({
         style: rootLinkCv.link({ ui_variant: variant }),
+        scale: { start: 0.2, end: 0.7, multiplier: 3 },
         radius,
-        scale: { max: 0.5 },
       });
 
       if (viewConfig.graph.viewSimilarity) {
@@ -272,7 +270,7 @@ export default function FlowerGraphView() {
           style: rootLinkCv.container({ ui_variant: variant }),
           height: 24,
           text: `${similarity.toFixed(2)}%`,
-          scale: { max: 0.5 },
+          scale: { start: 0.2, end: 0.7, multiplier: 4 },
           radius,
         });
       }
@@ -310,7 +308,6 @@ export default function FlowerGraphView() {
           style: childLinkCv.container({ ui_variant: variant }),
           height: 24,
           text: `${similarity.toFixed(2)}%`,
-          scale: { min: 1, max: 2 },
           radius,
         });
       } else {
@@ -347,8 +344,15 @@ export default function FlowerGraphView() {
             [Graph.Element.DefaultNode.CHILD]: renderChildLink,
           },
         },
+        renderAfter: focusResolver,
       }),
-    [renderRootNode, renderRootLink, renderChildLink, renderChildNode],
+    [
+      renderRootNode,
+      renderRootLink,
+      renderChildLink,
+      renderChildNode,
+      focusResolver,
+    ],
   );
 
   /* 노드 간을 연결하는 간선에 대해 설정합니다. */

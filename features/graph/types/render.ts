@@ -151,7 +151,9 @@ export type Renderer = {
 };
 
 /* Others */
-export type ScaleOption = true | { min?: number; max?: number };
+export type ScaleOption =
+  | true
+  | { start: number; end: number; multiplier?: number };
 export type LinkTextLocateOption = {
   from: "source" | "target";
   distance: number;
