@@ -8,6 +8,7 @@ import AddIcon from "@/ui/icons/add";
 import FilterIcon from "@/ui/icons/filter";
 import LabelButton from "@/ui/label-button";
 
+import FieldContainer from "@/ui/container/field-container";
 import CategoryChip from "@/features/search/components/chip/category";
 import JournalChip from "@/features/search/components/chip/journal";
 import DateChip from "@/features/search/components/chip/date";
@@ -66,34 +67,38 @@ export default function DefaultFilterInfo() {
   // Filter 정보는 Client에 존재하므로, Server 단에서는 Fallback을 띄운다.
   if (!isClient)
     return (
-      <div className="flex items-center gap-4">
-        <LabelButton
-          ui_color="secondary"
-          ui_variant="light"
-          ui_size="medium"
-          className="animate-pulse"
-        >
-          <FilterIcon ui_size="small" /> Loading Filters...
-        </LabelButton>
-      </div>
+      <FieldContainer title="Default Filter Options">
+        <div className="flex items-center gap-4">
+          <LabelButton
+            ui_color="secondary"
+            ui_variant="light"
+            ui_size="small"
+            className="animate-pulse"
+          >
+            <FilterIcon ui_size="small" /> Loading Filters...
+          </LabelButton>
+        </div>
+      </FieldContainer>
     );
 
   return (
-    <div className="flex animate-fadeIn flex-wrap items-center gap-4">
-      {filter && <Attributes attributes={filter.attributes} />}
-      <FilterSettings>
-        <LabelButton ui_color="secondary" ui_variant="bordered" ui_size="small">
-          {filter ? (
-            <>
-              <FilterIcon ui_size="small" /> Configure Filter...
-            </>
-          ) : (
-            <>
-              <AddIcon ui_size="small" /> Add Filter...
-            </>
-          )}
-        </LabelButton>
-      </FilterSettings>
-    </div>
+    <FieldContainer title="Default Filter Options">
+      <div className="flex animate-fadeIn flex-wrap items-center gap-4">
+        {filter && <Attributes attributes={filter.attributes} />}
+        <FilterSettings>
+          <LabelButton ui_color="secondary" ui_size="small">
+            {filter ? (
+              <>
+                <FilterIcon ui_size="small" /> Configure Filter...
+              </>
+            ) : (
+              <>
+                <AddIcon ui_size="small" /> Add Filter...
+              </>
+            )}
+          </LabelButton>
+        </FilterSettings>
+      </div>
+    </FieldContainer>
   );
 }

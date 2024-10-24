@@ -11,7 +11,6 @@ import {
 import { NavigationModule } from "@/ui/navigation";
 import SearchField from "@/ui/search-field";
 import SearchIcon from "@/ui/icons/search";
-import FieldContainer from "@/ui/container/field-container";
 import useSearchRequest from "@/features/search/hooks/query/use-search-request";
 import { defaultQueryValue } from "@/features/search/stores/query";
 import { Analytics } from "@/features/analytics/types";
@@ -62,11 +61,10 @@ function Content() {
         autoFocus
         onChange={onChangeText}
         onKeyUp={onKeyEnter}
+        onSubmitButton={onRequestQuery}
         defaultPlaceholder={searchPlaceholder}
       />
-      <FieldContainer title="DEFAULT OPTIONS">
-        <DefaultFilterInfo />
-      </FieldContainer>
+      <DefaultFilterInfo />
     </div>
   );
 }
