@@ -2,7 +2,12 @@ import { ComponentPropsWithoutRef, forwardRef } from "react";
 import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 
 export const badgeVariant = tv({
-  base: ["pointer-events-none", "px-1.5 py-0.5", "text-body-small"],
+  base: [
+    "pointer-events-none",
+    "px-1.5 py-0.5",
+    "text-label-small",
+    "text-nowrap",
+  ],
 
   variants: {
     ui_variant: {
