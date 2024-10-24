@@ -1,9 +1,12 @@
+import { Suspense } from "react";
+
 import Completion from "@/components/completion/component";
 import PageContainer from "@/components/layout/page-container";
 import AnnouncementProvider from "@/features/announcement/components/announcement-provider";
+import Suggestions from "@/features/suggestion/components/suggestions";
+import SuggestionsSkeleton from "@/features/suggestion/components/suggestions-skeleton";
 import DefaultFilterInfo from "./components/default-filter-info";
 import SearchForm from "./components/search-form";
-import Suggestions from "./components/suggestions";
 
 export default function Home() {
   return (
@@ -14,7 +17,9 @@ export default function Home() {
           <Completion>
             <SearchForm />
             <DefaultFilterInfo />
-            <Suggestions />
+            <Suspense fallback={<SuggestionsSkeleton />}>
+              <Suggestions />
+            </Suspense>
           </Completion>
         </div>
       </div>

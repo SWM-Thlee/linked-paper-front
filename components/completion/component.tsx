@@ -11,6 +11,9 @@ type CompletionProps = {
 export default function Completion({ children }: CompletionProps) {
   const [streamingQuery, setStreamingQuery] = useState({ query: "", index: 0 });
   const [isStreaming, setIsStreaming] = useState(false);
+  const [listeners, setListeners] = useState<
+    Map<string, (query: string) => void>
+  >(new Map());
   const [tick, setTick] = useState(DEFAULT_TICK);
   const [query, setQuery] = useState("");
 
@@ -21,8 +24,9 @@ export default function Completion({ children }: CompletionProps) {
 
       setQuery(req);
       setIsStreaming(true);
+      listeners.forEach((trigger) => trigger(req));
     },
-    [query],
+    [query, listeners],
   );
 
   useEffect(() => {
@@ -56,14 +60,29 @@ export default function Completion({ children }: CompletionProps) {
     );
   }, [query, tick, streamingQuery, isStreaming]);
 
+  const onTrigger = useCallback(
+    (
+      trigger: (query: string) => void,
+      name: string = "DefaultCompletionTriggerEvent",
+    ) => {
+      setListeners((prev) => {
+        const newListeners = new Map(prev);
+        newListeners.set(name, trigger);
+        return newListeners;
+      });
+    },
+    [],
+  );
+
   const value = useMemo(
     () => ({
+      onTrigger,
       currentQuery: streamingQuery.query,
       tick,
       requestQuery,
       setTick,
     }),
-    [streamingQuery, tick, requestQuery],
+    [streamingQuery, tick, requestQuery, onTrigger],
   );
 
   return (
