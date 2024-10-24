@@ -91,9 +91,9 @@ export default function CategoryChip({
           <div {...titleProps}>{title}</div>
         </LabelButton>
       </Popover.Trigger>
-      {hasMatchedResult && (
+      {(hasMatchedResult || visibleSearch) && (
         <Popover.Content>
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
             {visibleSearch && (
               <SearchField
                 value={matchText}
@@ -101,19 +101,20 @@ export default function CategoryChip({
                 ui_size="medium"
                 ui_color="secondary"
                 defaultPlaceholder="Find Categories..."
+                disableSubmit
               />
             )}
-            <div className="flex max-h-[20rem] flex-col gap-6 overflow-y-auto scrollbar">
+            <div className="flex max-h-[20rem] w-[25rem] flex-col gap-2 overflow-y-auto scrollbar">
               {Object.entries(matchedResult).map(([subject, categories]) => (
                 <FieldContainer key={subject} title={subject} ui_size="medium">
                   <ul className="flex list-disc flex-col">
                     {Object.entries(categories).map(([categoryID, info]) => (
-                      <div key={categoryID} className="flex items-center">
+                      <div key={categoryID} className="flex items-stretch">
                         <Button
                           ui_variant="ghost"
                           ui_size="small"
                           ui_color="secondary"
-                          className="flex-1 text-nowrap text-left"
+                          className="flex-1 text-left"
                         >
                           <li className="ml-2">{info.description}</li>
                         </Button>
