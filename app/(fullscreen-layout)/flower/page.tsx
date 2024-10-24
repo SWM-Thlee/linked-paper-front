@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 import { Flower } from "@/features/flower/types";
-import FloatingLayout from "@/components/layout/floating-layout";
 import ScrollLockOnce from "@/components/layout/scroll-lock-once";
 import { createFlowerMetadata } from "@/features/seo/metadata/flower";
 import ViewLoading from "./components/view-loading";
@@ -29,9 +28,7 @@ export default function Page() {
   return (
     <ScrollLockOnce>
       <Suspense fallback={<ViewLoading />}>
-        <FloatingLayout>
-          <FlowerGraphView />
-        </FloatingLayout>
+        <FlowerGraphView />
       </Suspense>
     </ScrollLockOnce>
   );

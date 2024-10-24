@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import useFullscreen from "@/hooks/use-fullscreen";
 import { GraphHandler } from "../default/use-graph-handler";
@@ -15,53 +15,68 @@ export default function useNodeFocus(
 ) {
   const [focusOffsetX, setFocusOffsetX] = useState(0);
   const [focusOffsetY, setFocusOffsetY] = useState(0);
+  const [requests, setRequests] = useState<FocusOptions[]>([]);
   const { width, height } = useFullscreen();
 
-  const focus = useCallback(
-    ({ nodeID, padding }: FocusOptions) => {
-      const { adjustDurationByZoom, duration } = viewConfig.zoom.focus;
-      handler?.config.applyConfig((config) => {
-        const currentZoom = config.zoom();
-        const box = config.getGraphBbox((node) => node.id === nodeID);
+  useEffect(() => {
+    handler?.event.onEvent(Graph.Event.Type.ENGINE_TICK, () => {
+      const unresolved = new Set<string>();
 
-        if (!box) {
-          throw new Error("Error from Focusing Root Node: Node is not found.");
-        }
+      requests.forEach(({ nodeID, padding }) => {
+        const { adjustDurationByZoom, duration } = viewConfig.zoom.focus;
 
-        const {
-          x: [minX, maxX],
-          y: [minY, maxY],
-        } = box;
+        handler?.config.applyConfig((config) => {
+          const currentZoom = config.zoom();
+          const {
+            x: [minX, maxX],
+            y: [minY, maxY],
+          } = config.getGraphBbox((node) => node.id === nodeID);
 
-        const zoom = Math.min(
-          width / (maxX - minX + (padding ?? 0)),
-          height / (maxY - minY + (padding ?? 0)),
-        );
+          if (!minX || !maxX || !minY || !maxY) {
+            unresolved.add(nodeID);
+            return;
+          }
 
-        const resolvedDuration =
-          duration *
-          (adjustDurationByZoom ? 1 / Math.abs(currentZoom - zoom) : 1);
+          const zoom = Math.min(
+            width / (maxX - minX + (padding ?? 0)),
+            height / (maxY - minY + (padding ?? 0)),
+          );
 
-        config.centerAt(
-          (minX + maxX) / 2 + focusOffsetX,
-          (minY + maxY) / 2 + focusOffsetY,
-          resolvedDuration,
-        );
-        config.zoom(zoom, resolvedDuration);
+          const resolvedDuration =
+            duration *
+            (adjustDurationByZoom ? 1 / Math.abs(currentZoom - zoom) : 1);
+
+          config.centerAt(
+            (minX + maxX) / 2 + focusOffsetX,
+            (minY + maxY) / 2 + focusOffsetY,
+            resolvedDuration,
+          );
+          config.zoom(zoom, resolvedDuration);
+        });
       });
-    },
-    [
-      handler?.config,
-      viewConfig.zoom.focus,
-      focusOffsetX,
-      focusOffsetY,
-      width,
-      height,
-    ],
-  );
+
+      setRequests((previous) =>
+        previous.filter(({ nodeID }) => unresolved.has(nodeID)),
+      );
+    });
+  }, [
+    handler?.event,
+    handler?.config,
+    requests,
+    viewConfig.zoom.focus,
+    focusOffsetX,
+    focusOffsetY,
+    width,
+    height,
+  ]);
+
+  /* 해당 노드가 존재할 때 포커스합니다. */
+  const requestFocus = useCallback((options: FocusOptions) => {
+    setRequests((previous) => [...previous, options]);
+  }, []);
 
   return {
-    focus,
+    requestFocus,
     focusOffsetX,
     focusOffsetY,
     setFocusOffsetX,

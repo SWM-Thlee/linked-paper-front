@@ -3,8 +3,30 @@
 import { useCallback, useMemo, useState } from "react";
 import { produce } from "immer";
 
+import { tv } from "@/utils/style/tailwind-variants";
 import { SidebarContext } from "./context";
 import { Graph } from "../../types";
+
+const sidebarVariant = tv({
+  base: [
+    "fixed right-0 top-[45%]",
+    "z-dialog",
+    "mr-[2rem]",
+    "max-h-[calc(90vh-4rem)] w-[30vw]",
+    "-translate-y-[50%]",
+    "overflow-y-auto",
+    "rounded-6",
+    "bg-light-surfaceBright/90 dark:bg-dark-surfaceDim/90",
+    "p-6",
+    "scrollbar scrollbar-none",
+  ],
+  variants: {
+    internal_ui_visible: {
+      visible: ["block"],
+      invisible: ["hidden"],
+    },
+  },
+});
 
 type Props = {
   children?: React.ReactNode;
@@ -40,8 +62,12 @@ export default function Sidebar({ children }: Props) {
 
   return (
     <SidebarContext.Provider value={sidebarProps}>
-      <div className="pointer-events-none fixed right-0 top-[50%] z-dialog w-[40vw] -translate-y-[50%] p-[2rem]">
-        <div className="relative flex flex-col items-stretch justify-center gap-[2rem]">
+      <div
+        className={sidebarVariant({
+          internal_ui_visible: hasSidebar ? "visible" : "invisible",
+        })}
+      >
+        <div className="relative flex flex-col items-stretch justify-center gap-6">
           {children}
         </div>
       </div>

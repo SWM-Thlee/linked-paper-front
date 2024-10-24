@@ -6,7 +6,7 @@ import Slider from "@/ui/slider";
 import IconButton from "@/ui/icon-button";
 import AddIcon from "@/ui/icons/add";
 import RemoveIcon from "@/ui/icons/remove";
-import ToolbarContainer from "./toolbar-container";
+import ToolbarContainer from "../../../../../features/graph/components/toolbar/toolbar-container";
 
 const config = {
   step: 25,

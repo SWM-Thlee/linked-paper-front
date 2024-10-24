@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAtom } from "jotai";
 
 import useCanvasVariants from "@/hooks/use-canvas-variants";
 import useGraphHandler from "@/features/graph/hooks/default/use-graph-handler";
@@ -32,10 +33,16 @@ import { isChildNode, isRootNode } from "@/features/graph/utils/validator";
 
 import GraphView from "@/features/graph/components/graph-view";
 import Sidebar from "@/features/graph/components/sidebar";
+import Toolbar from "@/features/graph/components/toolbar";
 import LabelButton from "@/ui/label-button";
 
 import CheckIcon from "@/ui/icons/check";
 import CloseIcon from "@/ui/icons/close";
+import QuestionIcon from "@/ui/icons/question";
+import { guideAtom } from "@/features/flower/stores/guide";
+import IconButton from "@/ui/icon-button";
+import FeedbackIcon from "@/ui/icons/feedback";
+import { Tooltip } from "@/ui/tooltip";
 import {
   rootNode as rootNodeStyle,
   rootLink as rootLinkStyle,
@@ -43,9 +50,9 @@ import {
   childNode as childNodeStyle,
 } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
-import ToolbarWrapper from "./toolbar/toolbar-wrapper";
-import ToolbarContainer from "./toolbar/toolbar-container";
+import ToolbarContainer from "../../../../features/graph/components/toolbar/toolbar-container";
 import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
+import GuideSidebar from "./sidebar/guide-sidebar";
 
 export default function FlowerGraphView() {
   /* Analytics */
@@ -77,11 +84,11 @@ export default function FlowerGraphView() {
 
   const { isHovered: isNodeHovered } = useNodeHoverHandler(handler);
   const { isHovered: isLinkHovered } = useLinkHoverHandler(handler);
-  const { focus, focusOffsetX, setFocusOffsetX } = useNodeFocus(
+  const { requestFocus, focusOffsetX, setFocusOffsetX } = useNodeFocus(
     handler,
     viewConfig,
   );
-  const { select, unselect, isSelected, selectedOne, onSelect } =
+  const { select, isSelected, selectedOne, onSelect } =
     useNodeSelectionHandler();
 
   /* Flower Correlations */
@@ -100,6 +107,7 @@ export default function FlowerGraphView() {
   const [paperInfo, setPaperInfo] = useState<Paper.Scheme.Metadata | null>(
     null,
   );
+  const [guide, setGuide] = useAtom(guideAtom);
 
   /* Node Renderer */
   const renderRootNode: Graph.Render.RenderNode = useCallback(
@@ -403,8 +411,9 @@ export default function FlowerGraphView() {
   useEffect(() => {
     if (isFlowerLoading(initial) || isFlowerLoaded(initial)) return;
 
-    loadFlower(initial);
-    upsertNode({ ...createRootNode(initial), fx: 0, fy: 0 });
+    upsertNode({ ...createRootNode(initial), fx: 0, fy: 0 }, () =>
+      loadFlower(initial),
+    );
   }, [initial, loadFlower, upsertNode, isFlowerLoading, isFlowerLoaded]);
 
   /* Event: Flower를 불러오는 중 Error 발생 */
@@ -428,7 +437,7 @@ export default function FlowerGraphView() {
 
       if (nodes.length !== 1) {
         throw new Error(
-          "Error from Loading Flower: There are more than a node or not found.",
+          "Error from Loading InitialFlower: There are more than a node or not found.",
         );
       }
 
@@ -489,8 +498,7 @@ export default function FlowerGraphView() {
           dynamic.fx = locX;
           dynamic.fy = locY;
 
-          // TODO: 수정 필요
-          setTimeout(() => select(rootNode.id, true), 500);
+          select(rootNode.id, true);
         });
         upsertLink(rootLink);
 
@@ -581,7 +589,7 @@ export default function FlowerGraphView() {
       const paper = getPaper(node.paperID);
       if (paper) setPaperInfo(paper);
     });
-  }, [onSelect, get, getNodes, focus, getPaper]);
+  }, [onSelect, get, getNodes, getPaper]);
 
   /* Event: 특정 Root Node Click 시 Select합니다. */
   useEffect(() => {
@@ -595,27 +603,23 @@ export default function FlowerGraphView() {
         } else {
           const paper = getPaper(node.paperID);
           if (paper) setPaperInfo(paper);
-          focus({ nodeID: node.id, padding: 1200 });
+          requestFocus({ nodeID: node.id, padding: 1200 });
         }
       },
       "RootNodeClicked",
     );
   }, [
     handler?.event,
-    isSelected,
     select,
-    unselect,
-    focus,
+    requestFocus,
     isFlowerLoading,
     getPaper,
     selectedOne,
   ]);
 
-  /* Event: Child Node RClick 시 논문 정보를 띄웁니다. */
+  /* Event: Node RClick 시 논문 정보를 띄웁니다. */
   useEffect(() => {
     handler?.event.onEvent(Graph.Event.Type.NODE_RCLICK, (node) => {
-      if (!isChildNode(node)) return;
-
       const paper = getPaper(node.paperID);
       if (paper) setPaperInfo(paper);
     });
@@ -623,18 +627,18 @@ export default function FlowerGraphView() {
 
   /* Sidebar: Sidebar가 존재하(지 않으)면 Focus Offset을 바꿉니다. */
   useEffect(() => {
-    if (paperInfo) {
-      setFocusOffsetX(width * 0.18);
+    if (paperInfo || guide) {
+      setFocusOffsetX(width * 0.2);
     } else {
       setFocusOffsetX(0);
     }
-  }, [paperInfo, width, setFocusOffsetX]);
+  }, [paperInfo, guide, width, setFocusOffsetX]);
 
   useEffect(() => {
     if (selectedOne) {
-      focus({ nodeID: selectedOne, padding: 1200 });
+      requestFocus({ nodeID: selectedOne, padding: 1200 });
     }
-  }, [focusOffsetX, focus, selectedOne]);
+  }, [focusOffsetX, requestFocus, selectedOne]);
 
   /* Event: 특정 Child Node Click 시 Bloom합니다. */
   useEffect(() => {
@@ -686,6 +690,7 @@ export default function FlowerGraphView() {
       viewConfig={viewConfig}
     >
       <Sidebar>
+        {guide && <GuideSidebar onClose={() => setGuide(false)} />}
         {paperInfo && (
           <PaperInfoSidebar
             paper={paperInfo}
@@ -693,30 +698,54 @@ export default function FlowerGraphView() {
           />
         )}
       </Sidebar>
-      <ToolbarWrapper>
+      <Toolbar>
         {/* Zoom 설정 */}
         <ZoomToolbar handler={handler} viewConfig={viewConfig} />
-
-        {/* Node 유사도 표시 여부 */}
-        <div className="absolute left-[50%] top-[50%] flex -translate-x-[50%] -translate-y-[50%] items-center gap-2" />
-        <ToolbarContainer>
-          <LabelButton
-            ui_variant={viewConfig.graph.viewSimilarity ? "default" : "ghost"}
-            onClick={() =>
-              setExtraViewConfig({
-                graph: { viewSimilarity: !viewConfig.graph.viewSimilarity },
-              })
-            }
-          >
-            {viewConfig.graph.viewSimilarity ? (
-              <CloseIcon ui_size="small" />
-            ) : (
-              <CheckIcon ui_size="small" />
-            )}
-            View Similarity
-          </LabelButton>
-        </ToolbarContainer>
-      </ToolbarWrapper>
+        <div className="absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%]">
+          <ToolbarContainer>
+            <LabelButton
+              ui_variant={viewConfig.graph.viewSimilarity ? "default" : "ghost"}
+              onClick={() =>
+                setExtraViewConfig({
+                  graph: { viewSimilarity: !viewConfig.graph.viewSimilarity },
+                })
+              }
+            >
+              {viewConfig.graph.viewSimilarity ? (
+                <CheckIcon ui_size="small" />
+              ) : (
+                <CloseIcon ui_size="small" />
+              )}
+              View Similarity
+            </LabelButton>
+          </ToolbarContainer>
+        </div>
+        <div className="flex items-center gap-2">
+          <ToolbarContainer>
+            <Tooltip title="Guide">
+              <IconButton
+                ui_size="large"
+                onClick={() => setGuide(!guide)}
+                ui_color="secondary"
+                ui_shape="circle"
+              >
+                <QuestionIcon />
+              </IconButton>
+            </Tooltip>
+          </ToolbarContainer>
+          <ToolbarContainer>
+            <Tooltip title="Feedback">
+              <IconButton
+                ui_size="large"
+                ui_color="secondary"
+                ui_shape="circle"
+              >
+                <FeedbackIcon />
+              </IconButton>
+            </Tooltip>
+          </ToolbarContainer>
+        </div>
+      </Toolbar>
     </GraphView>
   );
 }
