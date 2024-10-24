@@ -82,23 +82,21 @@ export default function DefaultFilterInfo() {
     );
 
   return (
-    <FieldContainer title="Default Filter Options">
-      <div className="flex animate-fadeIn flex-wrap items-center gap-4">
-        {filter && <Attributes attributes={filter.attributes} />}
-        <FilterSettings>
-          <LabelButton ui_color="secondary" ui_size="small">
-            {filter ? (
-              <>
-                <FilterIcon ui_size="small" /> Configure Filter...
-              </>
-            ) : (
-              <>
-                <AddIcon ui_size="small" /> Add Filter...
-              </>
-            )}
-          </LabelButton>
-        </FilterSettings>
-      </div>
-    </FieldContainer>
+    <div className="flex animate-fadeIn flex-wrap items-center gap-4">
+      {filter && <Attributes attributes={filter.attributes} />}
+      <FilterSettings>
+        <LabelButton ui_color="secondary" ui_size="small">
+          {filter ? (
+            <>
+              <FilterIcon ui_size="small" /> Configure Filter...
+            </>
+          ) : (
+            <>
+              <AddIcon ui_size="small" /> Add Filter...
+            </>
+          )}
+        </LabelButton>
+      </FilterSettings>
+    </div>
   );
 }

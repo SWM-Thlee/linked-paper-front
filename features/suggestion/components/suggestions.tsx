@@ -34,7 +34,7 @@ export default function Suggestions() {
           ui_color="secondary"
           ui_variant="light"
           ui_size="large"
-          className="flex select-none flex-col justify-between gap-2 p-6 text-left"
+          className="flex select-none flex-col items-center justify-between gap-2 p-6"
         >
           <AddIcon ui_size="exlarge" />
           <div className="text-body-large">Need more suggestions?</div>

@@ -15,8 +15,8 @@ export default function Home() {
         <AnnouncementProvider />
         <div className="flex flex-col gap-8">
           <Completion>
-            <SearchForm />
             <DefaultFilterInfo />
+            <SearchForm />
             <Suspense fallback={<SuggestionsSkeleton />}>
               <Suggestions />
             </Suspense>
