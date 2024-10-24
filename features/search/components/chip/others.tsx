@@ -21,7 +21,7 @@ export default function OthersChip({
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton>
+        <LabelButton ui_color="secondary" ui_variant="light">
           <DateIcon ui_size="small" /> {date}
           <SpliterIcon />
           <CitationIcon ui_size="small" /> {citationCount}

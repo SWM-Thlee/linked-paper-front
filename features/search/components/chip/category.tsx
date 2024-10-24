@@ -86,7 +86,7 @@ export default function CategoryChip({
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton>
+        <LabelButton ui_color="secondary" ui_variant="light">
           <CategoryIcon ui_size="small" />
           <div {...titleProps}>{title}</div>
         </LabelButton>

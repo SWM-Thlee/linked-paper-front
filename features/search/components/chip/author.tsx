@@ -43,7 +43,7 @@ export default function AuthorChip({ value, ...titleProps }: AuthorChipProps) {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton ui_size="small">
+        <LabelButton ui_size="small" ui_color="secondary" ui_variant="light">
           <AuthorIcon ui_size="small" />
           <div {...titleProps}>{title}</div>
         </LabelButton>

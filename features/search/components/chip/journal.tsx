@@ -43,7 +43,7 @@ export default function JournalChip({
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton>
+        <LabelButton ui_color="secondary" ui_variant="light">
           <JournalIcon ui_size="small" />
           <div {...titleProps}>{title}</div>
         </LabelButton>
