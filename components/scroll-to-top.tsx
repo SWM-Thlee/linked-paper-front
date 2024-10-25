@@ -9,7 +9,7 @@ import { Tooltip, TooltipProvider } from "@/ui/tooltip";
 
 export const variant = tv({
   base: [
-    "fixed top-[50vh] right-[calc(25vw_-_256px)] translate-x-[50%] -translate-y-[50%]",
+    "fixed top-[50vh] right-[2rem] -translate-y-[50%]",
     "animate-fadeIn",
     "rounded-circle",
     "p-4",
