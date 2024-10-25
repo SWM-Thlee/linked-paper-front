@@ -38,7 +38,7 @@ export default function RootLayout({
           <ThemeProvider>
             {header}
             {children}
-            <Toaster toastOptions={{ position: "bottom-right" }} />
+            <Toaster toastOptions={{ position: "bottom-center" }} />
           </ThemeProvider>
         </BodyWithScrollLock>
       </StateProvider>
