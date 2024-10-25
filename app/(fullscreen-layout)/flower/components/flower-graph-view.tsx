@@ -31,9 +31,10 @@ import {
 } from "@/features/graph/utils/graph";
 import { isChildNode, isRootNode } from "@/features/graph/utils/validator";
 
+import Feedback from "@/features/feedback/components/feedback";
 import GraphView from "@/features/graph/components/graph-view";
 import Sidebar from "@/features/graph/components/sidebar";
-import Toolbar from "@/features/graph/components/toolbar";
+import Toolbar from "@/components/toolbar";
 import LabelButton from "@/ui/label-button";
 
 import CheckIcon from "@/ui/icons/check";
@@ -41,6 +42,7 @@ import CloseIcon from "@/ui/icons/close";
 import QuestionIcon from "@/ui/icons/question";
 import { guideAtom } from "@/features/flower/stores/guide";
 import IconButton from "@/ui/icon-button";
+import FeedbackIcon from "@/ui/icons/feedback";
 import { Tooltip } from "@/ui/tooltip";
 import {
   rootNode as rootNodeStyle,
@@ -49,7 +51,7 @@ import {
   childNode as childNodeStyle,
 } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
-import ToolbarContainer from "../../../../features/graph/components/toolbar/toolbar-container";
+import ToolbarContainer from "../../../../components/toolbar/toolbar-container";
 import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
 import GuideSidebar from "./sidebar/guide-sidebar";
 
@@ -718,13 +720,24 @@ export default function FlowerGraphView() {
             ) : (
               <CloseIcon ui_size="small" />
             )}
-            View Similarity
+            Similarity
           </LabelButton>
+        </ToolbarContainer>
+        <ToolbarContainer>
+          <Feedback>
+            <LabelButton
+              aria-label="Feedback"
+              ui_color="secondary"
+              ui_variant="ghost"
+            >
+              <FeedbackIcon /> Feedback
+            </LabelButton>
+          </Feedback>
         </ToolbarContainer>
         <ToolbarContainer>
           <Tooltip title="Guide">
             <IconButton
-              ui_size="large"
+              aria-label="Graph View Guide"
               onClick={() => setGuide(!guide)}
               ui_color="secondary"
               ui_shape="circle"

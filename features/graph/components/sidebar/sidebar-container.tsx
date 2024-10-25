@@ -28,7 +28,7 @@ export default function SidebarContainer({ children, onClose, title }: Props) {
         <div className="mb-4 flex items-center justify-between text-title-medium text-light-onSurface dark:text-dark-onSurface">
           {title}
           {onClose && (
-            <IconButton onClick={onClose}>
+            <IconButton aria-label={`Close ${title}`} onClick={onClose}>
               <CloseIcon ui_size="small" />
             </IconButton>
           )}
