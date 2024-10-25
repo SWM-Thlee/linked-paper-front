@@ -8,7 +8,7 @@
   }
 
   [class*="scrollbar"] {
-    @apply scrollbar-track-transparent scrollbar-thumb-light-tertiaryContainer dark:scrollbar-thumb-dark-tertiaryContainer;
+    @apply scrollbar-track-transparent scrollbar-thumb-light-tertiary dark:scrollbar-thumb-dark-tertiary;
   }
 
   [class*="-display-"],

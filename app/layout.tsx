@@ -31,7 +31,7 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="ko"
-      className={`${playfair.variable} ${urbanist.variable}`}
+      className={`scrollbar ${playfair.variable} ${urbanist.variable}`}
     >
       <StateProvider>
         <BodyWithScrollLock>
