@@ -7,10 +7,8 @@ type Props = {
 export default function Toolbar({ children }: Props) {
   return (
     <TooltipProvider>
-      <div className="pointer-events-none fixed bottom-0 z-dialog w-screen p-[2rem]">
-        <div className="relative flex items-center justify-between gap-2">
-          {children}
-        </div>
+      <div className="pointer-events-none fixed bottom-0 z-toolbar w-screen p-[2rem]">
+        <div className="relative flex items-center gap-2">{children}</div>
       </div>
     </TooltipProvider>
   );

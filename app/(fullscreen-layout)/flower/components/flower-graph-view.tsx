@@ -41,7 +41,6 @@ import CloseIcon from "@/ui/icons/close";
 import QuestionIcon from "@/ui/icons/question";
 import { guideAtom } from "@/features/flower/stores/guide";
 import IconButton from "@/ui/icon-button";
-import FeedbackIcon from "@/ui/icons/feedback";
 import { Tooltip } from "@/ui/tooltip";
 import {
   rootNode as rootNodeStyle,
@@ -705,50 +704,35 @@ export default function FlowerGraphView() {
       <Toolbar>
         {/* Zoom 설정 */}
         <ZoomToolbar handler={handler} viewConfig={viewConfig} />
-        <div className="absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%]">
-          <ToolbarContainer>
-            <LabelButton
-              ui_variant={viewConfig.graph.viewSimilarity ? "default" : "ghost"}
-              onClick={() =>
-                setExtraViewConfig({
-                  graph: { viewSimilarity: !viewConfig.graph.viewSimilarity },
-                })
-              }
+        <ToolbarContainer>
+          <LabelButton
+            ui_variant={viewConfig.graph.viewSimilarity ? "default" : "ghost"}
+            onClick={() =>
+              setExtraViewConfig({
+                graph: { viewSimilarity: !viewConfig.graph.viewSimilarity },
+              })
+            }
+          >
+            {viewConfig.graph.viewSimilarity ? (
+              <CheckIcon ui_size="small" />
+            ) : (
+              <CloseIcon ui_size="small" />
+            )}
+            View Similarity
+          </LabelButton>
+        </ToolbarContainer>
+        <ToolbarContainer>
+          <Tooltip title="Guide">
+            <IconButton
+              ui_size="large"
+              onClick={() => setGuide(!guide)}
+              ui_color="secondary"
+              ui_shape="circle"
             >
-              {viewConfig.graph.viewSimilarity ? (
-                <CheckIcon ui_size="small" />
-              ) : (
-                <CloseIcon ui_size="small" />
-              )}
-              View Similarity
-            </LabelButton>
-          </ToolbarContainer>
-        </div>
-        <div className="flex items-center gap-2">
-          <ToolbarContainer>
-            <Tooltip title="Guide">
-              <IconButton
-                ui_size="large"
-                onClick={() => setGuide(!guide)}
-                ui_color="secondary"
-                ui_shape="circle"
-              >
-                <QuestionIcon />
-              </IconButton>
-            </Tooltip>
-          </ToolbarContainer>
-          <ToolbarContainer>
-            <Tooltip title="Feedback">
-              <IconButton
-                ui_size="large"
-                ui_color="secondary"
-                ui_shape="circle"
-              >
-                <FeedbackIcon />
-              </IconButton>
-            </Tooltip>
-          </ToolbarContainer>
-        </div>
+              <QuestionIcon />
+            </IconButton>
+          </Tooltip>
+        </ToolbarContainer>
       </Toolbar>
     </GraphView>
   );

@@ -35,7 +35,7 @@ export default function SidebarContainer({ children, onClose, title }: Props) {
         </div>
       )}
 
-      <div className="animate-fadeIn rounded-4 p-8 text-light-onSurface ring-2 ring-inset ring-light-outlineVariant/50 dark:text-dark-onSurface dark:ring-dark-outlineVariant/50">
+      <div className="animate-fadeIn rounded-4 p-8 text-light-onSurface ring-2 ring-inset ring-light-outlineVariant/25 dark:text-dark-onSurface dark:ring-dark-outlineVariant/25">
         {children}
       </div>
     </div>

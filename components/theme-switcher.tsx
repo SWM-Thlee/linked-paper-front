@@ -37,9 +37,9 @@ export default function ThemeSwitcher() {
       aria-label="Switch Theme"
       onClick={toggle}
       ui_color="secondary"
+      ui_variant="light"
     >
       {resolvedTheme === "light" ? themes.light : themes.dark}
-      {resolvedTheme}
     </LabelButton>
   );
 }
