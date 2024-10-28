@@ -1,3 +1,3 @@
-import { SearchNavigation } from "@/app/(scrollable-layout)/(main-page)/components/navigation";
+import { SearchNavigation } from "@/app/(main-page)/components/navigation";
 
 export default [SearchNavigation];
