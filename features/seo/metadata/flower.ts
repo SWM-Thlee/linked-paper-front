@@ -28,7 +28,7 @@ export async function createFlowerMetadata({
     keywords: [...authors, ...title.split(" ")],
     openGraph: {
       images: {
-        url: `/og/flower?title=${title}`,
+        url: `res/og/flower?title=${title}`,
         alt: "Flower (Correlation) Graph View from Linked Paper",
         width: 1200,
         height: 630,

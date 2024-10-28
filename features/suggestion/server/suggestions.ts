@@ -1,6 +1,6 @@
 export default async function Suggestions({ amount }: { amount: number }) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_DEV_ENDPOINT ?? "https://linked-paper.com"}/suggestion?amount=${amount}`,
+    `${process.env.NEXT_PUBLIC_DEV_ENDPOINT ?? "https://linked-paper.com"}/res/suggestion?amount=${amount}`,
     {
       cache: "no-store",
     },

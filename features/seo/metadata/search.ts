@@ -16,7 +16,7 @@ export async function createSearchMetadata({
     title: `${query} - Search`,
     openGraph: {
       images: {
-        url: `/og/search?query=${query}`,
+        url: `res/og/search?query=${query}`,
         alt: "Semantic Search Result Page from Linked Paper",
         width: 1200,
         height: 630,
