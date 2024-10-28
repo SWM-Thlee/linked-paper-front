@@ -5,9 +5,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { queryOptions } from "@/features/suggestion/server/queries";
 import useCompletion from "@/components/completion/hooks/use-completion";
 import FieldContainer from "@/ui/container/field-container";
-import TipIcon from "@/ui/icons/tip";
 import Button from "@/ui/button";
 import AddIcon from "@/ui/icons/add";
+import ArrowForwardIcon from "@/ui/icons/arrow-forward";
 
 export default function Suggestions() {
   const { data, refetch } = useSuspenseQuery(queryOptions.suggestions(2));
@@ -15,7 +15,7 @@ export default function Suggestions() {
 
   return (
     <FieldContainer title="Suggestions">
-      <div className="grid grid-cols-[5fr_5fr_2fr] gap-4">
+      <div className="flex items-center gap-4">
         {data.map((suggestion) => (
           <Button
             key={suggestion}
@@ -23,10 +23,10 @@ export default function Suggestions() {
             ui_color="secondary"
             ui_variant="light"
             ui_size="large"
-            className="flex animate-fadeIn select-none flex-col justify-between gap-2 p-6 text-left"
+            className="flex flex-1 animate-fadeIn select-none items-center justify-between gap-2 p-6 text-left"
           >
-            <TipIcon ui_size="large" />
-            <div className="text-body-large">{suggestion}</div>
+            <div className="w-[16rem] text-label-large">{suggestion}</div>
+            <ArrowForwardIcon />
           </Button>
         ))}
         <Button
@@ -34,10 +34,12 @@ export default function Suggestions() {
           ui_color="secondary"
           ui_variant="light"
           ui_size="large"
-          className="flex select-none flex-col items-center justify-between gap-2 p-6"
+          className="flex select-none items-center justify-between gap-4 p-6 text-left"
         >
-          <AddIcon ui_size="exlarge" />
-          <div className="text-body-large">Need more suggestions?</div>
+          <div className="w-[8rem] text-label-large">
+            Need more suggestions?
+          </div>
+          <AddIcon />
         </Button>
       </div>
     </FieldContainer>
