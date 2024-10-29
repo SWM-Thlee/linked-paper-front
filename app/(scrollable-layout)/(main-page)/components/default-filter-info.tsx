@@ -70,7 +70,7 @@ export default function DefaultFilterInfo() {
         <LabelButton
           ui_color="secondary"
           ui_variant="light"
-          ui_size="medium"
+          ui_size="small"
           className="animate-pulse"
         >
           <FilterIcon ui_size="small" /> Loading Filters...
@@ -82,7 +82,7 @@ export default function DefaultFilterInfo() {
     <div className="flex animate-fadeIn flex-wrap items-center gap-4">
       {filter && <Attributes attributes={filter.attributes} />}
       <FilterSettings>
-        <LabelButton ui_color="secondary" ui_variant="bordered" ui_size="small">
+        <LabelButton ui_color="secondary" ui_size="small">
           {filter ? (
             <>
               <FilterIcon ui_size="small" /> Configure Filter...

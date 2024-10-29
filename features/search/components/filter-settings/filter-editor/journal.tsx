@@ -179,6 +179,7 @@ export default function EditorJournal() {
               onChange={(e) => setText(e.target.value)}
               ui_color="tertiary"
               ui_size="medium"
+              disableSubmit
             />
             <div className="flex flex-col gap-4 overflow-y-auto rounded-2 p-4 ring-2 ring-inset ring-light-outlineVariant scrollbar dark:ring-dark-outlineVariant">
               {selection.map((journal) => (

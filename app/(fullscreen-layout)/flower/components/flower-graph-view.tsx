@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAtom } from "jotai";
 
 import useCanvasVariants from "@/hooks/use-canvas-variants";
 import useGraphHandler from "@/features/graph/hooks/default/use-graph-handler";
@@ -30,12 +31,19 @@ import {
 } from "@/features/graph/utils/graph";
 import { isChildNode, isRootNode } from "@/features/graph/utils/validator";
 
+import Feedback from "@/features/feedback/components/feedback";
 import GraphView from "@/features/graph/components/graph-view";
 import Sidebar from "@/features/graph/components/sidebar";
+import Toolbar from "@/components/toolbar";
 import LabelButton from "@/ui/label-button";
 
 import CheckIcon from "@/ui/icons/check";
 import CloseIcon from "@/ui/icons/close";
+import QuestionIcon from "@/ui/icons/question";
+import { guideAtom } from "@/features/flower/stores/guide";
+import IconButton from "@/ui/icon-button";
+import FeedbackIcon from "@/ui/icons/feedback";
+import { Tooltip } from "@/ui/tooltip";
 import {
   rootNode as rootNodeStyle,
   rootLink as rootLinkStyle,
@@ -43,9 +51,9 @@ import {
   childNode as childNodeStyle,
 } from "../utils/variants";
 import ZoomToolbar from "./toolbar/zoom-toolbar";
-import ToolbarWrapper from "./toolbar/toolbar-wrapper";
-import ToolbarContainer from "./toolbar/toolbar-container";
+import ToolbarContainer from "../../../../components/toolbar/toolbar-container";
 import PaperInfoSidebar from "./sidebar/paper-info-sidebar";
+import GuideSidebar from "./sidebar/guide-sidebar";
 
 export default function FlowerGraphView() {
   /* Analytics */
@@ -77,11 +85,9 @@ export default function FlowerGraphView() {
 
   const { isHovered: isNodeHovered } = useNodeHoverHandler(handler);
   const { isHovered: isLinkHovered } = useLinkHoverHandler(handler);
-  const { focus, focusOffsetX, setFocusOffsetX } = useNodeFocus(
-    handler,
-    viewConfig,
-  );
-  const { select, unselect, isSelected, selectedOne, onSelect } =
+  const { requestFocus, focusOffsetX, setFocusOffsetX, focusResolver } =
+    useNodeFocus(handler, viewConfig);
+  const { select, isSelected, selectedOne, onSelect } =
     useNodeSelectionHandler();
 
   /* Flower Correlations */
@@ -100,6 +106,7 @@ export default function FlowerGraphView() {
   const [paperInfo, setPaperInfo] = useState<Paper.Scheme.Metadata | null>(
     null,
   );
+  const [guide, setGuide] = useAtom(guideAtom);
 
   /* Node Renderer */
   const renderRootNode: Graph.Render.RenderNode = useCallback(
@@ -118,7 +125,7 @@ export default function FlowerGraphView() {
       drawCircle({
         style: rootNodeCv.node({ ui_variant: variant }),
         radius: nodeConfig.radius.root.default,
-        scale: { min: 0.3, max: 1 },
+        scale: { start: 0.3, end: 0.7, multiplier: 2 },
       });
 
       /* Draw Title */
@@ -129,7 +136,7 @@ export default function FlowerGraphView() {
         height: 24,
         maxLines: 3,
         offsetY: isFlowerLoading(node.paperID) ? 0 : -24,
-        scale: { min: 0.3, max: 1 },
+        scale: { start: 0.3, end: 0.7, multiplier: 2 },
       });
 
       /* Draw if loaded */
@@ -141,7 +148,7 @@ export default function FlowerGraphView() {
           maxWidth: 260,
           height: 24,
           offsetY: 36,
-          scale: { min: 0.3, max: 1 },
+          scale: { start: 0.3, end: 0.7, multiplier: 2 },
         });
 
         /* Draw Citation */
@@ -151,7 +158,7 @@ export default function FlowerGraphView() {
           maxWidth: 260,
           height: 24,
           offsetY: 72,
-          scale: { min: 0.3, max: 1 },
+          scale: { start: 0.3, end: 0.7, multiplier: 2 },
         });
       }
     },
@@ -252,8 +259,8 @@ export default function FlowerGraphView() {
 
       drawLink({
         style: rootLinkCv.link({ ui_variant: variant }),
+        scale: { start: 0.2, end: 0.7, multiplier: 3 },
         radius,
-        scale: { max: 0.5 },
       });
 
       if (viewConfig.graph.viewSimilarity) {
@@ -264,7 +271,7 @@ export default function FlowerGraphView() {
           style: rootLinkCv.container({ ui_variant: variant }),
           height: 24,
           text: `${similarity.toFixed(2)}%`,
-          scale: { max: 0.5 },
+          scale: { start: 0.2, end: 0.7, multiplier: 4 },
           radius,
         });
       }
@@ -302,7 +309,6 @@ export default function FlowerGraphView() {
           style: childLinkCv.container({ ui_variant: variant }),
           height: 24,
           text: `${similarity.toFixed(2)}%`,
-          scale: { min: 1, max: 2 },
           radius,
         });
       } else {
@@ -339,8 +345,15 @@ export default function FlowerGraphView() {
             [Graph.Element.DefaultNode.CHILD]: renderChildLink,
           },
         },
+        renderAfter: focusResolver,
       }),
-    [renderRootNode, renderRootLink, renderChildLink, renderChildNode],
+    [
+      renderRootNode,
+      renderRootLink,
+      renderChildLink,
+      renderChildNode,
+      focusResolver,
+    ],
   );
 
   /* 노드 간을 연결하는 간선에 대해 설정합니다. */
@@ -403,8 +416,9 @@ export default function FlowerGraphView() {
   useEffect(() => {
     if (isFlowerLoading(initial) || isFlowerLoaded(initial)) return;
 
-    loadFlower(initial);
-    upsertNode({ ...createRootNode(initial), fx: 0, fy: 0 });
+    upsertNode({ ...createRootNode(initial), fx: 0, fy: 0 }, () =>
+      loadFlower(initial),
+    );
   }, [initial, loadFlower, upsertNode, isFlowerLoading, isFlowerLoaded]);
 
   /* Event: Flower를 불러오는 중 Error 발생 */
@@ -428,7 +442,7 @@ export default function FlowerGraphView() {
 
       if (nodes.length !== 1) {
         throw new Error(
-          "Error from Loading Flower: There are more than a node or not found.",
+          "Error from Loading InitialFlower: There are more than a node or not found.",
         );
       }
 
@@ -489,8 +503,7 @@ export default function FlowerGraphView() {
           dynamic.fx = locX;
           dynamic.fy = locY;
 
-          // TODO: 수정 필요
-          setTimeout(() => select(rootNode.id, true), 500);
+          select(rootNode.id, true);
         });
         upsertLink(rootLink);
 
@@ -581,7 +594,7 @@ export default function FlowerGraphView() {
       const paper = getPaper(node.paperID);
       if (paper) setPaperInfo(paper);
     });
-  }, [onSelect, get, getNodes, focus, getPaper]);
+  }, [onSelect, get, getNodes, getPaper]);
 
   /* Event: 특정 Root Node Click 시 Select합니다. */
   useEffect(() => {
@@ -595,27 +608,23 @@ export default function FlowerGraphView() {
         } else {
           const paper = getPaper(node.paperID);
           if (paper) setPaperInfo(paper);
-          focus({ nodeID: node.id, padding: 1200 });
+          requestFocus({ nodeID: node.id, padding: 1500 });
         }
       },
       "RootNodeClicked",
     );
   }, [
     handler?.event,
-    isSelected,
     select,
-    unselect,
-    focus,
+    requestFocus,
     isFlowerLoading,
     getPaper,
     selectedOne,
   ]);
 
-  /* Event: Child Node RClick 시 논문 정보를 띄웁니다. */
+  /* Event: Node RClick 시 논문 정보를 띄웁니다. */
   useEffect(() => {
     handler?.event.onEvent(Graph.Event.Type.NODE_RCLICK, (node) => {
-      if (!isChildNode(node)) return;
-
       const paper = getPaper(node.paperID);
       if (paper) setPaperInfo(paper);
     });
@@ -623,18 +632,18 @@ export default function FlowerGraphView() {
 
   /* Sidebar: Sidebar가 존재하(지 않으)면 Focus Offset을 바꿉니다. */
   useEffect(() => {
-    if (paperInfo) {
-      setFocusOffsetX(width * 0.18);
+    if (paperInfo || guide) {
+      setFocusOffsetX(width * 0.3);
     } else {
       setFocusOffsetX(0);
     }
-  }, [paperInfo, width, setFocusOffsetX]);
+  }, [paperInfo, guide, width, setFocusOffsetX]);
 
   useEffect(() => {
     if (selectedOne) {
-      focus({ nodeID: selectedOne, padding: 1200 });
+      requestFocus({ nodeID: selectedOne, padding: 1500 });
     }
-  }, [focusOffsetX, focus, selectedOne]);
+  }, [focusOffsetX, requestFocus, selectedOne]);
 
   /* Event: 특정 Child Node Click 시 Bloom합니다. */
   useEffect(() => {
@@ -686,6 +695,7 @@ export default function FlowerGraphView() {
       viewConfig={viewConfig}
     >
       <Sidebar>
+        {guide && <GuideSidebar onClose={() => setGuide(false)} />}
         {paperInfo && (
           <PaperInfoSidebar
             paper={paperInfo}
@@ -693,12 +703,9 @@ export default function FlowerGraphView() {
           />
         )}
       </Sidebar>
-      <ToolbarWrapper>
+      <Toolbar>
         {/* Zoom 설정 */}
         <ZoomToolbar handler={handler} viewConfig={viewConfig} />
-
-        {/* Node 유사도 표시 여부 */}
-        <div className="absolute left-[50%] top-[50%] flex -translate-x-[50%] -translate-y-[50%] items-center gap-2" />
         <ToolbarContainer>
           <LabelButton
             ui_variant={viewConfig.graph.viewSimilarity ? "default" : "ghost"}
@@ -709,14 +716,37 @@ export default function FlowerGraphView() {
             }
           >
             {viewConfig.graph.viewSimilarity ? (
-              <CloseIcon ui_size="small" />
-            ) : (
               <CheckIcon ui_size="small" />
+            ) : (
+              <CloseIcon ui_size="small" />
             )}
-            View Similarity
+            Similarity
           </LabelButton>
         </ToolbarContainer>
-      </ToolbarWrapper>
+        <ToolbarContainer>
+          <Feedback>
+            <LabelButton
+              aria-label="Feedback"
+              ui_color="secondary"
+              ui_variant="ghost"
+            >
+              <FeedbackIcon /> Feedback
+            </LabelButton>
+          </Feedback>
+        </ToolbarContainer>
+        <ToolbarContainer>
+          <Tooltip title="Guide">
+            <IconButton
+              aria-label="Graph View Guide"
+              onClick={() => setGuide(!guide)}
+              ui_color="secondary"
+              ui_shape="circle"
+            >
+              <QuestionIcon />
+            </IconButton>
+          </Tooltip>
+        </ToolbarContainer>
+      </Toolbar>
     </GraphView>
   );
 }

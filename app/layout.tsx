@@ -4,7 +4,6 @@ import { Toaster } from "react-hot-toast";
 import { playfair, urbanist } from "@/config/fonts";
 
 import "@/globals.css";
-import Header from "@/components/header";
 import StateProvider from "@/components/state-provider";
 import BodyWithScrollLock from "@/components/layout/body-with-scroll-lock";
 import ThemeProvider from "@/features/theme/components/theme-provider";
@@ -22,22 +21,24 @@ export const viewport: Viewport = {
 
 // Header, Main, Footer 컴포넌트가 독립적으로 구성된다.
 export default function RootLayout({
+  header,
   children,
 }: {
+  header: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <html
       suppressHydrationWarning
       lang="ko"
-      className={`${playfair.variable} ${urbanist.variable}`}
+      className={`scrollbar ${playfair.variable} ${urbanist.variable}`}
     >
       <StateProvider>
         <BodyWithScrollLock>
           <ThemeProvider>
-            <Header />
+            {header}
             {children}
-            <Toaster toastOptions={{ position: "bottom-right" }} />
+            <Toaster toastOptions={{ position: "bottom-center" }} />
           </ThemeProvider>
         </BodyWithScrollLock>
       </StateProvider>

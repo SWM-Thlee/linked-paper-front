@@ -29,7 +29,7 @@ export default function DateChip({
   }, [startDate, endDate, min, max]);
 
   return (
-    <LabelButton>
+    <LabelButton ui_color="secondary" ui_variant="light">
       <DateIcon ui_size="small" /> <div {...titleProps}>{title}</div>
     </LabelButton>
   );

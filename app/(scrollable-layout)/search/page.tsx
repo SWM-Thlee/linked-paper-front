@@ -13,6 +13,7 @@ import {
   EndlessFooter,
   InitialLoading,
 } from "./components/result-skeleton/defaults";
+import SearchToolbar from "./components/search-toolbar";
 
 /* 특정 검색 페이지에 대한 메타데이터를 생성합니다. */
 export async function generateMetadata({
@@ -41,6 +42,7 @@ export default function Page() {
             <Contents />
           </Suspense>
           <ScrollToTop />
+          <SearchToolbar />
         </QueryResolver>
       </Suspense>
     </PageContainer>

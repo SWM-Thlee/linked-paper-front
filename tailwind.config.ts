@@ -25,6 +25,8 @@ const config = {
     extend: {
       zIndex: {
         header: "10",
+        sidebar: "15",
+        toolbar: "15",
         overlay: "20",
         dialog: "30",
         popover: "30",

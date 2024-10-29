@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useDeepCompareMemo } from "use-deep-compare";
 
 import { toArray } from "@/utils/array";
@@ -34,23 +34,19 @@ export default function AuthorChip({ value, ...titleProps }: AuthorChipProps) {
 
   // Author가 10명을 초과할 경우 검색 필드를 보이게 합니다.
   const visibleSearch = authors.length > 10;
-  const hasAuthors = useMemo(() => matchedResult.length > 0, [matchedResult]);
-  const title = useMemo(
-    () => (hasAuthors ? authors[0] : "None"),
-    [hasAuthors, authors],
-  );
+  const hasAuthors = authors.length > 0;
 
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton ui_size="small">
+        <LabelButton ui_size="small" ui_color="secondary" ui_variant="light">
           <AuthorIcon ui_size="small" />
-          <div {...titleProps}>{title}</div>
+          <div {...titleProps}>{authors[0] ?? "None"}</div>
         </LabelButton>
       </Popover.Trigger>
       {hasAuthors && (
         <Popover.Content>
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
             {visibleSearch && (
               <SearchField
                 value={matchText}
@@ -58,15 +54,16 @@ export default function AuthorChip({ value, ...titleProps }: AuthorChipProps) {
                 ui_size="medium"
                 ui_color="secondary"
                 defaultPlaceholder="Find Authors..."
+                disableSubmit
               />
             )}
-            <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
+            <ul className="flex max-h-[20rem] w-[20rem] list-disc flex-col overflow-y-auto scrollbar">
               {matchedResult.map((author) => (
                 <Button
                   ui_color="secondary"
                   ui_size="small"
                   ui_variant="ghost"
-                  className="min-w-[20rem] text-nowrap text-left text-label-large"
+                  className="w-full text-nowrap text-left text-label-large"
                   key={author}
                 >
                   <li className="ml-2">{author}</li>

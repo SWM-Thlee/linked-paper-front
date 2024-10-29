@@ -15,4 +15,5 @@ export interface Data {
   type: Type;
   title: string;
   description: string;
+  ps?: string;
 }

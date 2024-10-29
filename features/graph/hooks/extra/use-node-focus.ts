@@ -15,23 +15,28 @@ export default function useNodeFocus(
 ) {
   const [focusOffsetX, setFocusOffsetX] = useState(0);
   const [focusOffsetY, setFocusOffsetY] = useState(0);
+  const [requests, setRequests] = useState<FocusOptions[]>([]);
   const { width, height } = useFullscreen();
 
-  const focus = useCallback(
-    ({ nodeID, padding }: FocusOptions) => {
+  const focusResolver: Graph.Render.RenderAfter = useCallback(() => {
+    if (requests.length === 0) return;
+
+    const unresolved = new Set<string>();
+
+    requests.forEach(({ nodeID, padding }) => {
       const { adjustDurationByZoom, duration } = viewConfig.zoom.focus;
+
       handler?.config.applyConfig((config) => {
         const currentZoom = config.zoom();
-        const box = config.getGraphBbox((node) => node.id === nodeID);
-
-        if (!box) {
-          throw new Error("Error from Focusing Root Node: Node is not found.");
-        }
-
         const {
           x: [minX, maxX],
           y: [minY, maxY],
-        } = box;
+        } = config.getGraphBbox((node) => node.id === nodeID);
+
+        if (!minX || !maxX || !minY || !maxY) {
+          unresolved.add(nodeID);
+          return;
+        }
 
         const zoom = Math.min(
           width / (maxX - minX + (padding ?? 0)),
@@ -49,19 +54,29 @@ export default function useNodeFocus(
         );
         config.zoom(zoom, resolvedDuration);
       });
-    },
-    [
-      handler?.config,
-      viewConfig.zoom.focus,
-      focusOffsetX,
-      focusOffsetY,
-      width,
-      height,
-    ],
-  );
+    });
+
+    setRequests((previous) =>
+      previous.filter(({ nodeID }) => unresolved.has(nodeID)),
+    );
+  }, [
+    handler?.config,
+    requests,
+    viewConfig.zoom.focus,
+    focusOffsetX,
+    focusOffsetY,
+    width,
+    height,
+  ]);
+
+  /* 해당 노드가 존재할 때 포커스합니다. */
+  const requestFocus = useCallback((options: FocusOptions) => {
+    setRequests((previous) => [...previous, options]);
+  }, []);
 
   return {
-    focus,
+    requestFocus,
+    focusResolver,
     focusOffsetX,
     focusOffsetY,
     setFocusOffsetX,

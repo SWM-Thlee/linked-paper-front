@@ -2,18 +2,15 @@ import { Graph } from "../types";
 
 function resolveScale(scale: number, option?: Graph.Render.ScaleOption) {
   if (!option) return 1;
+  if (option === true) return scale;
 
-  let resolvedScale = scale;
+  const { start, end, multiplier = 1 } = option;
 
-  if (option === true) return resolvedScale;
+  /* 확대 범위를 벗어난 경우 기존 스케일로 고정합니다. */
+  if (scale >= end) return 1;
+  if (scale <= start) return 1 / (1 + (end / start - 1) * multiplier);
 
-  if (option.min !== undefined)
-    resolvedScale = Math.max(option.min, resolvedScale);
-
-  if (option.max !== undefined)
-    resolvedScale = Math.min(option.max, resolvedScale);
-
-  return resolvedScale;
+  return 1 / (1 + (end / scale - 1) * multiplier);
 }
 
 function resolveDetermination(
@@ -139,7 +136,7 @@ export const internalDrawLinkText: Graph.Render.DrawLinkTextResolver = ({
     angle += Math.PI;
   }
 
-  const padding = 8 / resolvedScale;
+  const padding = 6 / resolvedScale;
 
   ctx.save();
 

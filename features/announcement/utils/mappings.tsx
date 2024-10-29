@@ -29,4 +29,5 @@ export const DEFAULT_ANNOUNCEMENT: Data = {
         but if you enter the information you want directly, you will find the
         thesis that is most similar to the meaning. Type any sentence in the
         search box below!`,
+  ps: "Currently, our service supports only Computer Science papers in English.",
 };

@@ -3,8 +3,6 @@
 import React, { useCallback } from "react";
 
 import Badge from "@/ui/badge";
-import IconButton from "@/ui/icon-button";
-import CloseIcon from "@/ui/icons/close";
 import { Paper } from "@/features/paper/types";
 import AuthorChip from "@/features/search/components/chip/author";
 import CategoryChip from "@/features/search/components/chip/category";
@@ -15,6 +13,7 @@ import OriginLinkButton from "@/features/paper/components/origin";
 import PdfLinkButton from "@/features/paper/components/pdf";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import InfoIcon from "@/ui/icons/info";
 
 type Props = {
   paper: Paper.Scheme.Metadata | null;
@@ -54,13 +53,16 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
   );
 
   return (
-    <SidebarContainer>
-      <div className="pointer-events-none absolute left-0 top-0 z-10 flex w-full items-center justify-end p-8">
-        <IconButton onClick={onClose} className="pointer-events-auto">
-          <CloseIcon />
-        </IconButton>
-      </div>
-      <div className="flex max-h-[80vh] flex-col gap-8 overflow-y-auto p-8 scrollbar-none">
+    <SidebarContainer
+      onClose={onClose}
+      title={
+        <div className="flex items-center gap-2">
+          <InfoIcon />
+          <div className="select-none text-title-medium">Paper Details</div>
+        </div>
+      }
+    >
+      <div className="flex flex-col gap-8">
         {/* Header */}
         <div className="flex items-center gap-2">
           {!!paper && (

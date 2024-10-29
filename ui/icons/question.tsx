@@ -1,9 +1,9 @@
-import { MdQuestionAnswer } from "react-icons/md";
+import { MdOutlineQuestionMark } from "react-icons/md";
 import IconWrapper from "./wrapper";
 
 const QuestionIcon = IconWrapper({
   type: "react-icons",
-  baseComponent: MdQuestionAnswer,
+  baseComponent: MdOutlineQuestionMark,
 });
 
 export default QuestionIcon;

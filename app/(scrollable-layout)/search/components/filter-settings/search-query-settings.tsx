@@ -243,6 +243,7 @@ export default function SearchQuery() {
                     <SearchField
                       ui_color="tertiary"
                       ui_size="medium"
+                      disableSubmit
                       defaultPlaceholder="find presets by name."
                       value={text}
                       onChange={(event) => setText(event.target.value)}

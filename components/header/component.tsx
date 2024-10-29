@@ -7,7 +7,7 @@ import Image from "next/image";
 
 import { tv } from "@/utils/style/tailwind-variants";
 import { Navigation } from "@/ui/navigation";
-import ThemeSwitcher from "./settings/theme-switcher";
+import ThemeSwitcher from "../theme-switcher";
 import modules from "./modules";
 import { HeaderMode, headerModeAtom } from "./store";
 

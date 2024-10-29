@@ -43,14 +43,14 @@ export default function JournalChip({
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <LabelButton>
+        <LabelButton ui_color="secondary" ui_variant="light">
           <JournalIcon ui_size="small" />
           <div {...titleProps}>{title}</div>
         </LabelButton>
       </Popover.Trigger>
-      {hasMatchedResult && (
+      {(hasMatchedResult || visibleSearch) && (
         <Popover.Content className="w-[25rem]">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {visibleSearch && (
               <SearchField
                 value={matchText}
@@ -58,16 +58,17 @@ export default function JournalChip({
                 ui_size="medium"
                 ui_color="secondary"
                 defaultPlaceholder="Find Sources..."
+                disableSubmit
               />
             )}
-            <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
+            <ul className="flex max-h-[20rem] w-[25rem] list-disc flex-col overflow-y-auto scrollbar">
               {matchedResult.map((journal) => (
                 <Button
                   key={journal}
                   ui_variant="ghost"
                   ui_size="small"
                   ui_color="secondary"
-                  className="text-left text-label-large"
+                  className="w-full text-left text-label-large"
                 >
                   <li className="ml-2">{journal}</li>
                 </Button>

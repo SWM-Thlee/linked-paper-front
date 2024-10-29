@@ -9,17 +9,16 @@ import { Tooltip, TooltipProvider } from "@/ui/tooltip";
 
 export const variant = tv({
   base: [
-    "fixed top-[50vh] right-[4rem] -translate-y-[50%]",
+    "fixed top-[50vh] right-[2rem] -translate-y-[50%]",
     "animate-fadeIn",
     "rounded-circle",
     "p-4",
     "ring-2 ring-inset",
-    "bg-light-surfaceDim/50",
+    "bg-light-surfaceContainer/90",
     "text-light-onSurface",
     "ring-light-outlineVariant",
-    "dark:bg-dark-surfaceDim/50",
+    "dark:bg-dark-surfaceContainer/90",
     "dark:text-dark-onSurface",
-    "dark:ring-dark-outlineVariant",
   ],
 });
 
