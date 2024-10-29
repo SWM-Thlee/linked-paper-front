@@ -4,13 +4,16 @@ import Link from "next/link";
 import ThemeSwitcher from "./theme-switcher";
 
 export default function FlowerHeader() {
+  const endpoint =
+    process.env.NEXT_PUBLIC_DEV_ENDPOINT ?? "https://linked-paper.com";
+
   return (
     <header className="fixed left-[2rem] top-[2rem] z-header">
       <div className="flex items-center gap-4">
         <Link href="/">
           <div className="flex items-center gap-4">
             <Image
-              src="./logo.svg"
+              src={`${endpoint}/logo.svg`}
               alt="Logo"
               width={32}
               height={32}
@@ -18,7 +21,7 @@ export default function FlowerHeader() {
               className="animate-fadeIn dark:hidden"
             />
             <Image
-              src="./logo-dark.svg"
+              src={`${endpoint}/logo-dark.svg`}
               alt="Logo"
               width={32}
               height={32}

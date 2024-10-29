@@ -8,7 +8,7 @@ export default function MainPageMobileLayout({
   header?: React.ReactNode;
 }) {
   return (
-    <div className="mt-32 flex flex-col gap-8">
+    <div className="mt-32 flex min-h-screen flex-col justify-between gap-8">
       {header}
       {children}
       <Footer />

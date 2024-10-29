@@ -109,12 +109,17 @@ export default function SearchResultItem(data: Paper.Scheme.ResultMetadata) {
         </Link>
         {originLink.length > 0 && (
           <OriginLinkButton
+            title="Origin"
             originLink={originLink}
             onClick={onClickOriginLink}
           />
         )}
         {pdfLink.length > 0 && (
-          <PdfLinkButton pdfLink={pdfLink} onClick={onClickPdfLink} />
+          <PdfLinkButton
+            title="PDF"
+            pdfLink={pdfLink}
+            onClick={onClickPdfLink}
+          />
         )}
       </div>
     </div>

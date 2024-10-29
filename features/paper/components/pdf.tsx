@@ -31,7 +31,7 @@ export default function PdfLinkButton({ pdfLink, title, onClick }: Props) {
         ui_color="secondary"
         ui_variant="bordered"
         ui_size="medium"
-        className="flex h-full w-full items-center justify-center gap-2"
+        className="flex h-full w-full items-center gap-4 only:justify-center"
       >
         <PdfLinkIcon ui_size="small" />
         {title && <div>{title}</div>}

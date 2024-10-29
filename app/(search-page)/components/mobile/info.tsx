@@ -41,7 +41,7 @@ function Categories({ categories: categoryIDs }: { categories: string[] }) {
   return categoryIDs.length > 0 ? (
     <div className="flex flex-col items-start gap-2">
       {Object.entries(groupsOfCategories).map(([subject, categories]) => (
-        <>
+        <React.Fragment key={subject}>
           <div className="flex items-center gap-2 text-label-medium">
             <CategoryIcon ui_size="small" />
             {subject}
@@ -57,7 +57,7 @@ function Categories({ categories: categoryIDs }: { categories: string[] }) {
               </React.Fragment>
             ))}
           </ul>
-        </>
+        </React.Fragment>
       ))}
     </div>
   ) : null;
@@ -118,7 +118,7 @@ export default function ResultItemInfo({
       className="rounded-2 p-3 text-label-large text-light-onSurface ring-2 ring-inset ring-light-outlineVariant dark:text-dark-onSurface dark:ring-dark-outlineVariant"
     >
       {isOpen ? (
-        <div className="flex flex-col gap-3">
+        <div className="flex animate-fadeIn flex-col gap-3">
           <Authors authors={authors} />
           <Journal journal={journal} />
           <Date date={date} />
@@ -127,7 +127,7 @@ export default function ResultItemInfo({
           <Categories categories={categories} />
         </div>
       ) : (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex animate-fadeIn flex-wrap items-center gap-3">
           <Date date={date} />
           <CitationCount citationCount={citationCount} />
           <Journal journal={journal} />

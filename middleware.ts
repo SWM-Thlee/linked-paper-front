@@ -16,5 +16,5 @@ export function middleware({ nextUrl, headers }: NextRequest) {
 
 /* 모바일 버전이 존재하는 페이지만 미들웨어를 적용합니다. */
 export const config = {
-  matcher: ["/", "/search"],
+  matcher: ["/", "/search", "/error/:path*"],
 };

@@ -38,6 +38,8 @@ export const headerVariant = tv({
 
 export default function Header() {
   const { wrapper, container, header, navigation, content } = headerVariant();
+  const endpoint =
+    process.env.NEXT_PUBLIC_DEV_ENDPOINT ?? "https://linked-paper.com";
 
   return (
     <header className="pointer-events-none fixed top-0 z-header flex w-full justify-center">
@@ -46,14 +48,14 @@ export default function Header() {
           {/* Title */}
           <Link href="/" className={header()}>
             <Image
-              src="./logo.svg"
+              src={`${endpoint}/logo.svg`}
               alt="Logo"
               width={32}
               height={32}
               className="animate-fadeIn dark:hidden"
             />
             <Image
-              src="./logo-dark.svg"
+              src={`${endpoint}/logo-dark.svg`}
               alt="Logo"
               width={32}
               height={32}
