@@ -69,12 +69,14 @@ export default function PaperInfoSidebar({ paper, onClose, children }: Props) {
             <>
               {paper.originLink.length > 0 && (
                 <OriginLinkButton
+                  title="Origin"
                   originLink={paper.originLink}
                   onClick={onClickOriginLink}
                 />
               )}
               {paper.pdfLink.length > 0 && (
                 <PdfLinkButton
+                  title="PDF"
                   pdfLink={paper.pdfLink}
                   onClick={onClickPdfLink}
                 />

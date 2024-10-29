@@ -79,7 +79,7 @@ export default function Feedback({
                 </div>
               </div>
               <div className="flex min-w-[30rem] flex-1 flex-col gap-8">
-                <FieldContainer title="Name (required)" ui_size="medium">
+                <FieldContainer field="Name (required)" ui_size="medium">
                   <TextField
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -89,7 +89,7 @@ export default function Feedback({
                     placeholder="What's your name?"
                   />
                 </FieldContainer>
-                <FieldContainer title="Email (required)" ui_size="medium">
+                <FieldContainer field="Email (required)" ui_size="medium">
                   <TextField
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -103,7 +103,7 @@ export default function Feedback({
             </div>
             <div className="w-[1px] rounded-circle bg-light-outline/25 dark:bg-dark-outline/25" />
             <div className="flex min-w-[30rem] flex-1 flex-col gap-8">
-              <FieldContainer title="Type" ui_size="medium">
+              <FieldContainer field="Type" ui_size="medium">
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(Type).map(([feedbackType, key]) => (
                     <LabelButton
@@ -117,7 +117,7 @@ export default function Feedback({
                   ))}
                 </div>
               </FieldContainer>
-              <FieldContainer title="Subject" ui_size="medium">
+              <FieldContainer field="Subject" ui_size="medium">
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(Subject).map(([subjectType, key]) => (
                     <LabelButton
@@ -132,7 +132,7 @@ export default function Feedback({
                   ))}
                 </div>
               </FieldContainer>
-              <FieldContainer title="Description (required)" ui_size="medium">
+              <FieldContainer field="Description (required)" ui_size="medium">
                 <TextArea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}

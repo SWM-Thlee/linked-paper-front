@@ -8,14 +8,26 @@ import FieldContainer from "@/ui/container/field-container";
 import Button from "@/ui/button";
 import AddIcon from "@/ui/icons/add";
 import ArrowForwardIcon from "@/ui/icons/arrow-forward";
+import TipIcon from "@/ui/icons/tip";
+import { SuggestionsProps, suggestionsVariant } from "./variants";
 
-export default function Suggestions() {
+export default function Suggestions({ ui_variant }: SuggestionsProps) {
   const { data, refetch } = useSuspenseQuery(queryOptions.suggestions(2));
   const { requestQuery } = useCompletion();
+  const { root, item, itemText, nextButton, nextButtonText } =
+    suggestionsVariant({
+      ui_variant,
+    });
 
   return (
-    <FieldContainer title="Suggestions">
-      <div className="flex items-center gap-4">
+    <FieldContainer
+      field={
+        <div className="flex items-center gap-2 text-label-medium">
+          <TipIcon ui_size="small" /> SUGGESTIONS
+        </div>
+      }
+    >
+      <div className={root()}>
         {data.map((suggestion) => (
           <Button
             key={suggestion}
@@ -23,9 +35,9 @@ export default function Suggestions() {
             ui_color="secondary"
             ui_variant="light"
             ui_size="large"
-            className="flex flex-1 animate-fadeIn select-none items-center justify-between gap-2 p-6 text-left"
+            className={item()}
           >
-            <div className="w-[16rem] text-label-large">{suggestion}</div>
+            <div className={itemText()}>{suggestion}</div>
             <ArrowForwardIcon />
           </Button>
         ))}
@@ -34,11 +46,9 @@ export default function Suggestions() {
           ui_color="secondary"
           ui_variant="light"
           ui_size="large"
-          className="flex select-none items-center justify-between gap-4 p-6 text-left"
+          className={nextButton()}
         >
-          <div className="w-[8rem] text-label-large">
-            Need more suggestions?
-          </div>
+          <div className={nextButtonText()}>Need more suggestions?</div>
           <AddIcon />
         </Button>
       </div>

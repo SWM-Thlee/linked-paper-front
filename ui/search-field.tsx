@@ -67,16 +67,28 @@ export const searchVariant = tv({
     },
     ui_size: {
       large: {
-        input: ["text-title-large", "ml-6 my-3"],
+        input: [
+          "text-title-large",
+          "placeholder:text-title-large",
+          "ml-6 my-3",
+        ],
         submit: ["p-2 my-2 mr-2"],
       },
       medium: {
-        input: ["text-title-medium", "ml-4 my-2"],
+        input: [
+          "text-title-medium",
+          "placeholder:text-label-large",
+          "ml-4 my-2",
+        ],
         submit: ["p-1 my-1.5 mr-1.5"],
       },
       small: {
-        input: ["text-title-small", "ml-2 my-1"],
-        submit: ["p-0.5 my-1 mr-1"],
+        input: [
+          "text-label-small",
+          "placeholder:text-label-small",
+          "ml-4 my-2",
+        ],
+        submit: ["p-1 my-1.5 mr-1.5"],
       },
     },
   },

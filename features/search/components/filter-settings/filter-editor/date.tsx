@@ -284,18 +284,18 @@ export default function EditorDate() {
       <Settings.Tab.Content>
         <div className="mt-8 flex flex-col gap-8">
           <div className="flex flex-col gap-4">
-            <FieldContainer title="DETAILS" ui_variant="bordered">
+            <FieldContainer field="DETAILS" ui_variant="bordered">
               <div className="grid grid-cols-2 gap-x-6">
-                <FieldContainer title="FROM" ui_size="medium">
+                <FieldContainer field="FROM" ui_size="medium">
                   <StartDateEditor date={date} setDate={setDate} />
                 </FieldContainer>
-                <FieldContainer title="TO" ui_size="medium">
+                <FieldContainer field="TO" ui_size="medium">
                   <EndDateEditor date={date} setDate={setDate} />
                 </FieldContainer>
               </div>
             </FieldContainer>
-            <FieldContainer title="QUICK SETTINGS" ui_variant="bordered">
-              <FieldContainer title="DEFAULT" ui_size="medium">
+            <FieldContainer field="QUICK SETTINGS" ui_variant="bordered">
+              <FieldContainer field="DEFAULT" ui_size="medium">
                 <div className="flex flex-wrap gap-2">
                   {DateOptions.DEFAULT.map(({ id, option, resolve }) => (
                     <Button
@@ -311,7 +311,7 @@ export default function EditorDate() {
                   ))}
                 </div>
               </FieldContainer>
-              <FieldContainer title="UNTIL NOW" ui_size="medium">
+              <FieldContainer field="UNTIL NOW" ui_size="medium">
                 <div className="flex flex-wrap gap-2">
                   {DateOptions.UNTIL.map(({ id, option, resolve }) => (
                     <Button

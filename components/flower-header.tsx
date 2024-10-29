@@ -5,7 +5,7 @@ import ThemeSwitcher from "./theme-switcher";
 
 export default function FlowerHeader() {
   return (
-    <div className="fixed left-[2rem] top-[2rem] z-header">
+    <header className="fixed left-[2rem] top-[2rem] z-header">
       <div className="flex items-center gap-4">
         <Link href="/">
           <div className="flex items-center gap-4">
@@ -33,6 +33,6 @@ export default function FlowerHeader() {
         <div className="h-[2rem] w-[1px] rounded-circle bg-light-onSurface/25 dark:bg-dark-onSurface/25" />
         <ThemeSwitcher />
       </div>
-    </div>
+    </header>
   );
 }

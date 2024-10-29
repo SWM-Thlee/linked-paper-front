@@ -53,19 +53,19 @@ export const fieldContainerVariant = tv({
 });
 
 type Props = {
-  title: string;
+  field: React.ReactNode;
 } & VariantProps<typeof fieldContainerVariant> &
   ComponentPropsWithoutRef<"div">;
 
 const FieldContainer = forwardRef<HTMLDivElement, Props>(
-  ({ title, ui_size, ui_variant, children, className, ...props }, ref) => {
+  ({ field, ui_size, ui_variant, children, className, ...props }, ref) => {
     const { label, wrapper, container } = fieldContainerVariant({
       ui_size,
       ui_variant,
     });
     return (
       <div ref={ref} className={wrapper()}>
-        <div className={label()}>{title}</div>
+        <div className={label()}>{field}</div>
         <div className={container({ className })} {...props}>
           {children}
         </div>

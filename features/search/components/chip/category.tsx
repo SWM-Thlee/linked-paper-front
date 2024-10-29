@@ -106,7 +106,7 @@ export default function CategoryChip({
             )}
             <div className="flex max-h-[20rem] w-[25rem] flex-col gap-2 overflow-y-auto scrollbar">
               {Object.entries(matchedResult).map(([subject, categories]) => (
-                <FieldContainer key={subject} title={subject} ui_size="medium">
+                <FieldContainer key={subject} field={subject} ui_size="medium">
                   <ul className="flex list-disc flex-col">
                     {Object.entries(categories).map(([categoryID, info]) => (
                       <div key={categoryID} className="flex items-stretch">
