@@ -4,18 +4,20 @@ import { useState } from "react";
 
 import { tv } from "@/utils/style/tailwind-variants";
 import Badge from "@/ui/badge";
+import ArrowDownIcon from "@/ui/icons/arrow-down";
+import ArrowUpIcon from "@/ui/icons/arrow-up";
 
 const abstractionVariant = tv({
   slots: {
     container: [
       "group/abs",
       "relative",
-      "flex flex-col gap-2",
+      "flex flex-col items-stretch gap-2",
       "rounded-2",
-      "transition-all",
+      "transition-colors",
       "text-left",
     ],
-    badgeContainer: ["flex flex-wrap items-center gap-2"],
+    badgeContainer: ["flex justify-between items-center gap-2"],
     badge: ["select-none", "transition-colors"],
     content: [
       "align-middle",
@@ -29,11 +31,6 @@ const abstractionVariant = tv({
   variants: {
     internal_ui_variant: {
       opened: {
-        container: [
-          "p-4",
-          "bg-light-secondaryContainer",
-          "dark:bg-dark-secondaryContainer",
-        ],
         badge: [
           "bg-light-onSecondaryContainer",
           "text-light-secondaryContainer",
@@ -78,6 +75,7 @@ export default function Abstraction({ children }: Props) {
         <Badge ui_color="secondary" className={badge()}>
           ABSTRACTION
         </Badge>
+        {isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
       </div>
       <div className={content()}>{children}</div>
     </button>

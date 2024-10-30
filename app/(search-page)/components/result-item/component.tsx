@@ -102,7 +102,7 @@ export default function SearchResultItem(data: Paper.Scheme.ResultMetadata) {
           href={{ pathname: "/flower", query: { id } }}
           onClick={onMoveToGraphView}
         >
-          <LabelButton ui_size="medium" className="w-full">
+          <LabelButton ui_size="medium" className="w-full justify-evenly">
             <BloomIcon ui_size="small" />
             Graph
           </LabelButton>

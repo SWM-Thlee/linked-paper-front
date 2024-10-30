@@ -29,7 +29,7 @@ export function SimilarityWarning() {
       </div>
       <Button
         ui_color="tertiary"
-        className="self-start text-label-large"
+        className="text-label-large"
         onClick={disableLimitation}
       >
         Disable and Search Again

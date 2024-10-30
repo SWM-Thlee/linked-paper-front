@@ -53,7 +53,7 @@ function Categories({ categories: categoryIDs }: { categories: string[] }) {
                   <SubIcon ui_size="small" />
                   {info.description}
                 </li>
-                <div className="text-left">{categoryID}</div>
+                <div className="text-right">{categoryID}</div>
               </React.Fragment>
             ))}
           </ul>
@@ -115,7 +115,7 @@ export default function ResultItemInfo({
     <button
       type="button"
       onClick={() => setIsOpen(!isOpen)}
-      className="rounded-2 p-3 text-label-large text-light-onSurface ring-2 ring-inset ring-light-outlineVariant dark:text-dark-onSurface dark:ring-dark-outlineVariant"
+      className="rounded-2 p-4 text-label-large text-light-onSurface ring-2 ring-inset ring-light-outlineVariant dark:text-dark-onSurface dark:ring-dark-outlineVariant"
     >
       {isOpen ? (
         <div className="flex animate-fadeIn flex-col gap-3">

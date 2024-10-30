@@ -42,7 +42,7 @@ export default function Page() {
           </Suspense>
           <ScrollToTop
             ui_size="small"
-            ui_color="tertiary"
+            ui_color="secondary"
             ui_position="bottom"
           />
         </QueryResolver>

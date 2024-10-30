@@ -37,7 +37,7 @@ export default function OriginLinkButton({
         ui_variant="bordered"
         ui_color="secondary"
         ui_size="medium"
-        className="flex h-full w-full items-center gap-4 only:justify-center"
+        className="flex h-full w-full items-center gap-4 only:justify-evenly"
       >
         <OriginLinkIcon ui_size="small" />
         {title && <div>{title}</div>}

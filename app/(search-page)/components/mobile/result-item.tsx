@@ -91,7 +91,7 @@ export default function SearchResultItem(data: Paper.Scheme.ResultMetadata) {
         >
           <LabelButton
             ui_size="medium"
-            className="flex h-full w-full items-center justify-center gap-2"
+            className="flex h-full w-full items-center justify-evenly gap-2"
           >
             <BloomIcon ui_size="small" />
             Graph
