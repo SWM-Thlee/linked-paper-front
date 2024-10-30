@@ -87,6 +87,7 @@ export default function SearchResultItem(data: Paper.Scheme.ResultMetadata) {
         <Link
           href={{ pathname: "/flower", query: { id } }}
           onClick={onMoveToGraphView}
+          target="_blank"
           className="flex-1"
         >
           <LabelButton

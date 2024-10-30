@@ -5,8 +5,8 @@ import { useState } from "react";
 import { tv } from "@/utils/style/tailwind-variants";
 import Badge from "@/ui/badge";
 import IconButton from "@/ui/icon-button";
-import AddIcon from "@/ui/icons/add";
-import CloseIcon from "@/ui/icons/close";
+import ArrowUpIcon from "@/ui/icons/arrow-up";
+import ArrowDownIcon from "@/ui/icons/arrow-down";
 
 const abstractionVariant = tv({
   slots: {
@@ -98,11 +98,11 @@ export default function Abstraction({ children }: Props) {
       <div className={content()}>{children}</div>
       {isOpen ? (
         <IconButton className={close()} onClick={() => setIsOpen(false)}>
-          <CloseIcon ui_size="small" />
+          <ArrowUpIcon ui_size="small" />
         </IconButton>
       ) : (
         <IconButton className={open()} onClick={() => setIsOpen(true)}>
-          <AddIcon ui_size="small" />
+          <ArrowDownIcon ui_size="small" />
         </IconButton>
       )}
     </div>
