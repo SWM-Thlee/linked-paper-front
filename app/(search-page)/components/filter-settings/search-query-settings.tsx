@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import equal from "fast-deep-equal";
 import { produce } from "immer";
+import isEqual from "react-fast-compare";
 
 import { Settings } from "@/ui/settings";
 import useTabID from "@/ui/settings/hooks/use-tab-id";
@@ -74,21 +74,21 @@ export default function SearchQuery() {
   );
 
   /* 생성 날짜가 가까운 Preset부터 위에 위치합니다. */
-  const presetSearchResults = useMemo(
-    () =>
-      Object.entries(presetFilters)
-        .filter(([, data]) => search(data.name))
-        .toSorted(
-          ([, leftData], [, rightData]) =>
-            (rightData.tags[Filter.Identify.Tag.PRESET].createdAt as number) -
-            (leftData.tags[Filter.Identify.Tag.PRESET].createdAt as number),
-        ),
-    [search, presetFilters],
-  );
+  const presetSearchResults = useMemo(() => {
+    const entries = Object.entries(presetFilters).filter(([, data]) =>
+      search(data.name),
+    );
+
+    return entries.sort(
+      ([, leftData], [, rightData]) =>
+        (rightData.tags[Filter.Identify.Tag.PRESET].createdAt as number) -
+        (leftData.tags[Filter.Identify.Tag.PRESET].createdAt as number),
+    );
+  }, [search, presetFilters]);
 
   /* Default Filter 적용 시 Search Query에도 동일하게 적용합니다. */
   const isFilterMatched = useMemo(
-    () => equal(searchQueryFilter?.attributes, defaultFilter?.attributes),
+    () => isEqual(searchQueryFilter?.attributes, defaultFilter?.attributes),
     [searchQueryFilter?.attributes, defaultFilter?.attributes],
   );
 

@@ -21,7 +21,8 @@ export const queryOptions = {
 
       initialPageParam: info.index,
       getNextPageParam: (_, allPages) => {
-        const success = allPages.findLast((value) => value.status !== "ERROR");
+        const reversedPages = [...allPages].reverse();
+        const success = reversedPages.find((value) => value.status !== "ERROR");
 
         // ERROR만 존재하는 경우 Initial Index가 Next Page입니다.
         if (!success) return info.index;
@@ -32,7 +33,9 @@ export const queryOptions = {
       },
 
       select({ pages, pageParams }) {
-        const failIndex = pages.findLastIndex(
+        const reversedPages = [...pages].reverse();
+
+        const failIndex = reversedPages.findIndex(
           (value) => value.status === "ERROR",
         );
 
@@ -42,6 +45,7 @@ export const queryOptions = {
         const succeededParams = pageParams.filter(
           (_, index) => pages[index].status !== "ERROR",
         );
+
         return {
           pages: succeededPages,
           pageParams: succeededParams,

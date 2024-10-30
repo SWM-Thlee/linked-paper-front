@@ -44,17 +44,17 @@ export default function DefaultSearchFilter() {
   );
 
   /* 생성 날짜가 가까운 Preset부터 위에 위치합니다. */
-  const presets = useMemo(
-    () =>
-      Object.entries(filters)
-        .filter(([, data]) => search(data.name))
-        .toSorted(
-          ([, leftData], [, rightData]) =>
-            (rightData.tags[Filter.Identify.Tag.PRESET].createdAt as number) -
-            (leftData.tags[Filter.Identify.Tag.PRESET].createdAt as number),
-        ),
-    [search, filters],
-  );
+  const presets = useMemo(() => {
+    const entries = Object.entries(filters).filter(([, data]) =>
+      search(data.name),
+    );
+
+    return entries.sort(
+      ([, leftData], [, rightData]) =>
+        (rightData.tags[Filter.Identify.Tag.PRESET].createdAt as number) -
+        (leftData.tags[Filter.Identify.Tag.PRESET].createdAt as number),
+    );
+  }, [search, filters]);
 
   return (
     <Settings.Tab.Root

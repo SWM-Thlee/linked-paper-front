@@ -428,9 +428,7 @@ export default function FlowerGraphView() {
 
       if (initial !== paperID) return;
 
-      throw new Error(`Cannot load initial node of paper: ${paperID}`, {
-        cause: paperID,
-      });
+      throw new Error(`Cannot load initial node of paper: ${paperID}`);
     });
   }, [initial, onFlowerError]);
 

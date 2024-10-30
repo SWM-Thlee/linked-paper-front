@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useAtomValue } from "jotai";
 import { usePathname, useRouter } from "next/navigation";
-import equal from "fast-deep-equal";
+import isEqual from "react-fast-compare";
 
 import { Search } from "../../types";
 import { convertToQueryString } from "../../utils/filter/query";
@@ -34,7 +34,7 @@ export default function useSearchUpdate() {
       const newQuery = { ...query, ...info };
       const queryString = convertToQueryString(newQuery);
 
-      if (equal(query, newQuery)) return;
+      if (isEqual(query, newQuery)) return;
 
       router.replace(`/search?${queryString}`);
     },

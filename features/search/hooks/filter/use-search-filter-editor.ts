@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { Draft, produce } from "immer";
-import equal from "fast-deep-equal";
+import isEqual from "react-fast-compare";
 
 import { Filter } from "@/features/filter/types";
 import { Search } from "@/features/search/types";
@@ -145,8 +145,8 @@ export default function useSearchFilterEditor({ dataID, store }: Props) {
   /** 수정 사항의 존재 여부를 확인합니다. */
   const isModified = useMemo(
     () =>
-      !equal(editor?.name, filter?.name) ||
-      !equal(editor?.attributes, filter?.attributes),
+      !isEqual(editor?.name, filter?.name) ||
+      !isEqual(editor?.attributes, filter?.attributes),
     [editor?.attributes, editor?.name, filter?.attributes, filter?.name],
   );
 
