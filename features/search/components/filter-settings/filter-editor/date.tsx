@@ -278,7 +278,7 @@ export default function EditorDate() {
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">
-          <DateIcon ui_size="small" /> Date
+          <DateIcon ui_size="small" /> <span>Date</span>
         </div>
       </Settings.Tab.Title>
       <Settings.Tab.Content>

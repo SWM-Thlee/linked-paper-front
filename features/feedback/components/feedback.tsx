@@ -148,7 +148,7 @@ export default function Feedback({
             className="flex items-center justify-center gap-2 text-label-large"
             onClick={onSubmit}
           >
-            <AddIcon /> Submit Feedback
+            <AddIcon /> <span>Submit Feedback</span>
           </Button>
         </div>
       </Dialog.Content>

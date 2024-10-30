@@ -72,7 +72,7 @@ export default function ZoomToolbar({ handler, viewConfig }: Props) {
         className="flex w-[6rem] justify-between"
         onClick={() => setOpenDetails((open) => !open)}
       >
-        <SearchIcon ui_size="small" /> {zoom.toFixed(2)}x
+        <SearchIcon ui_size="small" /> <span>{zoom.toFixed(2)}x</span>
       </LabelButton>
       {openDetails && (
         <Slider

@@ -23,8 +23,9 @@ export function SimilarityWarning() {
       <div className="flex flex-col gap-4">
         <WarningIcon />
         <div className="text-title-medium">
-          Next search results may be significantly less similar. <br />
-          Do you want to disable Similar Limitation?
+          <span>Next search results may be significantly less similar.</span>
+          <br />
+          <span>Do you want to disable Similar Limitation?</span>
         </div>
       </div>
       <Button

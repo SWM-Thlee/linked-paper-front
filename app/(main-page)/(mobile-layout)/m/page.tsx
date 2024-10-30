@@ -24,7 +24,7 @@ export default function MainPage() {
             <FieldContainer
               field={
                 <div className="flex items-center gap-2 text-label-medium">
-                  <SearchIcon ui_size="small" /> AI SEARCH
+                  <SearchIcon ui_size="small" /> <span>AI SEARCH</span>
                 </div>
               }
             >

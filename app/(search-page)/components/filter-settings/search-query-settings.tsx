@@ -176,7 +176,8 @@ export default function SearchQuery() {
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">
-          <SearchIcon ui_size="small" /> {Search.Settings.SEARCH_QUERY.TITLE}
+          <SearchIcon ui_size="small" />
+          <span>{Search.Settings.SEARCH_QUERY.TITLE}</span>
         </div>
       </Settings.Tab.Title>
       <Settings.Tab.Content>

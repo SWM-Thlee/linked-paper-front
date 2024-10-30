@@ -22,9 +22,11 @@ export default function OthersChip({
     <Popover.Root>
       <Popover.Trigger>
         <LabelButton ui_color="secondary" ui_variant="light">
-          <DateIcon ui_size="small" /> {date}
+          <DateIcon ui_size="small" />
+          <span>{date}</span>
           <SpliterIcon />
-          <CitationIcon ui_size="small" /> {citationCount}
+          <CitationIcon ui_size="small" />
+          <span>{citationCount}</span>
         </LabelButton>
       </Popover.Trigger>
       <Popover.Content>
@@ -36,7 +38,7 @@ export default function OthersChip({
             className="flex items-center justify-between gap-24"
           >
             <div className="flex items-center gap-2">
-              <DateIcon ui_size="small" /> Date
+              <DateIcon ui_size="small" /> <span>Date</span>
             </div>
             <div className="text-label-large">{date}</div>
           </Button>
@@ -47,7 +49,7 @@ export default function OthersChip({
             className="flex items-center justify-between gap-24"
           >
             <div className="flex items-center gap-2">
-              <ReferenceIcon ui_size="small" /> Reference
+              <ReferenceIcon ui_size="small" /> <span>Reference</span>
             </div>
             <div className="text-label-large">{referenceCount}</div>
           </Button>
@@ -58,7 +60,7 @@ export default function OthersChip({
             className="flex items-center justify-between gap-24"
           >
             <div className="flex items-center gap-2">
-              <CitationIcon ui_size="small" /> Citation
+              <CitationIcon ui_size="small" /> <span>Citation</span>
             </div>
             <div className="text-label-large">{citationCount}</div>
           </Button>

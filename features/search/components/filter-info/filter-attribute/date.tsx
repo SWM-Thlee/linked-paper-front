@@ -11,7 +11,7 @@ import { ContentContainer, KeyContainer } from "./common";
 export function DateKey() {
   return (
     <KeyContainer>
-      <DateIcon /> Date
+      <DateIcon /> <span>Date</span>
     </KeyContainer>
   );
 }

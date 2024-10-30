@@ -73,7 +73,7 @@ export default function DefaultFilterInfo() {
           ui_size="small"
           className="animate-pulse"
         >
-          <FilterIcon ui_size="small" /> Loading Filters...
+          <FilterIcon ui_size="small" /> <span>Loading Filters...</span>
         </LabelButton>
       </div>
     );
@@ -85,11 +85,11 @@ export default function DefaultFilterInfo() {
         <LabelButton ui_color="secondary" ui_size="small">
           {filter ? (
             <>
-              <FilterIcon ui_size="small" /> Configure Filter...
+              <FilterIcon ui_size="small" /> <span>Configure Filter...</span>
             </>
           ) : (
             <>
-              <AddIcon ui_size="small" /> Add Filter...
+              <AddIcon ui_size="small" /> <span>Add Filter...</span>
             </>
           )}
         </LabelButton>

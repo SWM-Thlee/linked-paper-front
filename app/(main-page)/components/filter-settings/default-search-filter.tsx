@@ -66,7 +66,7 @@ export default function DefaultSearchFilter() {
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">
-          <FilterIcon ui_size="small" />{" "}
+          <FilterIcon ui_size="small" />
           {Search.Settings.DEFAULT_SEARCH_FILTER.TITLE}
         </div>
       </Settings.Tab.Title>

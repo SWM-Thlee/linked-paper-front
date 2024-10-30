@@ -718,7 +718,7 @@ export default function FlowerGraphView() {
             ) : (
               <CloseIcon ui_size="small" />
             )}
-            Similarity
+            <span>Similarity</span>
           </LabelButton>
         </ToolbarContainer>
         <ToolbarContainer>
@@ -728,7 +728,7 @@ export default function FlowerGraphView() {
               ui_color="secondary"
               ui_variant="ghost"
             >
-              <FeedbackIcon /> Feedback
+              <FeedbackIcon /> <span>Feedback</span>
             </LabelButton>
           </Feedback>
         </ToolbarContainer>

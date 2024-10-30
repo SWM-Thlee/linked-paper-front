@@ -145,7 +145,7 @@ function ResultSize({
               onClick={() => setStatus(size)}
             >
               {status === size && <CheckIcon ui_size="small" />}
-              {size}
+              <span>{size}</span>
             </LabelButton>
           ))}
         </div>
@@ -183,7 +183,7 @@ function SimilarityLimitation({
           ) : (
             <CloseIcon ui_size="small" />
           )}
-          Similarity Limitation
+          <span>Similarity Limitation</span>
         </LabelButton>
       </Popover.Trigger>
       <Popover.Content
@@ -208,7 +208,7 @@ function SimilarityLimitation({
               className="flex items-center justify-center gap-2 text-label-large"
               onClick={() => setStatus(false)}
             >
-              <CloseIcon ui_size="small" /> Disable Limitation
+              <CloseIcon ui_size="small" /> <span>Disable Limitation</span>
             </Button>
           </>
         ) : (
@@ -228,7 +228,7 @@ function SimilarityLimitation({
               className="flex items-center justify-center gap-2 text-label-large"
               onClick={() => setStatus(true)}
             >
-              <CheckIcon ui_size="small" /> Enable Limitation
+              <CheckIcon ui_size="small" /> <span>Enable Limitation</span>
             </Button>
           </>
         )}
@@ -305,7 +305,7 @@ export default function SearchResultHeader() {
           />
           <FilterSettings>
             <LabelButton ui_color="secondary" ui_variant="bordered">
-              <FilterIcon ui_size="small" /> Configure Filter...
+              <FilterIcon ui_size="small" /> <span>Configure Filter...</span>
             </LabelButton>
           </FilterSettings>
         </div>

@@ -28,7 +28,7 @@ export default function ThemeSwitcher() {
   if (!isClient || !(resolvedTheme === "light" || resolvedTheme === "dark"))
     return (
       <LabelButton aria-label="Switch Theme" ui_color="secondary">
-        {themes.light} Loading
+        {themes.light} <span>Loading</span>
       </LabelButton>
     );
 

@@ -14,7 +14,7 @@ export default function SuggestionsSkeleton({ ui_variant }: SuggestionsProps) {
     <FieldContainer
       field={
         <div className="flex items-center gap-2 text-label-medium">
-          <TipIcon ui_size="small" /> SUGGESTIONS
+          <TipIcon ui_size="small" /> <span>SUGGESTIONS</span>
         </div>
       }
     >

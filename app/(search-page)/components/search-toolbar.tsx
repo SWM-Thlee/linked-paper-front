@@ -13,7 +13,7 @@ export default function SearchToolbar() {
         <ToolbarContainer>
           <Feedback>
             <LabelButton ui_color="secondary" ui_variant="ghost">
-              <FeedbackIcon ui_size="small" /> Feedback
+              <FeedbackIcon ui_size="small" /> <span>Feedback</span>
             </LabelButton>
           </Feedback>
         </ToolbarContainer>

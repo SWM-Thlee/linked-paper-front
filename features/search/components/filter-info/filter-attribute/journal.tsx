@@ -11,7 +11,7 @@ import { ContentContainer, KeyContainer } from "./common";
 export function JournalKey() {
   return (
     <KeyContainer>
-      <JournalIcon /> Source
+      <JournalIcon /> <span>Source</span>
     </KeyContainer>
   );
 }
