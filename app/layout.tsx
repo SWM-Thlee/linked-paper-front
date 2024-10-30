@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html
       suppressHydrationWarning
-      lang="ko"
+      lang="en"
       className={`scrollbar ${playfair.variable} ${urbanist.variable}`}
     >
       <StateProvider>

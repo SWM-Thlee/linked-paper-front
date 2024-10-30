@@ -27,6 +27,7 @@ export const DefaultMetadata = {
     type: "website",
     title: "Linked Paper",
     url: "https://linked-paper.com",
+    locale: "en-US",
     description:
       "Linked Paper leverages semantic analysis and graph-based visualization to enhance academic paper discovery and provide personalized recommendations.",
     siteName: "Linked Paper",
