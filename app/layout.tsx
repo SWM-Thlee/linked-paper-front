@@ -1,5 +1,6 @@
 import { Viewport } from "next";
 import { Toaster } from "react-hot-toast";
+import NextTopLoader from "nextjs-toploader";
 
 import { playfair, urbanist } from "@/config/fonts";
 
@@ -38,6 +39,7 @@ export default function RootLayout({
           <ThemeProvider>
             {header}
             {children}
+            <NextTopLoader color="#7782FF" />
             <Toaster toastOptions={{ position: "bottom-center" }} />
           </ThemeProvider>
         </BodyWithScrollLock>

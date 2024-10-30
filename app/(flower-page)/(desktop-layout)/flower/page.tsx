@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
@@ -27,9 +26,7 @@ export async function generateMetadata({
 export default function Page() {
   return (
     <ScrollLockOnce>
-      <Suspense fallback={<ViewLoading />}>
-        <FlowerGraphView />
-      </Suspense>
+      <FlowerGraphView />
     </ScrollLockOnce>
   );
 }
