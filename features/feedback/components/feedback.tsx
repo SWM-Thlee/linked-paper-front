@@ -12,7 +12,7 @@ import TextArea from "@/ui/text-area";
 import TextField from "@/ui/text-field";
 import VisuallyHidden from "@/ui/visually-hidden";
 import LabelButton from "@/ui/label-button";
-import TipIcon from "@/ui/icons/tip";
+import CheckBox from "@/ui/check-box";
 import { sendSentryFeedback } from "../utils/sentry";
 import { Subject, Type } from "../types/scheme";
 
@@ -30,11 +30,12 @@ export default function Feedback({
   const [description, setDescription] = useState("");
   const [type, setType] = useState<Type>(Type.FEEDBACK);
   const [subject, setSubject] = useState<Subject>(Subject.ALL);
+  const [isSpecificUser, setIsSpecificUser] = useState(false);
   const [open, setOpen] = useState(false);
 
   const onSubmit = useCallback(() => {
-    if (!name || !email || !description) {
-      toast.error("Please fill in all fields");
+    if (!description) {
+      toast.error("Please fill the description.");
       return;
     }
 
@@ -63,46 +64,45 @@ export default function Feedback({
             <FeedbackIcon />
             <div className="text-title-large">{title}</div>
           </div>
-          <div className="flex gap-8">
-            <div className="flex flex-1 flex-col gap-8">
-              <div className="flex flex-col gap-8 rounded-4 bg-light-secondaryContainer p-6 text-light-onSecondaryContainer dark:bg-dark-secondaryContainer dark:text-dark-onSecondaryContainer">
-                <div className="flex flex-col gap-8 text-title-large">
-                  <TipIcon ui_size="large" />
-                  Your Feedback Shapes Our Service!
-                </div>
-                <div className="text-body-medium">
-                  Tell us how we can make this service better for you! Whether
-                  it’s a bug, a feature you’d love, or any other improvement
-                  idea, your insights are valuable to us. Please share your
-                  thoughts—big or small! Every piece of feedback helps us create
-                  a better experience for you and the community.
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-8">
+              <div className="flex items-center gap-2">
+                <CheckBox
+                  checked={isSpecificUser}
+                  onCheckedChange={(checked) =>
+                    setIsSpecificUser(checked !== false)
+                  }
+                />
+                <div className="text-label-large">
+                  want to be remembered as one who helped build this service.
                 </div>
               </div>
-              <div className="flex min-w-[30rem] flex-1 flex-col gap-8">
-                <FieldContainer field="Name (required)" ui_size="medium">
-                  <TextField
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    ui_size="medium"
-                    ui_color="secondary"
-                    type="text"
-                    placeholder="What's your name?"
-                  />
-                </FieldContainer>
-                <FieldContainer field="Email (required)" ui_size="medium">
-                  <TextField
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    ui_size="medium"
-                    ui_color="secondary"
-                    type="email"
-                    placeholder="hello@example.com"
-                  />
-                </FieldContainer>
-              </div>
+              {isSpecificUser && (
+                <>
+                  <FieldContainer field="Name" ui_size="medium">
+                    <TextField
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      ui_size="medium"
+                      ui_color="secondary"
+                      type="text"
+                      placeholder="What's your name?"
+                    />
+                  </FieldContainer>
+                  <FieldContainer field="Email" ui_size="medium">
+                    <TextField
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      ui_size="medium"
+                      ui_color="secondary"
+                      type="email"
+                      placeholder="hello@example.com"
+                    />
+                  </FieldContainer>
+                </>
+              )}
             </div>
-            <div className="w-[1px] rounded-circle bg-light-outline/25 dark:bg-dark-outline/25" />
-            <div className="flex min-w-[30rem] flex-1 flex-col gap-8">
+            <div className="flex flex-col gap-8">
               <FieldContainer field="Type" ui_size="medium">
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(Type).map(([feedbackType, key]) => (
@@ -132,16 +132,16 @@ export default function Feedback({
                   ))}
                 </div>
               </FieldContainer>
-              <FieldContainer field="Description (required)" ui_size="medium">
-                <TextArea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  ui_size="medium"
-                  ui_color="secondary"
-                  rows={15}
-                />
-              </FieldContainer>
             </div>
+            <FieldContainer field="Description (required)" ui_size="medium">
+              <TextArea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                ui_size="medium"
+                ui_color="secondary"
+                rows={10}
+              />
+            </FieldContainer>
           </div>
           <Button
             ui_color="secondary"
