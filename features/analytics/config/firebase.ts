@@ -2,7 +2,9 @@ import { FirebaseOptions, initializeApp } from "firebase/app";
 import {
   Analytics,
   getAnalytics as getFirebaseAnalytics,
+  setUserId,
 } from "firebase/analytics";
+import { UserId } from "../types/track";
 
 /**
  * Firebase Analytics에 접근하기 위한 환경 설정입니다.
@@ -25,12 +27,17 @@ export function canAnalyze(
   return typeof window !== undefined && analyticsObj !== null;
 }
 
-export function createAnalytics() {
+export function createAnalytics(userId?: UserId) {
   // Server에서는 Analytics를 불러올 수 없습니다.
   if (typeof window === undefined) return null;
 
   const app = initializeApp(firebaseConfig);
   const analytics = getFirebaseAnalytics(app);
+
+  // 사용자 ID를 설정합니다.
+  if (userId) {
+    setUserId(analytics, userId);
+  }
 
   return analytics;
 }
