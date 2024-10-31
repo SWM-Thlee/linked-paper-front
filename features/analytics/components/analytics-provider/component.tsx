@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAtomValue } from "jotai";
-
 import { Analytics } from "firebase/analytics";
+
 import { createAnalytics } from "../../config/firebase";
 import { AnalyticsProviderContext } from "./context";
-import { userIdAtom } from "../../store/user";
+import { getAnalyticsUserId } from "../../store/user";
 
 type Props = {
   children: React.ReactNode;
@@ -14,12 +13,14 @@ type Props = {
 
 export default function AnalyticsProvider({ children }: Props) {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
-  const userId = useAtomValue(userIdAtom);
 
   useEffect(() => {
-    if (typeof window === undefined) return;
-    setAnalytics(createAnalytics(userId));
-  }, [userId]);
+    const userId = getAnalyticsUserId();
+
+    if (userId) {
+      setAnalytics(createAnalytics(userId));
+    }
+  }, []);
 
   return (
     <AnalyticsProviderContext.Provider value={analytics}>
