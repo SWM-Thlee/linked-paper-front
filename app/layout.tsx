@@ -39,7 +39,7 @@ export default function RootLayout({
           <ThemeProvider>
             {header}
             {children}
-            <NextTopLoader color="#7782FF" />
+            <NextTopLoader color="#7782FF" showSpinner={false} />
             <Toaster toastOptions={{ position: "bottom-center" }} />
           </ThemeProvider>
         </BodyWithScrollLock>
