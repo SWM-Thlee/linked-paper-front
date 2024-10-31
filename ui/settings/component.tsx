@@ -1,15 +1,8 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as Primitive from "@radix-ui/react-dialog";
 
 import useIsClient from "@/hooks/use-is-client";
 import { tv } from "@/utils/style/tailwind-variants";
-import { sem } from "@/utils/style/semantic-styles";
 import { Search } from "@/features/search/types";
 import {
   SettingsContainer,
@@ -33,97 +26,42 @@ import useOptionContainerID from "./hooks/use-option-container-id";
 
 export const settingsVariant = tv({
   slots: {
-    overlay: sem()
-      .layout(["fixed", "inset-0", "z-overlay"])
-      .color(["bg-light-shadow/15", "dark:bg-dark-shadow/15", "backdrop-blur"])
-      .transition(["data-[state=open]:animate-overlayShow"])
-      .build(),
-    container: sem()
-      .layout([
-        "grid grid-cols-[minmax(20rem,_1fr)_3fr]",
-        "fixed",
-        "overflow-hidden",
-        "rounded-6",
-        "top-[50%] left-[50%]",
-        "w-[1024px]",
-        "translate-x-[-50%] translate-y-[-50%]",
-        "z-dialog",
-      ])
-      .color([
-        "focus:outline-none",
-        "shadow-lg",
-        "bg-light-surfaceContainerLowest",
-        "text-light-onSurface",
-        "dark:bg-dark-surfaceContainerLowest",
-        "dark:text-dark-onSurface",
-      ])
-      .transition([
-        "data-[state=open]:animate-contentShow",
-        "data-[state=closed]:animate-contentHide",
-      ])
-      .build(),
-    tabContainer: sem()
-      .layout(["select-none", "h-[75vh]", "flex flex-col", "px-6"])
-      .color([
-        "bg-light-surfaceContainerLow",
-        "text-light-onSurface",
-        "dark:bg-dark-surfaceContainerLow",
-        "dark:text-dark-onSurface",
-      ])
-      .build(),
-    tab: sem()
-      .layout([
-        "flex flex-col",
-        "overflow-hidden",
-        "overflow-y-auto",
-        "scrollbar-none",
-        "py-6",
-        "gap-4",
-      ])
-      .build(),
-    contentContainer: sem()
-      .layout(["relative", "h-[75vh]", "flex flex-col", "px-8"])
-      .color([
-        "bg-light-surfaceContainerLowest",
-        "text-light-onSurface",
-        "dark:bg-dark-surfaceContainerLowest",
-        "dark:text-dark-onSurface",
-      ])
-      .build(),
-    content: sem()
-      .layout([
-        "flex flex-col",
-        "overflow-hidden",
-        "overflow-y-auto",
-        "scrollbar-none",
-        "py-8",
-      ])
-      .build(),
-    optionContainer: sem()
-      .layout([
-        "absolute",
-        "flex items-center",
-        "rounded-circle",
-        "right-[50%] bottom-[1.5rem]",
-        "translate-x-[50%]",
-        "p-2",
-        "gap-2",
-      ])
-      .color([
-        "bg-light-surfaceVariant/50",
-        "text-light-onSurface",
-        "dark:bg-dark-surfaceVariant/50",
-        "dark:text-dark-onSurface",
-      ])
-      .transition(["transition-transform", "empty:translate-y-[250%]"])
-      .build(),
-    close: sem()
-      .layout(["absolute", "top-8", "right-8"])
-      .color(["text-light-onSurface", "dark:text-dark-onSurface"])
-      .build(),
-    contentHeader: sem()
-      .layout(["flex items-center", "gap-2", "text-title-large", "select-none"])
-      .build(),
+    overlay: [
+      "fixed inset-0 z-overlay",
+      "bg-light-shadow/15 dark:bg-dark-shadow/15 backdrop-blur",
+      "transition data-[state=open]:animate-overlayShow",
+    ],
+    container: [
+      "grid grid-cols-[minmax(20rem,_1fr)_3fr] fixed overflow-hidden rounded-6",
+      "top-[50%] left-[50%] w-[1024px] translate-x-[-50%] translate-y-[-50%] z-dialog",
+      "focus:outline-none shadow-lg",
+      "bg-light-surfaceContainerLowest text-light-onSurface dark:bg-dark-surfaceContainerLowest dark:text-dark-onSurface",
+      "data-[state=open]:animate-contentShow data-[state=closed]:animate-contentHide",
+    ],
+    tabContainer: [
+      "select-none h-[75vh] flex flex-col px-6",
+      "bg-light-surfaceContainerLow text-light-onSurface dark:bg-dark-surfaceContainerLow dark:text-dark-onSurface",
+    ],
+    tab: [
+      "flex flex-col overflow-hidden overflow-y-auto scrollbar-none py-6 gap-4",
+    ],
+    contentContainer: [
+      "relative h-[75vh] flex flex-col px-8",
+      "bg-light-surfaceContainerLowest text-light-onSurface dark:bg-dark-surfaceContainerLowest dark:text-dark-onSurface",
+    ],
+    content: [
+      "flex flex-col overflow-hidden overflow-y-auto scrollbar-none py-8",
+    ],
+    optionContainer: [
+      "absolute flex items-center rounded-circle right-[50%] bottom-[1.5rem] translate-x-[50%] p-2 gap-2",
+      "bg-light-surfaceVariant/50 text-light-onSurface dark:bg-dark-surfaceVariant/50 dark:text-dark-onSurface",
+      "transition-transform empty:translate-y-[250%]",
+    ],
+    close: [
+      "absolute top-8 right-8",
+      "text-light-onSurface dark:text-dark-onSurface",
+    ],
+    contentHeader: ["flex items-center gap-2 text-title-large select-none"],
   },
 });
 

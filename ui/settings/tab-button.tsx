@@ -3,23 +3,18 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 
 import { tv, VariantProps } from "@/utils/style/tailwind-variants";
-import { sem } from "@/utils/style/semantic-styles";
 
 export const tabButtonVariant = tv({
-  base: sem()
-    .layout(["text-body-large", "px-4 py-2", "rounded-3"])
-    .color([
-      "text-light-onPrimaryContainer",
-      "hover:bg-light-primaryContainer",
-      "dark:text-dark-onPrimaryContainer",
-      "dark:hover:bg-dark-primaryContainer",
-    ])
-    .transition(["transition-colors", "duration-200"])
-    .build(),
+  base: [
+    "text-body-large px-4 py-2 rounded-3",
+    "text-light-onPrimaryContainer dark:text-dark-onPrimaryContainer",
+    "hover:bg-light-primaryContainer dark:hover:bg-dark-primaryContainer",
+    "transition-colors duration-200",
+  ],
   variants: {
     ui_variant: {
       default: [],
-      selected: ["bg-light-primaryContainer", "dark:bg-dark-primaryContainer"],
+      selected: ["bg-light-primaryContainer dark:bg-dark-primaryContainer"],
     },
   },
   defaultVariants: {

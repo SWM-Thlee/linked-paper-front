@@ -1,18 +1,17 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 import { tv, VariantProps } from "@/utils/style/tailwind-variants";
-import { sem } from "@/utils/style/semantic-styles";
 
 export const fieldContainerVariant = tv({
   slots: {
-    label: sem()
-      .layout(["text-label-large"])
-      .color(["text-light-onSurface", "dark:text-dark-onSurface"])
-      .build(),
-    wrapper: sem().layout(["flex flex-col"]).build(),
-    container: sem()
-      .layout(["flex flex-col"])
-      .color(["ring-light-outlineVariant", "dark:ring-dark-outlineVariant"])
-      .build(),
+    label: [
+      "text-label-large",
+      "text-light-onSurface dark:text-dark-onSurface",
+    ],
+    wrapper: ["flex flex-col"],
+    container: [
+      "flex flex-col",
+      "ring-light-outlineVariant dark:ring-dark-outlineVariant",
+    ],
   },
   variants: {
     ui_variant: {

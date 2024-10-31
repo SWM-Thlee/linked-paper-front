@@ -4,23 +4,17 @@ import { createPortal } from "react-dom";
 
 import useIsClient from "@/hooks/use-is-client";
 import { tv } from "@/utils/style/tailwind-variants";
-import { sem } from "@/utils/style/semantic-styles";
 import { GroupContainerID } from "./types";
 import { GroupContainerContext } from "./context";
 import useTabContainer from "./hooks/use-tab-container";
 import useGroupContainer from "./hooks/use-group-container";
 
 export const groupVariant = tv({
-  base: sem()
-    .layout(["flex flex-col", "gap-3", "p-4", "rounded-4", "text-body-large"])
-    .color([
-      "bg-light-primaryContainer/25",
-      "text-light-onPrimaryContainer",
-      "dark:bg-dark-primaryContainer/25",
-      "dark:text-dark-onPrimaryContainer",
-    ])
-    .transition(["transition-colors", "animate-scaleIn", "duration-200"])
-    .build(),
+  base: [
+    "flex flex-col gap-3 p-4 rounded-4 text-body-large",
+    "bg-light-primaryContainer/25 text-light-onPrimaryContainer dark:bg-dark-primaryContainer/25 dark:text-dark-onPrimaryContainer",
+    "transition-colors animate-scaleIn duration-200",
+  ],
 });
 
 export interface SettingsGroupRootProps extends React.ComponentProps<"div"> {
