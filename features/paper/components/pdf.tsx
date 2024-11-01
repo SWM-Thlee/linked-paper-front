@@ -11,11 +11,12 @@ import { toArray } from "@/utils/array";
 
 type Props = {
   pdfLink: string | string[];
+  title?: string;
   onClick?: (pdfLink: string) => void;
 };
 
 // 해당 논문의 PDF 링크를 새 탭으로 열도록 합니다.
-export default function PdfLinkButton({ pdfLink, onClick }: Props) {
+export default function PdfLinkButton({ pdfLink, title, onClick }: Props) {
   const linksToArray = toArray(pdfLink);
   const hasSingleLink = linksToArray.length === 1;
 
@@ -30,10 +31,10 @@ export default function PdfLinkButton({ pdfLink, onClick }: Props) {
         ui_color="secondary"
         ui_variant="bordered"
         ui_size="medium"
-        className="flex w-full"
+        className="flex h-full w-full items-center gap-4 only:justify-evenly"
       >
         <PdfLinkIcon ui_size="small" />
-        <div>PDF</div>
+        {title && <div>{title}</div>}
       </LabelButton>
     </Link>
   ) : (
@@ -44,10 +45,10 @@ export default function PdfLinkButton({ pdfLink, onClick }: Props) {
           ui_color="secondary"
           ui_variant="bordered"
           ui_size="medium"
-          className="relative flex items-center justify-between gap-4"
+          className="relative flex h-full w-full items-center justify-between gap-4"
         >
           <PdfLinkIcon ui_size="small" />
-          <div>PDF</div>
+          {title && <div>{title}</div>}
           <Badge ui_color="secondary" ui_variant="topRight">
             {pdfLink.length}
           </Badge>

@@ -183,7 +183,7 @@ export default function EditorCategory() {
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">
-          <CategoryIcon ui_size="small" /> Category
+          <CategoryIcon ui_size="small" /> <span>Category</span>
         </div>
       </Settings.Tab.Title>
       <Settings.Tab.Content>

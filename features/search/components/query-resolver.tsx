@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 import { redirect, useSearchParams } from "next/navigation";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
-import equal from "fast-deep-equal";
+import isEqual from "react-fast-compare";
 
 import { Search } from "@/features/search/types";
 import { Filter } from "@/features/filter/types";
@@ -104,7 +104,7 @@ export default function SearchQueryResolver({
     }
 
     if (!router.isInSearchPage()) return;
-    if (equal(filter, queryToFilter)) return;
+    if (isEqual(filter, queryToFilter)) return;
 
     router.update(convertSearchFilterToQuery(filter));
   }, [router, filter, validation, dispatcher, queryFilterID]);

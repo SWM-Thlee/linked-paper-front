@@ -4,68 +4,30 @@ import React from "react";
 
 import { TooltipProvider } from "@/ui/tooltip";
 import { tv, VariantProps } from "@/utils/style/tailwind-variants";
-import { sem } from "@/utils/style/semantic-styles";
 import { AttributeDefaultRenderer } from "./default-renderer";
 import { Filter } from "../../types";
 
 const filterInfoVariant = tv({
   slots: {
-    container: sem()
-      .layout([
-        "grid grid-cols-[minmax(10rem,_1fr)_4fr]",
-        "rounded-4",
-        "overflow-hidden",
-        "border-2",
-      ])
-      .color(["border-light-outlineVariant", "dark:border-dark-outlineVariant"])
-      .build(),
-    header: sem()
-      .layout([
-        "col-span-2",
-        "flex items-center gap-2",
-        "border-none",
-        "px-6 py-4",
-      ])
-      .color([
-        "bg-light-surfaceContainerHighest",
-        "text-light-onSurface",
-        "dark:bg-dark-surfaceContainerHighest",
-        "dark:text-dark-onSurface",
-      ])
-      .build(),
-    title: sem()
-      .layout([
-        "flex-1",
-        "text-ellipsis",
-        "text-nowrap",
-        "overflow-hidden",
-        "text-title-medium",
-      ])
-      .build(),
-    attributeKey: sem()
-      .layout([
-        "flex flex-col justify-center",
-        "gap-4",
-        "border-none",
-        "px-6 py-4",
-        "text-label-large",
-      ])
-      .color([
-        "bg-light-surfaceContainer",
-        "text-light-onSurface",
-        "dark:bg-dark-surfaceContainer",
-        "dark:text-dark-onSurface",
-      ])
-      .build(),
-    attributeContent: sem()
-      .layout(["flex flex-wrap gap-4", "border-none", "p-4"])
-      .color([
-        "bg-light-surfaceContainerLowest",
-        "text-light-onSecondaryContainer",
-        "dark:bg-dark-surfaceContainerLowest",
-        "dark:text-dark-onSecondaryContainer",
-      ])
-      .build(),
+    container: [
+      "grid grid-cols-[minmax(10rem,_1fr)_4fr] rounded-4 overflow-hidden border-2",
+      "border-light-outlineVariant dark:border-dark-outlineVariant",
+    ],
+    header: [
+      "col-span-2 flex items-center gap-2 border-none px-6 py-4",
+      "bg-light-surfaceContainerHighest text-light-onSurface dark:bg-dark-surfaceContainerHighest dark:text-dark-onSurface",
+    ],
+    title: [
+      "flex-1 text-ellipsis text-nowrap overflow-hidden text-title-medium",
+    ],
+    attributeKey: [
+      "flex flex-col justify-center gap-4 border-none px-6 py-4 text-label-large",
+      "bg-light-surfaceContainer text-light-onSurface dark:bg-dark-surfaceContainer dark:text-dark-onSurface",
+    ],
+    attributeContent: [
+      "flex flex-wrap gap-4 border-none p-4",
+      "bg-light-surfaceContainerLowest text-light-onSecondaryContainer dark:bg-dark-surfaceContainerLowest dark:text-dark-onSecondaryContainer",
+    ],
   },
 });
 

@@ -1,3 +1,7 @@
+import { Signature } from "@/utils/signature";
+
+export type UserId = `user:${Signature}`;
+
 export const View = {
   MAIN: "main",
   SEARCH: "search",

@@ -5,17 +5,29 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { queryOptions } from "@/features/suggestion/server/queries";
 import useCompletion from "@/components/completion/hooks/use-completion";
 import FieldContainer from "@/ui/container/field-container";
-import TipIcon from "@/ui/icons/tip";
 import Button from "@/ui/button";
 import AddIcon from "@/ui/icons/add";
+import ArrowForwardIcon from "@/ui/icons/arrow-forward";
+import TipIcon from "@/ui/icons/tip";
+import { SuggestionsProps, suggestionsVariant } from "./variants";
 
-export default function Suggestions() {
+export default function Suggestions({ ui_variant }: SuggestionsProps) {
   const { data, refetch } = useSuspenseQuery(queryOptions.suggestions(2));
   const { requestQuery } = useCompletion();
+  const { root, item, itemText, nextButton, nextButtonText } =
+    suggestionsVariant({
+      ui_variant,
+    });
 
   return (
-    <FieldContainer title="Suggestions">
-      <div className="grid grid-cols-[5fr_5fr_2fr] gap-4">
+    <FieldContainer
+      field={
+        <div className="flex items-center gap-2 text-label-medium">
+          <TipIcon ui_size="small" /> <span>SUGGESTIONS</span>
+        </div>
+      }
+    >
+      <div className={root()}>
         {data.map((suggestion) => (
           <Button
             key={suggestion}
@@ -23,10 +35,10 @@ export default function Suggestions() {
             ui_color="secondary"
             ui_variant="light"
             ui_size="large"
-            className="flex animate-fadeIn select-none flex-col justify-between gap-2 p-6 text-left"
+            className={item()}
           >
-            <TipIcon ui_size="large" />
-            <div className="text-body-large">{suggestion}</div>
+            <div className={itemText()}>{suggestion}</div>
+            <ArrowForwardIcon />
           </Button>
         ))}
         <Button
@@ -34,10 +46,10 @@ export default function Suggestions() {
           ui_color="secondary"
           ui_variant="light"
           ui_size="large"
-          className="flex select-none flex-col items-center justify-between gap-2 p-6"
+          className={nextButton()}
         >
-          <AddIcon ui_size="exlarge" />
-          <div className="text-body-large">Need more suggestions?</div>
+          <div className={nextButtonText()}>Need more suggestions?</div>
+          <AddIcon />
         </Button>
       </div>
     </FieldContainer>

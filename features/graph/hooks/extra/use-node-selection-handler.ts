@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import isEqual from "react-fast-compare";
 
 import usePrevious from "@/hooks/use-previous";
 import { Graph } from "../../types";
@@ -89,8 +90,7 @@ export default function useNodeSelectionHandler() {
 
   /* Selection 구성의 변화를 체크합니다. */
   useEffect(() => {
-    if (prevNodeIDs?.isSubsetOf(nodeIDs) && prevNodeIDs.isSupersetOf(nodeIDs))
-      return;
+    if (isEqual(prevNodeIDs, nodeIDs)) return;
 
     // Selected Node에 대해 onSelect Listener 호출
     nodeIDs.forEach((nodeID) => {

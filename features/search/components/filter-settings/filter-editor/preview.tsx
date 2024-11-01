@@ -61,7 +61,7 @@ export default function EditorPreview() {
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">
-          <OverviewIcon ui_size="small" /> Preview
+          <OverviewIcon ui_size="small" /> <span>Preview</span>
         </div>
       </Settings.Tab.Title>
       <Settings.Tab.Content>

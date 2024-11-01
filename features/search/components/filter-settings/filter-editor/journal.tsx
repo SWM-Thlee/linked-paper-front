@@ -139,7 +139,7 @@ export default function EditorJournal() {
     >
       <Settings.Tab.Title>
         <div className="flex items-center gap-4">
-          <JournalIcon ui_size="small" /> Source
+          <JournalIcon ui_size="small" /> <span>Source</span>
         </div>
       </Settings.Tab.Title>
       <Settings.Tab.Content>

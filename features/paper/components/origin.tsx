@@ -11,13 +11,18 @@ import { toArray } from "@/utils/array";
 
 type Props = {
   originLink: string | string[];
+  title?: string;
   onClick?: (originLink: string) => void;
 };
 
 /**
  * 해당 논문의 원문 링크를 새로운 탭으로 열도록 합니다.
  */
-export default function OriginLinkButton({ originLink, onClick }: Props) {
+export default function OriginLinkButton({
+  originLink,
+  title,
+  onClick,
+}: Props) {
   const linksToArray = toArray(originLink);
   const hasSingleLink = linksToArray.length === 1;
 
@@ -32,10 +37,10 @@ export default function OriginLinkButton({ originLink, onClick }: Props) {
         ui_variant="bordered"
         ui_color="secondary"
         ui_size="medium"
-        className="w-full"
+        className="flex h-full w-full items-center gap-4 only:justify-evenly"
       >
         <OriginLinkIcon ui_size="small" />
-        <div>Origin</div>
+        {title && <div>{title}</div>}
       </LabelButton>
     </Link>
   ) : (
@@ -46,10 +51,10 @@ export default function OriginLinkButton({ originLink, onClick }: Props) {
           ui_color="secondary"
           ui_variant="bordered"
           ui_size="medium"
-          className="relative flex items-center justify-between gap-4"
+          className="relative flex h-full w-full items-center justify-between gap-4"
         >
           <OriginLinkIcon ui_size="small" />
-          <div>Origin</div>
+          {title && <div>{title}</div>}
           <Badge ui_variant="topRight" ui_color="secondary">
             {originLink.length}
           </Badge>

@@ -1,5 +1,6 @@
 import { Viewport } from "next";
 import { Toaster } from "react-hot-toast";
+import NextTopLoader from "nextjs-toploader";
 
 import { playfair, urbanist } from "@/config/fonts";
 
@@ -30,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       suppressHydrationWarning
-      lang="ko"
+      lang="en"
       className={`scrollbar ${playfair.variable} ${urbanist.variable}`}
     >
       <StateProvider>
@@ -38,6 +39,7 @@ export default function RootLayout({
           <ThemeProvider>
             {header}
             {children}
+            <NextTopLoader color="#7782FF" showSpinner={false} />
             <Toaster toastOptions={{ position: "bottom-center" }} />
           </ThemeProvider>
         </BodyWithScrollLock>

@@ -30,7 +30,7 @@ export default function AddPreset() {
       ui_variant="light"
       className="flex items-center gap-4 text-nowrap"
     >
-      <AddIcon /> New...
+      <AddIcon /> <span>New...</span>
     </Button>
   );
 }

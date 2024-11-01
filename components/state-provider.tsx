@@ -31,12 +31,12 @@ export default function StateProvider({ children }: React.PropsWithChildren) {
   const queryClient = getQueryClient();
 
   return (
-    <AnalyticsProvider>
-      <JotaiProvider>
+    <JotaiProvider>
+      <AnalyticsProvider>
         <QueryClientProvider client={queryClient}>
           <ReactQueryStreamedHydration>{children}</ReactQueryStreamedHydration>
         </QueryClientProvider>
-      </JotaiProvider>
-    </AnalyticsProvider>
+      </AnalyticsProvider>
+    </JotaiProvider>
   );
 }

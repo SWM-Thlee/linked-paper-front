@@ -1,18 +1,17 @@
 import { ComponentPropsWithoutRef, forwardRef } from "react";
 import { tv, VariantProps } from "@/utils/style/tailwind-variants";
-import { sem } from "@/utils/style/semantic-styles";
 
 export const fieldContainerVariant = tv({
   slots: {
-    label: sem()
-      .layout(["text-label-large"])
-      .color(["text-light-onSurface", "dark:text-dark-onSurface"])
-      .build(),
-    wrapper: sem().layout(["flex flex-col"]).build(),
-    container: sem()
-      .layout(["flex flex-col"])
-      .color(["ring-light-outlineVariant", "dark:ring-dark-outlineVariant"])
-      .build(),
+    label: [
+      "text-label-large",
+      "text-light-onSurface dark:text-dark-onSurface",
+    ],
+    wrapper: ["flex flex-col"],
+    container: [
+      "flex flex-col",
+      "ring-light-outlineVariant dark:ring-dark-outlineVariant",
+    ],
   },
   variants: {
     ui_variant: {
@@ -53,19 +52,19 @@ export const fieldContainerVariant = tv({
 });
 
 type Props = {
-  title: string;
+  field: React.ReactNode;
 } & VariantProps<typeof fieldContainerVariant> &
   ComponentPropsWithoutRef<"div">;
 
 const FieldContainer = forwardRef<HTMLDivElement, Props>(
-  ({ title, ui_size, ui_variant, children, className, ...props }, ref) => {
+  ({ field, ui_size, ui_variant, children, className, ...props }, ref) => {
     const { label, wrapper, container } = fieldContainerVariant({
       ui_size,
       ui_variant,
     });
     return (
       <div ref={ref} className={wrapper()}>
-        <div className={label()}>{title}</div>
+        <div className={label()}>{field}</div>
         <div className={container({ className })} {...props}>
           {children}
         </div>

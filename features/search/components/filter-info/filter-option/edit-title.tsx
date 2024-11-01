@@ -28,7 +28,7 @@ export default function EditTitleOption({ dataID, store }: Props) {
   );
 
   return (
-    <FieldContainer title="TITLE" ui_size="medium">
+    <FieldContainer field="TITLE" ui_size="medium">
       <TextField
         value={text}
         onChange={(event) => setText(event.target.value)}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 import { matches } from "@/features/search/utils/matcher";
 import Button from "@/ui/button";
@@ -9,6 +10,8 @@ import JournalIcon from "@/ui/icons/journal";
 import LabelButton from "@/ui/label-button";
 import { Popover } from "@/ui/popover";
 import { toArray } from "@/utils/array";
+import CopyIcon from "@/ui/icons/copy";
+import { copyToClipboard } from "@/utils/clipboard";
 
 export interface JournalChipProps extends React.ComponentPropsWithRef<"div"> {
   value?: string | string[];
@@ -32,6 +35,18 @@ export default function JournalChip({
         }),
       ),
     [nameOfJournals, matchText],
+  );
+
+  const copy = useCallback(
+    (text: string) =>
+      copyToClipboard(text, (success) => {
+        if (success) {
+          toast.success(`Copy: ${text}`);
+        } else {
+          toast.error(`Failed to Copy: ${text}`);
+        }
+      }),
+    [],
   );
 
   const title = nameOfJournals[0] ?? "None";
@@ -61,16 +76,21 @@ export default function JournalChip({
                 disableSubmit
               />
             )}
-            <ul className="flex max-h-[20rem] w-[25rem] list-disc flex-col overflow-y-auto scrollbar">
+            <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
               {matchedResult.map((journal) => (
                 <Button
                   key={journal}
                   ui_variant="ghost"
                   ui_size="small"
                   ui_color="secondary"
-                  className="w-full text-left text-label-large"
+                  className="group/journal flex w-full items-center justify-between gap-2 text-left text-label-large"
+                  onClick={() => copy(journal)}
                 >
-                  <li className="ml-2">{journal}</li>
+                  <li className="ml-2 max-w-[15rem]">{journal}</li>
+                  <CopyIcon
+                    ui_size="small"
+                    className="opacity-0 transition-opacity group-hover/journal:opacity-100"
+                  />
                 </Button>
               ))}
             </ul>

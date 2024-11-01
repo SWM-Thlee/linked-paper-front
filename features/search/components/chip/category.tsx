@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { useDeepCompareMemo } from "use-deep-compare";
 
 import useCategories, {
   CategoryGroup,
@@ -13,8 +15,9 @@ import LabelButton from "@/ui/label-button";
 import { Popover } from "@/ui/popover";
 import FieldContainer from "@/ui/container/field-container";
 import Button from "@/ui/button";
-import { useDeepCompareMemo } from "use-deep-compare";
 import { toArray } from "@/utils/array";
+import CopyIcon from "@/ui/icons/copy";
+import { copyToClipboard } from "@/utils/clipboard";
 
 export interface CategoryChipProps extends React.ComponentPropsWithRef<"div"> {
   value?: string | string[];
@@ -79,6 +82,18 @@ export default function CategoryChip({
     [matchedResult],
   );
 
+  const copy = useCallback(
+    (text: string) =>
+      copyToClipboard(text, (success) => {
+        if (success) {
+          toast.success(`Copy: ${text}`);
+        } else {
+          toast.error(`Failed to Copy: ${text}`);
+        }
+      }),
+    [],
+  );
+
   // Category의 개수가 10개를 초과할 경우 검색 필드를 보이게 합니다.
   const visibleSearch = categoryIDs.length > 10;
   const hasMatchedResult = matchedResultSize > 0;
@@ -104,27 +119,39 @@ export default function CategoryChip({
                 disableSubmit
               />
             )}
-            <div className="flex max-h-[20rem] w-[25rem] flex-col gap-2 overflow-y-auto scrollbar">
+            <div className="flex max-h-[20rem] flex-col gap-2 overflow-y-auto scrollbar">
               {Object.entries(matchedResult).map(([subject, categories]) => (
-                <FieldContainer key={subject} title={subject} ui_size="medium">
+                <FieldContainer key={subject} field={subject} ui_size="medium">
                   <ul className="flex list-disc flex-col">
                     {Object.entries(categories).map(([categoryID, info]) => (
-                      <div key={categoryID} className="flex items-stretch">
+                      <div key={categoryID} className="flex items-center">
                         <Button
                           ui_variant="ghost"
                           ui_size="small"
                           ui_color="secondary"
-                          className="flex-1 text-left"
+                          className="group/category flex w-full flex-1 items-center justify-between gap-4 text-left"
+                          onClick={() => copy(info.description)}
                         >
-                          <li className="ml-2">{info.description}</li>
+                          <li className="ml-2 max-w-[15rem] flex-1">
+                            {info.description}
+                          </li>
+                          <CopyIcon
+                            ui_size="small"
+                            className="opacity-0 transition-opacity group-hover/category:opacity-100"
+                          />
                         </Button>
                         <Button
                           ui_variant="ghost"
                           ui_size="small"
                           ui_color="tertiary"
-                          className="text-nowrap text-label-large"
+                          className="group/categoryId flex items-center justify-between gap-2 text-nowrap text-label-large"
+                          onClick={() => copy(categoryID)}
                         >
-                          {categoryID}
+                          <CopyIcon
+                            ui_size="small"
+                            className="opacity-0 transition-opacity group-hover/categoryId:opacity-100"
+                          />
+                          <div>{categoryID}</div>
                         </Button>
                       </div>
                     ))}

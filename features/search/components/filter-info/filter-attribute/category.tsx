@@ -13,7 +13,7 @@ import { ContentContainer, KeyContainer } from "./common";
 export function CategoryKey() {
   return (
     <KeyContainer>
-      <CategoryIcon /> Category
+      <CategoryIcon /> <span>Category</span>
     </KeyContainer>
   );
 }

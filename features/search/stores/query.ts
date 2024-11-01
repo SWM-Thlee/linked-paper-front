@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { selectAtom } from "jotai/utils";
-import equal from "fast-deep-equal";
+import isEqual from "react-fast-compare";
 
 import { generateFilterDataID } from "@/features/filter/utils/id";
 import { Search } from "../types";
@@ -33,7 +33,7 @@ export const requiredQueryAtom = selectAtom<
     size,
     sorting,
   }),
-  equal,
+  isEqual,
 );
 
 /** Filter 정보를 나타냅니다. */
@@ -53,5 +53,5 @@ export const filterQueryAtom = selectAtom<
     filter_journal,
     filter_start_date,
   }),
-  equal,
+  isEqual,
 );

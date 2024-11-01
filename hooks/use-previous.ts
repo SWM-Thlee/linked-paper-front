@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import equal from "fast-deep-equal";
+import isEqual from "react-fast-compare";
 
 /** 각 Render Phase에서 이전 시점(Phase)의 정보와 비교하기 위해 사용됩니다. */
 export default function usePrevious<T>() {
@@ -10,7 +10,9 @@ export default function usePrevious<T>() {
 
   const isEqualTo = useCallback(
     (targetValue: T, deepCheck: boolean = true) =>
-      deepCheck ? equal(ref.current, targetValue) : ref.current === targetValue,
+      deepCheck
+        ? isEqual(ref.current, targetValue)
+        : ref.current === targetValue,
     [],
   );
 

@@ -5,131 +5,70 @@ import Link from "next/link";
 import * as Primitive from "@radix-ui/react-navigation-menu";
 
 import { tv, VariantProps } from "@/utils/style/tailwind-variants";
-import { sem } from "@/utils/style/semantic-styles";
 import { NavigationModule } from "./types";
 
 export const navigationVariant = tv({
   slots: {
     root: ["flex", "justify-center"],
-    list: sem()
-      .layout(["flex", "p-1", "gap-1", "list-none", "rounded-circle"])
-      .color(["bg-light-surfaceDim", "dark:bg-dark-surfaceDim"])
-      .build(),
-    button: ["rounded-circle", "transition-colors", "block", "select-none"],
-    content: sem()
-      .layout([
-        "absolute",
-        "left-0 top-0",
-        "min-w-[1024px] max-w-[60%] sm:w-auto",
-      ])
-      .color(["text-light-onSurface", "dark:text-dark-onSurface"])
-      .transition([
-        "data-[motion=from-start]:animate-enterFromLeft",
-        "data-[motion=from-end]:animate-enterFromRight",
-        "data-[motion=to-start]:animate-exitToLeft",
-        "data-[motion=to-end]:animate-exitToRight",
-      ])
-      .build(),
-    viewport: sem()
-      .layout([
-        "relative",
-        "mt-[-14px]",
-        "h-[var(--radix-navigation-menu-viewport-height)]",
-        "sm:w-[var(--radix-navigation-menu-viewport-width)]",
-        "w-full",
-        "overflow-hidden",
-        "shadow-md",
-      ])
-      .color([
-        "bg-light-surfaceContainerLow",
-        "dark:bg-dark-surfaceContainerLow",
-      ])
-      .transition([
-        "data-[state=open]:animate-scaleIn",
-        "data-[state=closed]:animate-scaleOut",
-
-        "origin-[top_center]",
-        "transition-[width,_height]",
-        "duration-300",
-      ])
-      .build(),
+    list: [
+      "flex p-1 gap-1 list-none rounded-circle",
+      "bg-light-surfaceDim dark:bg-dark-surfaceDim",
+    ],
+    button: ["rounded-circle transition-colors block select-none"],
+    content: [
+      "absolute left-0 top-0 min-w-[1024px] max-w-[60%] sm:w-auto",
+      "text-light-onSurface dark:text-dark-onSurface",
+      "data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight",
+    ],
+    viewport: [
+      "relative mt-[-14px] h-[var(--radix-navigation-menu-viewport-height)] sm:w-[var(--radix-navigation-menu-viewport-width)] w-full overflow-hidden shadow-md",
+      "bg-light-surfaceContainerLow dark:bg-dark-surfaceContainerLow",
+      "data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut origin-[top_center] transition-[width,_height] duration-300",
+    ],
     viewportWrapper: [
-      "perspective-[2000px]",
-      "absolute",
-      "left-0",
-      "top-full",
-      "flex",
-      "w-full",
-      "justify-center",
+      "perspective-[2000px] absolute left-0 top-full flex w-full justify-center",
     ],
   },
   variants: {
     ui_color: {
       none: {
-        button: ["text-light-onSurface", "dark:text-dark-onSurface"],
+        button: ["text-light-onSurface dark:text-dark-onSurface"],
       },
       primary: {
         button: [
-          "bg-light-primary",
-          "text-light-onPrimary",
-          "dark:bg-dark-primary",
-          "dark:text-dark-onPrimary",
-          "hover:bg-light-primary/75",
-          "hover:text-light-onPrimary/75",
-          "dark:hover:bg-dark-primary/75",
-          "dark:hover:text-dark-onPrimary/75",
-          "data-[state=open]:bg-light-primary/75",
-          "data-[state=open]:text-light-onPrimary/75",
-          "dark:data-[state=open]:bg-dark-primary/75",
-          "dark:data-[state=open]:text-dark-onPrimary/75",
+          "bg-light-primary text-light-onPrimary dark:bg-dark-primary dark:text-dark-onPrimary",
+          "hover:bg-light-primary/75 hover:text-light-onPrimary/75 dark:hover:bg-dark-primary/75 dark:hover:text-dark-onPrimary/75",
+          "data-[state=open]:bg-light-primary/75 data-[state=open]:text-light-onPrimary/75 dark:data-[state=open]:bg-dark-primary/75 dark:data-[state=open]:text-dark-onPrimary/75",
         ],
       },
       secondary: {
         button: [
-          "bg-light-secondary",
-          "text-light-onSecondary",
-          "dark:bg-dark-secondary",
-          "dark:text-dark-onSecondary",
-          "hover:bg-light-secondary/75",
-          "hover:text-light-onSecondary/75",
-          "dark:hover:bg-dark-secondary/75",
-          "dark:hover:text-dark-onSecondary/75",
-          "data-[state=open]:bg-light-secondary/75",
-          "data-[state=open]:text-light-onSecondary/75",
-          "dark:data-[state=open]:bg-dark-secondary/75",
-          "dark:data-[state=open]:text-dark-onSecondary/75",
+          "bg-light-secondary text-light-onSecondary dark:bg-dark-secondary dark:text-dark-onSecondary",
+          "hover:bg-light-secondary/75 hover:text-light-onSecondary/75 dark:hover:bg-dark-secondary/75 dark:hover:text-dark-onSecondary/75",
+          "data-[state=open]:bg-light-secondary/75 data-[state=open]:text-light-onSecondary/75 dark:data-[state=open]:bg-dark-secondary/75 dark:data-[state=open]:text-dark-onSecondary/75",
         ],
       },
       tertiary: {
         button: [
-          "bg-light-tertiary",
-          "text-light-onTertiary",
-          "dark:bg-dark-tertiary",
-          "dark:text-dark-onTertiary",
-          "hover:bg-light-tertiary/75",
-          "hover:text-light-onTertiary/75",
-          "dark:hover:bg-dark-tertiary/75",
-          "dark:hover:text-dark-onTertiary/75",
-          "data-[state=open]:bg-light-tertiary/75",
-          "data-[state=open]:text-light-onTertiary/75",
-          "dark:data-[state=open]:bg-dark-tertiary/75",
-          "dark:data-[state=open]:text-dark-onTertiary/75",
+          "bg-light-tertiary text-light-onTertiary dark:bg-dark-tertiary dark:text-dark-onTertiary",
+          "hover:bg-light-tertiary/75 hover:text-light-onTertiary/75 dark:hover:bg-dark-tertiary/75 dark:hover:text-dark-onTertiary/75",
+          "data-[state=open]:bg-light-tertiary/75 data-[state=open]:text-light-onTertiary/75 dark:data-[state=open]:bg-dark-tertiary/75 dark:data-[state=open]:text-dark-onTertiary/75",
         ],
       },
     },
     ui_size: {
       large: {
-        button: ["px-6", "py-2"],
+        button: ["px-6 py-2"],
         content: ["p-8"],
         viewport: ["rounded-6"],
       },
       medium: {
-        button: ["px-4", "py-1.5"],
+        button: ["px-4 py-1.5"],
         content: ["p-8"],
         viewport: ["rounded-4"],
       },
       small: {
-        button: ["px-3", "py-1"],
+        button: ["px-3 py-1"],
         content: ["p-6"],
         viewport: ["rounded-2"],
       },

@@ -29,7 +29,7 @@ export default function RemoveAll() {
       ui_variant="light"
       className="flex items-center gap-4 text-nowrap"
     >
-      <DeleteIcon /> Remove All
+      <DeleteIcon /> <span>Remove All</span>
     </Button>
   );
 }
