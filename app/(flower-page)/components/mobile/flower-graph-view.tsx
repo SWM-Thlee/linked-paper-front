@@ -42,6 +42,7 @@ import {
   childLink as childLinkStyle,
 } from "@/app/(flower-page)/utils/mobile-variants";
 import PaperInfoToolbar from "./toolbar/paper-info-toolbar";
+import MobileZoomToolbar from "./toolbar/mobile-zoom-toolbar";
 
 export default function FlowerGraphView() {
   /* Analytics */
@@ -243,36 +244,17 @@ export default function FlowerGraphView() {
   );
 
   const renderRootLink: Graph.Render.RenderLink = useCallback(
-    ({ link: { id, source, target }, drawLink, drawLinkText }) => {
+    ({ link: { id }, drawLink }) => {
       const variant = isLinkHovered(id) ? "hovered" : "default";
       const radius = nodeConfig.link.distanceFromCenter;
 
       drawLink({
         style: rootLinkCv.link({ ui_variant: variant }),
-        scale: { start: 0.2, end: 0.7, multiplier: 3 },
+        scale: { start: 0.2, end: 0.7, multiplier: 2 },
         radius,
       });
-
-      if (viewConfig.graph.viewSimilarity) {
-        const similarity =
-          (getSimilarity(source.paperID, target.paperID) ?? 0) * 100;
-
-        drawLinkText({
-          style: rootLinkCv.container({ ui_variant: variant }),
-          height: 24,
-          text: `${similarity.toFixed(2)}%`,
-          scale: { start: 0.2, end: 0.7, multiplier: 4 },
-          radius,
-        });
-      }
     },
-    [
-      getSimilarity,
-      isLinkHovered,
-      rootLinkCv,
-      nodeConfig.link.distanceFromCenter,
-      viewConfig.graph.viewSimilarity,
-    ],
+    [isLinkHovered, rootLinkCv, nodeConfig.link.distanceFromCenter],
   );
 
   const renderChildLink: Graph.Render.RenderLink = useCallback(
@@ -380,6 +362,27 @@ export default function FlowerGraphView() {
       return true;
     });
   }, [handler?.event, handler?.config, selectedOne]);
+
+  /* 어떤 간선을 보여줄 지 결정합니다. */
+  useEffect(() => {
+    handler?.event.onLinkFilter(({ source, target }) => {
+      /* Root-Child Link는 선택된 경우에만 보이도록 합니다. */
+      if (
+        (isRootNode(source) && isChildNode(target)) ||
+        (isRootNode(target) && isChildNode(source))
+      ) {
+        if (!(selectedOne === source.id || selectedOne === target.id))
+          return false;
+
+        /* Zoom 배율이 일정 수치 이하이면 Child Node를 숨깁니다. */
+        const zoom = handler.config.applyConfig((config) => config.zoom());
+
+        return !zoom || zoom > 0.2;
+      }
+
+      return true;
+    });
+  }, [handler?.event, handler?.config, selectedOne, isNodeHovered]);
 
   /* 초기 로딩 시: 중앙에 Root Node를 삽입합니다. */
   useEffect(() => {
@@ -645,8 +648,9 @@ export default function FlowerGraphView() {
       nodeConfig={nodeConfig}
       viewConfig={viewConfig}
     >
-      <Toolbar>
+      <Toolbar className="justify-between">
         <PaperInfoToolbar paper={paperInfo} />
+        <MobileZoomToolbar handler={handler} viewConfig={viewConfig} />
       </Toolbar>
     </GraphView>
   );

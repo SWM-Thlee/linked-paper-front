@@ -54,7 +54,7 @@ export default function PaperInfoToolbar({ paper }: PaperInfoToolbarProps) {
     <ToolbarContainer>
       <Dialog.Root>
         <Dialog.Trigger asChild>
-          <LabelButton ui_variant="light" ui_color="secondary">
+          <LabelButton ui_variant="ghost" ui_color="secondary">
             <InfoIcon />
             <span>Paper Info</span>
           </LabelButton>
@@ -65,7 +65,7 @@ export default function PaperInfoToolbar({ paper }: PaperInfoToolbarProps) {
             {paper?.title ?? "Unknown Paper"}
           </Dialog.Description>
         </VisuallyHidden>
-        <Dialog.Content className="h-[calc(100vh-4rem)] w-[calc(100vw-4rem)] overflow-y-auto scrollbar-none">
+        <Dialog.Content className="h-screen w-screen overflow-y-auto rounded-0 p-8 scrollbar-none">
           <div className="flex flex-col gap-8">
             {/* Header */}
             <div className="flex items-center gap-2">
@@ -90,7 +90,7 @@ export default function PaperInfoToolbar({ paper }: PaperInfoToolbarProps) {
             {paper && (
               <>
                 <div className="text-headline-small">{paper.title}</div>
-                <ResultItemInfo {...paper} />
+                <ResultItemInfo {...paper} defaultOpen />
                 <div className="flex flex-col gap-2">
                   <Badge
                     ui_color="secondary"

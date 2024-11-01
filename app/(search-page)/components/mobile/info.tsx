@@ -17,6 +17,7 @@ export type ResultItemInfoProps = {
   date: string;
   referenceCount: number;
   citationCount: number;
+  defaultOpen?: boolean;
 };
 
 function Authors({ authors }: { authors: string[] }) {
@@ -108,14 +109,15 @@ export default function ResultItemInfo({
   date,
   referenceCount,
   citationCount,
+  defaultOpen = false,
 }: ResultItemInfoProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
     <button
       type="button"
       onClick={() => setIsOpen(!isOpen)}
-      className="rounded-2 p-4 text-label-large text-light-onSurface ring-2 ring-inset ring-light-outlineVariant dark:text-dark-onSurface dark:ring-dark-outlineVariant"
+      className="relative rounded-2 p-4 text-label-large text-light-onSurface ring-2 ring-inset ring-light-outlineVariant dark:text-dark-onSurface dark:ring-dark-outlineVariant"
     >
       {isOpen ? (
         <div className="flex animate-fadeIn flex-col gap-3">
