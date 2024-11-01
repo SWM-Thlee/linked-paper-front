@@ -51,7 +51,7 @@ export default function PaperInfoToolbar({ paper }: PaperInfoToolbarProps) {
   );
 
   return (
-    <ToolbarContainer>
+    <ToolbarContainer className="gap-0 p-0.5">
       <Dialog.Root>
         <Dialog.Trigger asChild>
           <LabelButton ui_variant="ghost" ui_color="secondary">

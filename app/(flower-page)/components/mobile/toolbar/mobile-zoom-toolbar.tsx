@@ -52,21 +52,22 @@ export default function MobileZoomToolbar({ handler, viewConfig }: Props) {
   }, [handler?.event]);
 
   return (
-    <ToolbarContainer>
+    <ToolbarContainer className="gap-0 p-0.5">
       <LabelButton
         ui_variant="ghost"
         ui_color="secondary"
         onClick={() => zoomInOut(10)}
         aria-label="Zoom In"
+        className="rounded-r-0 pr-3"
       >
         <ZoomInIcon /> <span>In</span>
       </LabelButton>
-      <div className="h-[1.5rem] w-[1px] bg-light-outline/50 dark:bg-dark-outline/50" />
       <LabelButton
         ui_variant="ghost"
         ui_color="secondary"
         onClick={() => zoomInOut(-10)}
         aria-label="Zoom Out"
+        className="rounded-l-0 pl-3"
       >
         <ZoomOutIcon /> <span>Out</span>
       </LabelButton>

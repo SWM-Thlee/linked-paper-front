@@ -46,8 +46,8 @@ export const childNode = baseVariants({
   slots: {
     node: [],
     title: ["text-title-large", "text-4xl"],
-    date: ["text-title-large", "text-2xl"],
-    citation: ["text-label-large", "text-lg", "text-2xl"],
+    date: ["text-body-large", "text-2xl"],
+    citation: ["text-title-large"],
   },
   variants: {
     ui_variant: {
