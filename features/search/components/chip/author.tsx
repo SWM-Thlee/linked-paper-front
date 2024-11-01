@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useDeepCompareMemo } from "use-deep-compare";
+import toast from "react-hot-toast";
 
+import { copyToClipboard } from "@/utils/clipboard";
 import { toArray } from "@/utils/array";
 import { Popover } from "@/ui/popover";
 import AuthorIcon from "@/ui/icons/author";
 import LabelButton from "@/ui/label-button";
 import Button from "@/ui/button";
 import SearchField from "@/ui/search-field";
+import CopyIcon from "@/ui/icons/copy";
 import { matches } from "../../utils/matcher";
 
 export interface AuthorChipProps extends React.ComponentPropsWithRef<"div"> {
@@ -30,6 +33,18 @@ export default function AuthorChip({ value, ...titleProps }: AuthorChipProps) {
         }),
       ),
     [authors, matchText],
+  );
+
+  const copy = useCallback(
+    (text: string) =>
+      copyToClipboard(text, (success) => {
+        if (success) {
+          toast.success(`Copy: ${text}`);
+        } else {
+          toast.error(`Failed to Copy: ${text}`);
+        }
+      }),
+    [],
   );
 
   // Author가 10명을 초과할 경우 검색 필드를 보이게 합니다.
@@ -57,16 +72,21 @@ export default function AuthorChip({ value, ...titleProps }: AuthorChipProps) {
                 disableSubmit
               />
             )}
-            <ul className="flex max-h-[20rem] w-[20rem] list-disc flex-col overflow-y-auto scrollbar">
+            <ul className="flex max-h-[20rem] list-disc flex-col overflow-y-auto scrollbar">
               {matchedResult.map((author) => (
                 <Button
                   ui_color="secondary"
                   ui_size="small"
                   ui_variant="ghost"
-                  className="w-full text-nowrap text-left text-label-large"
+                  className="group/author flex w-full items-center justify-between gap-2 text-left text-label-large"
+                  onClick={() => copy(author)}
                   key={author}
                 >
-                  <li className="ml-2">{author}</li>
+                  <li className="ml-2 max-w-[15rem]">{author}</li>
+                  <CopyIcon
+                    ui_size="small"
+                    className="opacity-0 transition-opacity group-hover/author:opacity-100"
+                  />
                 </Button>
               ))}
             </ul>
