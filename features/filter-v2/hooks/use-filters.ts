@@ -1,11 +1,17 @@
 import { useCallback } from "react";
 import { useAtom } from "jotai";
+import { useDeepCompareMemo } from "use-deep-compare";
 
 import { filterAtom } from "../stores/filter";
 import { FilterFeature, FilterScheme } from "../types/registered-filter";
 
-export default function useFilters() {
+export default function useFilters(...features: FilterFeature[]) {
   const [filters, setFilters] = useAtom(filterAtom);
+
+  const filtersInFeature = useDeepCompareMemo(
+    () => filters.filter((filter) => features.includes(filter.feature)),
+    [filters, features],
+  );
 
   const dispatch = useCallback(
     <T extends FilterFeature>(data: FilterScheme<T>) => {
@@ -23,5 +29,13 @@ export default function useFilters() {
     [setFilters],
   );
 
-  return { filters, dispatch, remove };
+  const removeAll = useCallback(() => {
+    setFilters((prev) =>
+      prev.filter(
+        (filter) => !filtersInFeature.find((f) => f.id === filter.id),
+      ),
+    );
+  }, [filtersInFeature, setFilters]);
+
+  return { filters: filtersInFeature, dispatch, remove, removeAll };
 }

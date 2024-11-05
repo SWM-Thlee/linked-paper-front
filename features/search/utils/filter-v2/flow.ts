@@ -11,8 +11,8 @@ function copy<T>(data: T): T {
 export const converter = {
   "search-preset": {
     "search-default": (
-      data: Search.Filter_V2.Preset,
-    ): Search.Filter_V2.Default => {
+      data: Search.FilterV2.Preset,
+    ): Search.FilterV2.Default => {
       return {
         ...copy(data),
         feature: "search-default",
@@ -21,8 +21,8 @@ export const converter = {
   },
   "search-default": {
     "search-preset": (
-      data: Search.Filter_V2.Default,
-    ): Search.Filter_V2.Preset => {
+      data: Search.FilterV2.Default,
+    ): Search.FilterV2.Preset => {
       return {
         ...copy(data),
         feature: "search-preset",
@@ -30,9 +30,7 @@ export const converter = {
     },
   },
   "search-edit": {
-    "search-default": (
-      data: Search.Filter_V2.Edit,
-    ): Search.Filter_V2.Default => {
+    "search-default": (data: Search.FilterV2.Edit): Search.FilterV2.Default => {
       return {
         ...copy(data),
         id: data.link,
@@ -41,7 +39,7 @@ export const converter = {
         link: undefined,
       };
     },
-    "search-preset": (data: Search.Filter_V2.Edit): Search.Filter_V2.Preset => {
+    "search-preset": (data: Search.FilterV2.Edit): Search.FilterV2.Preset => {
       return {
         ...copy(data),
         id: data.link,
@@ -50,7 +48,7 @@ export const converter = {
         link: undefined,
       };
     },
-    "search-query": (data: Search.Filter_V2.Edit): Search.Filter_V2.Query => {
+    "search-query": (data: Search.FilterV2.Edit): Search.FilterV2.Query => {
       return {
         ...copy(data),
         id: data.link,
@@ -64,7 +62,7 @@ export const converter = {
 // 특정 Filter로부터 다른 타입의 Filter를 생성합니다.
 export const producer = {
   "search-preset": {
-    "search-query": (data: Search.Filter_V2.Preset): Search.Filter_V2.Query => {
+    "search-query": (data: Search.FilterV2.Preset): Search.FilterV2.Query => {
       return {
         ...copy(data),
         id: uuidv4(),
@@ -73,7 +71,7 @@ export const producer = {
         persist: false,
       };
     },
-    "search-edit": (data: Search.Filter_V2.Preset): Search.Filter_V2.Edit => {
+    "search-edit": (data: Search.FilterV2.Preset): Search.FilterV2.Edit => {
       return {
         ...copy(data),
         id: uuidv4(),
@@ -84,9 +82,7 @@ export const producer = {
     },
   },
   "search-default": {
-    "search-query": (
-      data: Search.Filter_V2.Default,
-    ): Search.Filter_V2.Query => {
+    "search-query": (data: Search.FilterV2.Default): Search.FilterV2.Query => {
       return {
         ...copy(data),
         id: uuidv4(),
@@ -95,7 +91,7 @@ export const producer = {
         persist: false,
       };
     },
-    "search-edit": (data: Search.Filter_V2.Default): Search.Filter_V2.Edit => {
+    "search-edit": (data: Search.FilterV2.Default): Search.FilterV2.Edit => {
       return {
         ...copy(data),
         id: uuidv4(),
@@ -106,7 +102,7 @@ export const producer = {
     },
   },
   "search-query": {
-    "search-edit": (data: Search.Filter_V2.Query): Search.Filter_V2.Edit => {
+    "search-edit": (data: Search.FilterV2.Query): Search.FilterV2.Edit => {
       return {
         ...copy(data),
         feature: "search-edit",

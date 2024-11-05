@@ -2,10 +2,10 @@ import { Search } from "@/features/search/types";
 import { z } from "zod";
 
 export const RegisteredFilter = z.discriminatedUnion("feature", [
-  Search.Filter_V2.DefaultScheme,
-  Search.Filter_V2.QueryScheme,
-  Search.Filter_V2.EditScheme,
-  Search.Filter_V2.PresetScheme,
+  Search.Filter_V2.Default,
+  Search.Filter_V2.Query,
+  Search.Filter_V2.Edit,
+  Search.Filter_V2.Preset,
 ]);
 export type RegisteredFilter = z.infer<typeof RegisteredFilter>;
 

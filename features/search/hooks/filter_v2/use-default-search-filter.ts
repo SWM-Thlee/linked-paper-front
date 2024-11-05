@@ -1,6 +1,6 @@
 import { useDeepCompareMemo } from "use-deep-compare";
 
-import useFilters from "@/features/filter_v2/hooks/use-filters";
+import useFilters from "@/features/filter-v2/hooks/use-filters";
 
 export default function useDefaultSearchFilter() {
   const { filters, dispatch } = useFilters();

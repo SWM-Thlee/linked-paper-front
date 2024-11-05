@@ -6,12 +6,14 @@ export const Scheme = z.object({
   name: z.string(),
   persist: z.boolean(),
   link: z.string().optional(),
+  createdAt: z.coerce.date(),
+  attributes: z.record(z.string(), z.any()),
 });
 
-export const OptionalScheme = Scheme.pick({
+export const InitialProps = Scheme.pick({
   name: true,
   link: true,
 }).partial();
 
 export type Type = z.infer<typeof Scheme>;
-export type Optional = z.infer<typeof OptionalScheme>;
+export type InitialProps = z.infer<typeof InitialProps>;

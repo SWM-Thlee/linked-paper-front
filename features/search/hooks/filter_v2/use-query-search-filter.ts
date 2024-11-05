@@ -1,7 +1,7 @@
 import { useDeepCompareMemo } from "use-deep-compare";
 import { useAtomValue } from "jotai";
 
-import useFilters from "@/features/filter_v2/hooks/use-filters";
+import useFilters from "@/features/filter-v2/hooks/use-filters";
 import { queryFilterIdAtom } from "@/features/search/stores/query";
 
 export default function useQuerySearchFilter() {

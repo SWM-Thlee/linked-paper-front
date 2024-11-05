@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useDeepCompareMemo } from "use-deep-compare";
 
-import useFilters from "@/features/filter_v2/hooks/use-filters";
-import { converter, producer } from "../../utils/filter_v2/flow";
+import useFilters from "@/features/filter-v2/hooks/use-filters";
+import { converter, producer } from "../../utils/filter-v2/flow";
 
 export default function useEditSearchFilter(id?: string) {
   const { filters, dispatch, remove } = useFilters();
