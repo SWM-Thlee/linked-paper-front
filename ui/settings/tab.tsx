@@ -2,6 +2,7 @@
 
 import {
   PropsWithChildren,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -17,7 +18,6 @@ import { TabContext } from "./context";
 import TabButton from "./tab-button";
 import useTab from "./hooks/use-tab";
 import useSettings from "./hooks/use-settings-container";
-import useOptionContainer from "./hooks/use-option-container";
 import useTabContainer from "./hooks/use-tab-container";
 import useGroupContainer from "./hooks/use-group-container";
 
@@ -25,15 +25,8 @@ export interface SettingsTabRootProps extends PropsWithChildren<Tab> {
   defaultTab?: boolean;
 }
 
-export function Root({
-  id,
-  name,
-  title,
-  description,
-  defaultTab,
-  children,
-}: SettingsTabRootProps) {
-  const { currentTabID, setTabID, setTabInfo } = useSettings();
+export function Root({ id, defaultTab, children }: SettingsTabRootProps) {
+  const { currentTabID, setTabID } = useSettings();
 
   // 선택된 Tab이 존재하지 않은 경우에만 기본 Tab으로 이동합니다.
   useEffect(() => {
@@ -41,20 +34,8 @@ export function Root({
     setTabID(id);
   }, [currentTabID, defaultTab, id, setTabID]);
 
-  useEffect(() => {
-    if (currentTabID === id) {
-      setTabInfo({ title, description });
-    }
-  }, [currentTabID, id, title, description, setTabInfo]);
-
   return (
-    <TabContext.Provider
-      value={useMemo(
-        () => ({ name, id, title, description }),
-        [name, id, title, description],
-      )}
-      key={id}
-    >
+    <TabContext.Provider value={useMemo(() => ({ id }), [id])} key={id}>
       {children}
     </TabContext.Provider>
   );
@@ -69,22 +50,12 @@ export function Content({ children }: SettingsTabContentProps) {
   return tab?.id === currentTabID ? children : null;
 }
 
-export interface SettingsTabOptionsProps extends PropsWithChildren {}
-
-export function Options({ children }: SettingsTabOptionsProps) {
-  const { currentTabID } = useSettings();
-  const tab = useTab();
-  const { element } = useOptionContainer();
-
-  if (!useIsClient()) return null;
-
-  return tab?.id === currentTabID ? createPortal(children, element()) : null;
+export interface SettingsTabTitleProps extends PropsWithChildren {
+  extra?: ReactNode;
 }
 
-export interface SettingsTabTitleProps extends PropsWithChildren {}
-
-export function Title({ children }: SettingsTabTitleProps) {
-  const { currentTabID, setTabID, setTabInfo } = useSettings();
+export function Title({ children, extra }: SettingsTabTitleProps) {
+  const { currentTabID, setTabID } = useSettings();
   const { element: tabContainerElement } = useTabContainer();
   const { groupContainerID, element: groupContainerElement } =
     useGroupContainer();
@@ -115,18 +86,21 @@ export function Title({ children }: SettingsTabTitleProps) {
   if (!useIsClient() || !tab) return null;
 
   return createPortal(
-    <TabButton
-      ui_variant={tab.id === currentTabID ? "selected" : "default"}
-      ref={refCallback}
-      onClick={() => {
-        if (tab.id !== currentTabID) {
-          setTabID(tab.id);
-          setTabInfo({ title: tab.title, description: tab.description });
-        }
-      }}
-    >
-      {children}
-    </TabButton>,
+    <div className="flex animate-scaleIn items-center gap-2">
+      <TabButton
+        ui_variant={tab.id === currentTabID ? "selected" : "default"}
+        ref={refCallback}
+        onClick={() => {
+          if (tab.id !== currentTabID) {
+            setTabID(tab.id);
+          }
+        }}
+        className="flex-1"
+      >
+        {children}
+      </TabButton>
+      {extra}
+    </div>,
     groupContainerID ? groupContainerElement() : tabContainerElement(),
   );
 }

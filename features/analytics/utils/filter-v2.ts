@@ -2,7 +2,7 @@ import { Search } from "@/features/search/types";
 import { Analytics } from "../types";
 
 export function searchFilterForAnalytics(
-  data: Search.Filter.Scheme | null,
+  data: Search.Filter.Scheme,
 ): Analytics.Scheme.SearchFilter {
   if (!data) return {};
 

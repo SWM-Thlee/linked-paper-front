@@ -1,55 +1,55 @@
-import * as FilterAttribute from "@/features/filter/types/attribute";
-import * as FilterBase from "@/features/filter/types/base";
+import { z } from "zod";
 
-export const Type = "semantic-search";
-export type Type = typeof Type;
+import Filter from "@/features/filter/types";
+import { date } from "../utils/filter/date";
 
-export type Journal = {
-  /** Journal의 이름을 고유 값으로 지정합니다. */
-  nameOfJournal: string;
-};
+// Search Filter Features
+export const Feature = z.enum([
+  "search-default",
+  "search-query",
+  "search-preset",
+]);
+export type Feature = z.infer<typeof Feature>;
 
-export function Journal(journals: string[]): Data["attributes"]["journal"] {
-  return {
-    type: FilterAttribute.MultiSelect,
-    value: journals.reduce<Record<string, FilterAttribute.Item<Journal>>>(
-      (result, journal) => ({
-        ...result,
-        [journal]: { itemID: journal, itemValue: { nameOfJournal: journal } },
-      }),
-      {},
-    ),
-  };
-}
+// Search Filter Attributes
+export const Attributes = z.object({
+  journal: z.array(z.string()),
+  category: z.array(z.string()),
+  date: z.object({
+    min: date.optional(),
+    max: date.optional(),
+  }),
+});
+export type Attributes = z.infer<typeof Attributes>;
+export type KeyAttributes = keyof Attributes;
 
-export type Category = {
-  /** Category의 고유 ID를 나타냅니다. */
-  categoryID: string;
-};
+// Search Filter Extra Scheme
+const Scheme = Filter.Base.Scheme.extend({
+  feature: Feature,
+  attributes: Attributes,
+});
+export type Scheme = Query | Default | Preset;
 
-export function Category(categories: string[]): Data["attributes"]["category"] {
-  return {
-    type: FilterAttribute.MultiSelect,
-    value: categories.reduce<Record<string, FilterAttribute.Item<Category>>>(
-      (result, category) => ({
-        ...result,
-        [category]: { itemID: category, itemValue: { categoryID: category } },
-      }),
-      {},
-    ),
-  };
-}
+// Search Filter Initial Props
+const InitialProps = Attributes.partial();
+export type InitialProps = z.infer<typeof InitialProps> &
+  Filter.Base.InitialProps;
 
-export type Data = FilterBase.Data<Type> & {
-  attributes: {
-    journal: FilterAttribute.MultiSelect<Journal>;
-    category: FilterAttribute.MultiSelect<Category>;
-    date: FilterAttribute.DataRange;
-  };
-};
+// Search Filter Scheme
+export const Query = Scheme.extend({
+  feature: z.literal("search-query"),
+});
 
-export type DataID = Data["dataID"];
+export type Query = z.infer<typeof Query>;
 
-export type Attribute = keyof Data["attributes"];
+export const Default = Scheme.extend({
+  feature: z.literal("search-default"),
+});
 
-export type Filters = FilterBase.Filters<Type, Data>;
+export type Default = z.infer<typeof Default>;
+
+export const Preset = Scheme.extend({
+  feature: z.literal("search-preset"),
+});
+
+export type Preset = z.infer<typeof Preset>;

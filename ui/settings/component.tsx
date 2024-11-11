@@ -1,73 +1,23 @@
+"use client";
+
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as Primitive from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
-import useIsClient from "@/hooks/use-is-client";
-import { tv } from "@/utils/style/tailwind-variants";
-import { Search } from "@/features/search/types";
-import {
-  SettingsContainer,
-  TabDirectionObserver,
-  TabID,
-  TabInfo,
-} from "./types";
-import VisuallyHidden from "../visually-hidden";
+import { tv, VariantProps } from "@/utils/style/tailwind-variants";
 import CloseIcon from "../icons/close";
-import InfoTooltip from "../info-tooltip";
-import InfoIcon from "../icons/info";
-import IconButton from "../icon-button";
 import {
-  OpenContext,
-  OptionContainerContext,
   SettingsContainerContext,
+  SettingsOpenContext,
   TabContainerContext,
 } from "./context";
 import useTabContainerID from "./hooks/use-tab-container-id";
-import useOptionContainerID from "./hooks/use-option-container-id";
+import { SettingsContainer, TabDirectionObserver, TabID } from "./types";
 
-export const settingsVariant = tv({
-  slots: {
-    overlay: [
-      "fixed inset-0 z-overlay",
-      "bg-light-shadow/15 dark:bg-dark-shadow/15 backdrop-blur",
-      "transition data-[state=open]:animate-overlayShow",
-    ],
-    container: [
-      "grid grid-cols-[minmax(20rem,_1fr)_3fr] fixed overflow-hidden rounded-6",
-      "top-[50%] left-[50%] w-[1024px] translate-x-[-50%] translate-y-[-50%] z-dialog",
-      "focus:outline-none shadow-lg",
-      "bg-light-surfaceContainerLowest text-light-onSurface dark:bg-dark-surfaceContainerLowest dark:text-dark-onSurface",
-      "data-[state=open]:animate-contentShow data-[state=closed]:animate-contentHide",
-    ],
-    tabContainer: [
-      "select-none h-[75vh] flex flex-col px-6",
-      "bg-light-surfaceContainerLow text-light-onSurface dark:bg-dark-surfaceContainerLow dark:text-dark-onSurface",
-    ],
-    tab: [
-      "flex flex-col overflow-hidden overflow-y-auto scrollbar-none py-6 gap-4",
-    ],
-    contentContainer: [
-      "relative h-[75vh] flex flex-col px-8",
-      "bg-light-surfaceContainerLowest text-light-onSurface dark:bg-dark-surfaceContainerLowest dark:text-dark-onSurface",
-    ],
-    content: [
-      "flex flex-col overflow-hidden overflow-y-auto scrollbar-none py-8",
-    ],
-    optionContainer: [
-      "absolute flex items-center rounded-circle right-[50%] bottom-[1.5rem] translate-x-[50%] p-2 gap-2",
-      "bg-light-surfaceVariant/50 text-light-onSurface dark:bg-dark-surfaceVariant/50 dark:text-dark-onSurface",
-      "transition-transform empty:translate-y-[250%]",
-    ],
-    close: [
-      "absolute top-8 right-8",
-      "text-light-onSurface dark:text-dark-onSurface",
-    ],
-    contentHeader: ["flex items-center gap-2 text-title-large select-none"],
-  },
-});
+// Root Component
+export interface RootProps extends Primitive.DialogProps {}
 
-export interface SettingsRootProps extends Primitive.DialogProps {}
-
-export function Root({ children, onOpenChange, ...props }: SettingsRootProps) {
+export function Root({ children, onOpenChange, ...props }: RootProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const onOpen = useCallback(
@@ -79,18 +29,37 @@ export function Root({ children, onOpenChange, ...props }: SettingsRootProps) {
   );
 
   return (
-    <OpenContext.Provider value={isOpen}>
+    <SettingsOpenContext.Provider value={isOpen}>
       <Primitive.Root {...props} onOpenChange={onOpen}>
         {children}
       </Primitive.Root>
-    </OpenContext.Provider>
+    </SettingsOpenContext.Provider>
   );
 }
 
-export interface SettingsTriggerProps
+// AriaInfo Component
+export interface AriaInfoProps {
+  title?: string;
+  description?: string;
+}
+
+export function AriaInfo({
+  title = "Settings",
+  description = "This is the settings dialog.",
+}: AriaInfoProps) {
+  return (
+    <VisuallyHidden>
+      <Primitive.Title>{title}</Primitive.Title>
+      <Primitive.Description>{description}</Primitive.Description>
+    </VisuallyHidden>
+  );
+}
+
+// Trigger Component
+export interface TriggerProps
   extends Omit<Primitive.DialogTriggerProps, "asChild"> {}
 
-export function Trigger({ children, ...props }: SettingsTriggerProps) {
+export function Trigger({ children, ...props }: TriggerProps) {
   return (
     <Primitive.Trigger {...props} asChild>
       {children}
@@ -98,35 +67,63 @@ export function Trigger({ children, ...props }: SettingsTriggerProps) {
   );
 }
 
-export interface SettingsContentProps extends Primitive.DialogContentProps {}
+// Content Component
+export const settingsVariant = tv({
+  slots: {
+    // Overlay
+    overlay: [
+      "fixed inset-0 z-overlay bg-light-shadow/15 dark:bg-dark-shadow/50",
+      "transition data-[state=open]:animate-overlayShow",
+    ],
+    // Container (Tabs + Content)
+    container: [
+      "grid grid-cols-[3fr_4fr] overflow-hidden rounded-4 h-[75vh]",
+      "fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]",
+      "focus:outline-none z-dialog",
+      "bg-light-surfaceContainer dark:bg-dark-surfaceContainer text-light-onSurface dark:text-dark-onSurface",
+      "shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]",
+      "transition data-[state=open]:animate-contentShow data-[state=closed]:animate-contentHide",
+    ],
+    // Tabs Container
+    tabs: [
+      "select-none flex flex-col gap-4 p-5 overflow-y-auto scrollbar-none",
+      "bg-light-surfaceContainerLow text-light-onSurface dark:bg-dark-surfaceContainerLow dark:text-dark-onSurface",
+    ],
+    // Content Container
+    content: ["flex snap-x snap-mandatory overflow-hidden scrollbar-none"],
+    // Close Button
+    close: [
+      "absolute top-[34px] right-[34px] z-tooltip",
+      "text-light-onSurface dark:text-dark-onSurface",
+    ],
+  },
+});
 
-export function Content({
-  children,
-  className,
-  ...props
-}: SettingsContentProps) {
+export interface ContentProps
+  extends Primitive.DialogContentProps,
+    VariantProps<typeof settingsVariant> {}
+
+export function Content({ children, className, ...props }: ContentProps) {
+  const { overlay, container, close, tabs, content } = settingsVariant();
+
   // null로 설정 시 Content 영역에 빈 화면이 표시됩니다.
   const [tabID, setTabID] = useState<TabID | null>(null);
-  const [tabInfo, setTabInfo] = useState<TabInfo | null>(null);
 
   // 특정 Tab으로 이동할 수 있도록 합니다.
   const [directionObserver, setDirectionObserver] =
     useState<TabDirectionObserver>({});
 
   const tabContainerID = useTabContainerID();
-  const optionContainerID = useOptionContainerID();
-  const isOpen = useContext(OpenContext);
+  const isOpen = useContext(SettingsOpenContext);
 
   const value = useMemo<SettingsContainer>(
     () => ({
       currentTabID: tabID,
       setTabID,
-      currentTabInfo: tabInfo,
-      setTabInfo,
       directionObserver,
       setDirectionObserver,
     }),
-    [tabID, tabInfo, directionObserver],
+    [tabID, directionObserver],
   );
 
   /**
@@ -138,71 +135,23 @@ export function Content({
   useEffect(() => {
     if (!isOpen) {
       setTabID(null);
-      setTabInfo(null);
     }
   }, [isOpen]);
-
-  if (!useIsClient()) return null;
-
-  const {
-    overlay,
-    container,
-    tabContainer,
-    tab,
-    contentContainer,
-    content,
-    optionContainer,
-    close,
-    contentHeader,
-  } = settingsVariant();
 
   return (
     <Primitive.Portal>
       <Primitive.Overlay className={overlay()} />
       <SettingsContainerContext.Provider value={value}>
         <TabContainerContext.Provider value={tabContainerID}>
-          <OptionContainerContext.Provider value={optionContainerID}>
-            <Primitive.Content className={container({ className })} {...props}>
-              <div className={tabContainer()}>
-                <div className={tab()} id={tabContainerID} />
-              </div>
-              <div className={contentContainer()}>
-                <Primitive.Close asChild>
-                  <IconButton className={close()}>
-                    <CloseIcon />
-                  </IconButton>
-                </Primitive.Close>
-                <div className={content()}>
-                  <div className={contentHeader()}>
-                    {tabInfo ? (
-                      <>
-                        <Primitive.Title>{tabInfo.title}</Primitive.Title>
-                        <InfoTooltip title={tabInfo.description}>
-                          <InfoIcon />
-                        </InfoTooltip>
-                        <VisuallyHidden>
-                          <Primitive.Description>
-                            {tabInfo.description}
-                          </Primitive.Description>
-                        </VisuallyHidden>
-                      </>
-                    ) : (
-                      <VisuallyHidden>
-                        <Primitive.Title>
-                          {Search.Settings.EMPTY.TITLE}
-                        </Primitive.Title>
-                        <Primitive.Description>
-                          {Search.Settings.EMPTY.DESCRIPTION}
-                        </Primitive.Description>
-                      </VisuallyHidden>
-                    )}
-                  </div>
-                  {children}
-                </div>
-                <div id={optionContainerID} className={optionContainer()} />
-              </div>
-            </Primitive.Content>
-          </OptionContainerContext.Provider>
+          <Primitive.Content className={container({ className })} {...props}>
+            <Primitive.Close asChild>
+              <button type="button" aria-label="Close" className={close()}>
+                <CloseIcon />
+              </button>
+            </Primitive.Close>
+            <div className={tabs()} id={tabContainerID} />
+            <div className={content()}>{children}</div>
+          </Primitive.Content>
         </TabContainerContext.Provider>
       </SettingsContainerContext.Provider>
     </Primitive.Portal>

@@ -5,9 +5,9 @@ import PageContainer from "@/components/layout/page-container";
 import AnnouncementProvider from "@/features/announcement/components/announcement-provider";
 import Suggestions from "@/features/suggestion/components/suggestions";
 import SuggestionsSkeleton from "@/features/suggestion/components/suggestions-skeleton";
-import DefaultFilterInfo from "../components/default-filter-info";
 import SearchForm from "../components/search-form";
 import MainPageToolbar from "../components/main-page-toolbar";
+import DefaultFilterInfo from "../components/filters/default-filter-info";
 
 export default function MainPage() {
   return (

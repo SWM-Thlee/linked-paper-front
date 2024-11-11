@@ -1,14 +1,14 @@
 import { ErrorResponse, api } from "@/utils/api";
 import { convertToResult } from "@/features/paper/utils/converter";
-import { convertToQueryString } from "../utils/filter/query";
 import { Search } from "../types";
+import { toQueryString } from "../utils/query";
 
 export async function SearchResult(
   info: Search.Query.Info,
 ): Promise<Search.Api.Result | ErrorResponse> {
   // Server Response
   const response = await api<Search.Api.Response>(
-    `/api/search?${convertToQueryString(info)}`,
+    `/api/search?${toQueryString(info)}`,
     Search.Api.NoStore,
   );
 

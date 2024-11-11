@@ -1,29 +1,22 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import { Filter } from "@/features/filter/types";
 import { Search } from "../../types";
-import {
-  convertSearchFilterToQuery,
-  convertToQueryString,
-} from "../../utils/filter/query";
-import useSearchFilters from "../filter/use-search-filters";
+import { filterToQuery, toQueryString } from "../../utils/query";
+import useDefaultSearchFilter from "../filter/use-default-search-filter";
 
 export default function useSearchRequest() {
   const router = useRouter();
 
   /** Search Request on "Any Page" */
-  const { filter: defaultFilter } = useSearchFilters({
-    store: Filter.Store.PERSIST,
-    track: { tag: [Filter.Identify.Tag.DEFAULT] },
-  });
+  const { filter: defaultFilter } = useDefaultSearchFilter();
 
   const request = useCallback(
-    (info: Search.Query.RequiredInfo, filter?: Search.Filter.Data) => {
+    (info: Search.Query.Required, filter?: Search.Filter.Scheme) => {
       const targetFilter = filter ?? defaultFilter;
 
-      const queryString = convertToQueryString({
-        ...(targetFilter ? convertSearchFilterToQuery(targetFilter) : null),
+      const queryString = toQueryString({
+        ...(targetFilter ? filterToQuery(targetFilter.attributes) : null),
         ...info,
       });
 

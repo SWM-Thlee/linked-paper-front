@@ -5,7 +5,7 @@ export default function useGroupContainer() {
   const groupContainerID = useContext(GroupContainerContext);
 
   // DOM 내의 Group Container Element를 불러옵니다.
-  // React Porta 목적으로 사용됩니다.
+  // React Portal 목적으로 사용됩니다.
   const element = useCallback(() => {
     let container;
 

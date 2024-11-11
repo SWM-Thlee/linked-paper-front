@@ -1,30 +1,38 @@
-export type Sorting = (typeof Sorting)[keyof typeof Sorting];
-export const Sorting = {
-  SIMILARITY: "similarity",
-  RECENCY: "recency",
-  CITATION: "citation",
-} as const;
+import { z } from "zod";
 
-/** 검색 결과의 크기를 나타냅니다. */
-export type Size = (typeof Size)[number];
-export const Size = [20, 30, 40, 50] as const;
+export const Sorting = z.enum(["similarity", "recency", "citation"]);
+export type Sorting = z.infer<typeof Sorting>;
 
-export type RequiredInfo = {
-  query: string;
-  sorting: Sorting;
-  size: Size;
-  index: number;
-  similarity_limit: boolean;
-};
+export const Size = z.enum(["20", "30", "40", "50"]);
+export type Size = z.infer<typeof Size>;
 
-export type FilterInfo = {
-  filter_journal?: string[];
-  filter_category?: string[];
-  filter_start_date?: string;
-  filter_end_date?: string;
-};
+export const Required = z.object({
+  query: z.string().default("Linked Paper"),
+  sorting: Sorting.default("similarity"),
+  size: Size.default("20"),
+  index: z
+    .string()
+    .default("0")
+    .transform((value) => Number(value)),
+  similarity_limit: z
+    .string()
+    .default("true")
+    .transform((value) => value === "true"),
+});
 
-export type Info = RequiredInfo & FilterInfo;
+export type Required = z.infer<typeof Required>;
+
+export const Filter = z.object({
+  filter_journal: z.array(z.string()).nullish(),
+  filter_category: z.array(z.string()).nullish(),
+  filter_start_date: z.string().nullish(),
+  filter_end_date: z.string().nullish(),
+});
+
+export type Filter = z.infer<typeof Filter>;
+
+export const Info = Required.merge(Filter);
+export type Info = z.infer<typeof Info>;
 
 export type Params = {
   readonly [key in keyof Info]-?:
@@ -32,9 +40,4 @@ export type Params = {
     | undefined;
 };
 
-/** Query String에서 바로 가져온 값을 나타냅니다. */
-export type RawInfo = {
-  readonly [key in keyof Info]-?:
-    | (NonNullable<Info[key]> extends unknown[] ? string[] : string)
-    | null;
-};
+export const defaultInfo: Info = Info.parse({});

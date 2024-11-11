@@ -5,8 +5,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import useIsClient from "@/hooks/use-is-client";
 import { Search } from "@/features/search/types";
 import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
-import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
+import useQuerySearchFilter from "@/features/search/hooks/filter/use-query-search-filter";
 import CategoryChip from "@/features/search/components/chip/category";
 import JournalChip from "@/features/search/components/chip/journal";
 import DateChip from "@/features/search/components/chip/date";
@@ -23,50 +23,28 @@ import WarningIcon from "@/ui/icons/warning";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
-import { FilterSettings } from "./filter-settings";
+import FilterSettings from "./filters/filter-settings";
 
 function Attributes({
   attributes: { category, journal, date },
 }: {
-  attributes: Search.Filter.Data["attributes"];
+  attributes: Search.Filter.Attributes;
 }) {
-  const categoryIDs = useMemo(
-    () =>
-      Object.values(category.value ?? {}).map(
-        ({ itemValue }) => itemValue.categoryID,
-      ),
-    [category.value],
-  );
+  const hasCategory = category.length > 0;
+  const hasJournal = journal.length > 0;
+  const hasDate = date.min || date.max;
 
-  const nameOfJournals = useMemo(
-    () =>
-      Object.values(journal.value ?? {}).map(
-        ({ itemValue }) => itemValue.nameOfJournal,
-      ),
-    [journal.value],
-  );
-
-  const dateRange = useMemo(
-    () => ({ min: date.value?.min, max: date.value?.max }),
-    [date.value],
-  );
-
-  const hasCategory = categoryIDs.length > 0;
-  const hasJournal = nameOfJournals.length > 0;
-  const hasDate = dateRange.min || dateRange.max;
-  const hasData = hasCategory || hasJournal || hasDate;
-
-  return hasData ? (
-    <div className="flex flex-wrap items-center gap-2">
-      {hasCategory && <CategoryChip value={categoryIDs} />}
-      {hasJournal && <JournalChip value={nameOfJournals} />}
-      {hasDate && <DateChip value={dateRange} />}
+  return (
+    <div className="flex flex-wrap items-center gap-4">
+      {hasCategory && <CategoryChip value={category} />}
+      {hasJournal && <JournalChip value={journal} />}
+      {hasDate && <DateChip value={date} />}
     </div>
-  ) : null;
+  );
 }
 
 function FilterChips() {
-  const filter = useSearchQueryFilter();
+  const { filter } = useQuerySearchFilter();
   const isClient = useIsClient();
 
   if (!isClient) return null;
@@ -83,7 +61,7 @@ function Sorting({
 }) {
   const items = useMemo<SelectComponentItem[]>(
     () =>
-      Object.values(Search.Query.Sorting).map((sorting) => ({
+      Object.values(Search.Query.Sorting.options).map((sorting) => ({
         id: sorting,
         value: sorting,
       })),
@@ -136,7 +114,7 @@ function ResultSize({
           take to import.
         </p>
         <div className="flex items-center gap-1">
-          {Search.Query.Size.map((size) => (
+          {Search.Query.Size.options.map((size) => (
             <LabelButton
               ui_color={status === size ? "primary" : "secondary"}
               ui_size="small"
@@ -241,7 +219,7 @@ export default function SearchResultHeader() {
   const { log } = useAnalytics();
   const { update } = useSearchUpdate();
   const { requiredQuery, stale } = useSearchQueryInfo();
-  const filter = useSearchQueryFilter();
+  const { filter } = useQuerySearchFilter();
   const [text, setText] = useState("");
 
   useEffect(() => {
@@ -278,7 +256,7 @@ export default function SearchResultHeader() {
 
       log(Analytics.Event.SEARCH_QUERY_RESULT, {
         query: text,
-        ...searchFilterForAnalytics(filter),
+        ...(filter ? searchFilterForAnalytics(filter) : {}),
       });
       update({ ...requiredQuery, query: text });
     },

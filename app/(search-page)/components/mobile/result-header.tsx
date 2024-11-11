@@ -4,19 +4,19 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Search } from "@/features/search/types";
 import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
-import useSearchQueryFilter from "@/features/search/hooks/query/use-search-query-filter";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
 import SearchField from "@/ui/search-field";
 import Select, { SelectComponentItem } from "@/ui/select";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
+import useQuerySearchFilter from "@/features/search/hooks/filter/use-query-search-filter";
 
 export default function MobileSearchResultHeader() {
   const { log } = useAnalytics();
   const { update } = useSearchUpdate();
   const { requiredQuery, stale } = useSearchQueryInfo();
-  const filter = useSearchQueryFilter();
+  const { filter } = useQuerySearchFilter();
   const [text, setText] = useState("");
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function MobileSearchResultHeader() {
 
       log(Analytics.Event.SEARCH_QUERY_RESULT, {
         query: text,
-        ...searchFilterForAnalytics(filter),
+        ...(filter ? searchFilterForAnalytics(filter) : {}),
       });
       update({ ...requiredQuery, query: text });
     },
@@ -49,7 +49,7 @@ export default function MobileSearchResultHeader() {
 
   const items = useMemo<SelectComponentItem[]>(
     () =>
-      Object.values(Search.Query.Sorting).map((sorting) => ({
+      Object.values(Search.Query.Sorting.options).map((sorting) => ({
         id: sorting,
         value: sorting,
       })),

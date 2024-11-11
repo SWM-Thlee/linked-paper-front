@@ -3,10 +3,10 @@ import { Metadata as PaperMetadata } from "@/features/paper/types/scheme";
 import * as Track from "./track";
 
 export type SearchFilter = {
-  filter_journal?: string[];
-  filter_date_start?: string;
-  filter_date_end?: string;
-  filter_category?: string[];
+  filter_journal?: string[] | null;
+  filter_date_start?: string | null;
+  filter_date_end?: string | null;
+  filter_category?: string[] | null;
 };
 
 export type SearchQuery = {

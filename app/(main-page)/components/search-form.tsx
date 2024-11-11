@@ -11,12 +11,12 @@ import {
 } from "react";
 
 import useSearchRequest from "@/features/search/hooks/query/use-search-request";
-import { defaultQueryValue } from "@/features/search/stores/query";
 import SearchField, { SearchProps } from "@/ui/search-field";
 import { Analytics } from "@/features/analytics/types";
 import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import useCompletion from "@/components/completion/hooks/use-completion";
+import { Search } from "@/features/search/types";
 
 export default function SearchForm({
   ui_color,
@@ -57,7 +57,7 @@ export default function SearchForm({
       ...searchFilterForAnalytics(router.defaultFilter),
     });
 
-    router.request({ ...defaultQueryValue, query: text });
+    router.request({ ...Search.Query.defaultInfo, query: text });
   }, [router, text, log]);
 
   const searchPlaceholder = useMemo(

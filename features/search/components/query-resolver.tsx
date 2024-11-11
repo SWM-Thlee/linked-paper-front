@@ -5,26 +5,20 @@ import { redirect, useSearchParams } from "next/navigation";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import isEqual from "react-fast-compare";
+import { v4 as uuidv4 } from "uuid";
 
 import { Search } from "@/features/search/types";
-import { Filter } from "@/features/filter/types";
-import { generateFilterDataID } from "@/features/filter/utils/id";
+import useFilters from "@/features/filter/hooks/use-filters";
 import usePrevious from "@/hooks/use-previous";
-import {
-  convertSearchFilterToQuery,
-  convertSearchQueryToFilter,
-} from "../utils/filter/query";
 import {
   queryAtom,
   queryFilterIdAtom,
   queryStaleAtom,
   requiredQueryAtom,
 } from "../stores/query";
-import { validate } from "../utils/validator";
-
-import useSearchFilterDispatcher from "../hooks/filter/use-search-filter-dispatcher";
-import useSearchFilterEditor from "../hooks/filter/use-search-filter-editor";
 import useSearchUpdate from "../hooks/query/use-search-update";
+import useQuerySearchFilter from "../hooks/filter/use-query-search-filter";
+import { filterToQuery, queryToFilter } from "../utils/query";
 
 /**
  * Query String으로부터 검색 정보를 불러옵니다.
@@ -36,33 +30,33 @@ export default function SearchQueryResolver({
   const searchParams = useSearchParams();
   const router = useSearchUpdate();
 
-  const validation = useMemo(
-    () =>
-      validate({
-        // Required Info
-        query: searchParams.get("query"),
-        sorting: searchParams.get("sorting"),
-        size: searchParams.get("size"),
-        index: searchParams.get("index"),
-        similarity_limit: searchParams.get("similarity_limit"),
+  const validation = useMemo(() => {
+    const result = Search.Query.Info.safeParse({
+      // Required Info
+      query: searchParams.get("query"),
+      sorting: searchParams.get("sorting"),
+      size: searchParams.get("size"),
+      index: searchParams.get("index"),
+      similarity_limit: searchParams.get("similarity_limit"),
 
-        // Filter Info
-        filter_start_date: searchParams.get("filter_start_date"),
-        filter_end_date: searchParams.get("filter_end_date"),
-        filter_journal: searchParams.getAll("filter_journal"),
-        filter_category: searchParams.getAll("filter_category"),
-      }),
-    [searchParams],
-  );
+      // Filter Info
+      filter_start_date: searchParams.get("filter_start_date"),
+      filter_end_date: searchParams.get("filter_end_date"),
+      filter_journal: searchParams.getAll("filter_journal"),
+      filter_category: searchParams.getAll("filter_category"),
+    });
 
-  if (!validation) {
-    redirect("/error/400?from=Semantic Search&reason=Invalid Queries");
-  }
+    if (!result.success) {
+      redirect("/error/400?from=Semantic Search&reason=Invalid Queries");
+    }
+
+    return result.data;
+  }, [searchParams]);
 
   // Search Query를 Atom과 연동합니다.
   useHydrateAtoms([
     [queryAtom, validation],
-    [queryFilterIdAtom, generateFilterDataID(Search.Filter.Type)],
+    [queryFilterIdAtom, uuidv4()],
   ]);
 
   const setStale = useSetAtom(queryStaleAtom);
@@ -76,50 +70,51 @@ export default function SearchQueryResolver({
   }, [setQueryInfo, setStale, validation]);
 
   // Filter System과 연동합니다.
-  const queryFilterID = useAtomValue(queryFilterIdAtom);
+  const { id, filter, remove } = useQuerySearchFilter();
+  const { dispatch } = useFilters();
 
-  const dispatcher = useSearchFilterDispatcher({
-    store: Filter.Store.TEMPORARY,
-  });
-
-  const { filter, remove } = useSearchFilterEditor({
-    store: Filter.Store.TEMPORARY,
-    dataID: queryFilterID,
-  });
-
-  // SearchQueryResolver가 Unmount되면 Filter는 자동으로 제거됩니다.
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    return () => remove(true);
-  }, [remove]);
+    return () => remove();
+  }, []);
 
+  // 0. Filter가 없을 경우 Query에서 Filter를 불러옵니다.
   useEffect(() => {
-    const queryToFilter = convertSearchQueryToFilter({
+    if (filter) return;
+
+    dispatch(
+      queryToFilter({
+        ...validation,
+        id,
+      }),
+    );
+  }, [dispatch, validation, id, filter]);
+
+  // 1. Filter를 수정할 경우 검색 결과를 재요청합니다.
+  useEffect(() => {
+    if (!filter || !router.isInSearchPage()) return;
+
+    const filterFromQuery = queryToFilter({
       ...validation,
-      queryDataID: queryFilterID,
+      id,
     });
 
-    if (!filter) {
-      dispatcher(queryToFilter);
-      return;
-    }
+    if (isEqual(filter, filterFromQuery)) return;
 
-    if (!router.isInSearchPage()) return;
-    if (isEqual(filter, queryToFilter)) return;
+    router.update(filterToQuery(filter.attributes));
+  }, [router, filter, validation, id]);
 
-    router.update(convertSearchFilterToQuery(filter));
-  }, [router, filter, validation, dispatcher, queryFilterID]);
-
-  // Required Query
-  const previousRequiredQuery = usePrevious<Search.Query.RequiredInfo>();
-  const currentRequiredQuery = useAtomValue(requiredQueryAtom);
+  // 2. Query가 수정될 경우 검색 결과를 재요청합니다.
+  const prevQuery = usePrevious<Search.Query.Required>();
+  const currentQuery = useAtomValue(requiredQueryAtom);
 
   useEffect(() => {
     if (!router.isInSearchPage()) return;
-    if (previousRequiredQuery.isEqualTo(currentRequiredQuery)) return;
+    if (prevQuery.isEqualTo(currentQuery)) return;
 
-    previousRequiredQuery.setPrevious(currentRequiredQuery);
-    router.update(currentRequiredQuery);
-  }, [router, previousRequiredQuery, currentRequiredQuery]);
+    prevQuery.setPrevious(currentQuery);
+    router.update(currentQuery);
+  }, [router, prevQuery, currentQuery]);
 
   return children;
 }

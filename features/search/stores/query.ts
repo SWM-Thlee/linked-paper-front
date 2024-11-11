@@ -1,29 +1,19 @@
 import { atom } from "jotai";
 import { selectAtom } from "jotai/utils";
 import isEqual from "react-fast-compare";
+import { v4 as uuidv4 } from "uuid";
 
-import { generateFilterDataID } from "@/features/filter/utils/id";
 import { Search } from "../types";
 
-export const defaultQueryValue: Search.Query.Info = {
-  query: "Linked Paper",
-  index: 0,
-  size: 20,
-  similarity_limit: true,
-  sorting: Search.Query.Sorting.SIMILARITY,
-};
-
 /** Query String과 연동되는 정보입니다. */
-export const queryAtom = atom<Search.Query.Info>(defaultQueryValue);
+export const queryAtom = atom<Search.Query.Info>(Search.Query.defaultInfo);
 export const queryStaleAtom = atom(false);
-export const queryFilterIdAtom = atom<Search.Filter.DataID>(
-  generateFilterDataID(Search.Filter.Type),
-);
+export const queryFilterIdAtom = atom<string>(uuidv4());
 
 /** 필수 정보를 나타냅니다. */
 export const requiredQueryAtom = selectAtom<
   Search.Query.Info,
-  Search.Query.RequiredInfo
+  Search.Query.Required
 >(
   queryAtom,
   ({ index, query, similarity_limit, size, sorting }) => ({
@@ -39,7 +29,7 @@ export const requiredQueryAtom = selectAtom<
 /** Filter 정보를 나타냅니다. */
 export const filterQueryAtom = selectAtom<
   Search.Query.Info,
-  Search.Query.FilterInfo
+  Search.Query.Filter
 >(
   queryAtom,
   ({

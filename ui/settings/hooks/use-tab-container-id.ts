@@ -3,5 +3,5 @@ import { signature } from "@/utils/signature";
 import { TabContainerID } from "../types";
 
 export default function useTabContainerID() {
-  return useRef<TabContainerID>(`tabcontainer-${signature()}`).current;
+  return useRef<TabContainerID>(`tab-container-${signature()}`).current;
 }

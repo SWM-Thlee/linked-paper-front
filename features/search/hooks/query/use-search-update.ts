@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import isEqual from "react-fast-compare";
 
 import { Search } from "../../types";
-import { convertToQueryString } from "../../utils/filter/query";
+import { toQueryString } from "../../utils/query";
 import { queryAtom } from "../../stores/query";
 
 export default function useSearchUpdate() {
@@ -20,10 +20,7 @@ export default function useSearchUpdate() {
 
   const update = useCallback(
     (
-      info?:
-        | Search.Query.Info
-        | Search.Query.RequiredInfo
-        | Search.Query.FilterInfo,
+      info?: Search.Query.Info | Search.Query.Required | Search.Query.Filter,
     ) => {
       if (currentRoute !== "/search") {
         throw new Error(
@@ -32,7 +29,7 @@ export default function useSearchUpdate() {
       }
 
       const newQuery = { ...query, ...info };
-      const queryString = convertToQueryString(newQuery);
+      const queryString = toQueryString(newQuery);
 
       if (isEqual(query, newQuery)) return;
 

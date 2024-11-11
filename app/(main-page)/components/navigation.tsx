@@ -12,11 +12,11 @@ import { NavigationModule } from "@/ui/navigation";
 import SearchField from "@/ui/search-field";
 import SearchIcon from "@/ui/icons/search";
 import useSearchRequest from "@/features/search/hooks/query/use-search-request";
-import { defaultQueryValue } from "@/features/search/stores/query";
 import { Analytics } from "@/features/analytics/types";
 import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
-import DefaultFilterInfo from "./default-filter-info";
+import { Search } from "@/features/search/types";
+import DefaultFilterInfo from "./filters/default-filter-info";
 
 function Content() {
   const { log } = useAnalytics();
@@ -31,7 +31,7 @@ function Content() {
       query: text,
       ...searchFilterForAnalytics(router.defaultFilter),
     });
-    router.request({ ...defaultQueryValue, query: text });
+    router.request({ ...Search.Query.defaultInfo, query: text });
   }, [router, log, text]);
 
   const searchPlaceholder = useMemo(

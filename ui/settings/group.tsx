@@ -10,11 +10,7 @@ import useTabContainer from "./hooks/use-tab-container";
 import useGroupContainer from "./hooks/use-group-container";
 
 export const groupVariant = tv({
-  base: [
-    "flex flex-col gap-3 p-4 rounded-4 text-body-large",
-    "bg-light-primaryContainer/25 text-light-onPrimaryContainer dark:bg-dark-primaryContainer/25 dark:text-dark-onPrimaryContainer",
-    "transition-colors animate-scaleIn duration-200",
-  ],
+  base: ["flex flex-col gap-2"],
 });
 
 export interface SettingsGroupRootProps extends React.ComponentProps<"div"> {
