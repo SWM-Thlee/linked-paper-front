@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { redirect, useSearchParams } from "next/navigation";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
@@ -72,15 +72,13 @@ export default function SearchQueryResolver({
   // Filter System과 연동합니다.
   const { id, filter, remove } = useQuerySearchFilter();
   const { dispatch } = useFilters();
-
-  /* eslint-disable react-hooks/exhaustive-deps */
-  useEffect(() => {
-    return () => remove();
-  }, []);
+  const initial = useRef(false);
 
   // 0. Filter가 없을 경우 Query에서 Filter를 불러옵니다.
   useEffect(() => {
-    if (filter) return;
+    if (filter || initial.current) return;
+
+    initial.current = true;
 
     dispatch(
       queryToFilter({
@@ -88,7 +86,7 @@ export default function SearchQueryResolver({
         id,
       }),
     );
-  }, [dispatch, validation, id, filter]);
+  }, [dispatch, validation, id, filter, remove]);
 
   // 1. Filter를 수정할 경우 검색 결과를 재요청합니다.
   useEffect(() => {
