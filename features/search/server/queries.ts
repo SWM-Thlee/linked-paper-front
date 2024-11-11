@@ -8,7 +8,14 @@ export const queryKeys = {
 
   /* 동일한 검색 쿼리는 Context가 유지되는 동안(새로고침을 하기 전까지는) Cache 됩니다. */
   result: (info: Search.Query.Info) =>
-    [...queryKeys.all, "result", info] as const,
+    [
+      ...queryKeys.all,
+      "result",
+      info.sorting,
+      info.query,
+      info.index,
+      info,
+    ] as const,
 };
 
 export const queryOptions = {

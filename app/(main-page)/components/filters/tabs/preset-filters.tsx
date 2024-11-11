@@ -17,6 +17,9 @@ import { Search } from "@/features/search/types";
 import AddIcon from "@/ui/icons/add";
 import { createPresetSearchFilter } from "@/features/search/utils/filter/creator";
 import FilterSettingsTab from "@/features/search/components/filter/filter-settings-tab";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 
 function PresetFilterTab({
   defaultFilter,
@@ -86,18 +89,25 @@ function PresetFilterOptions({
 }) {
   const { request } = useTabDirection();
   const { remove, dispatch } = useFilters();
+  const { log } = useAnalytics();
 
+  /* User Event: 기본 필터를 프리셋 필터에 적용합니다. */
   const onApplyDefault = useCallback(() => {
     dispatch(converter["search-default"]["search-preset"](defaultFilter));
     dispatch(converter["search-preset"]["search-default"](preset));
 
     request("SearchFilter", preset.id);
-  }, [dispatch, request, preset, defaultFilter]);
 
+    log(Analytics.Event.FILTER_APPLY, searchFilterForAnalytics(preset));
+  }, [dispatch, request, preset, defaultFilter, log]);
+
+  /* User Event: 프리셋 필터를 삭제합니다. */
   const onRemovePreset = useCallback(() => {
     remove(preset.id);
     request("SearchFilter", defaultFilter.id);
-  }, [remove, preset, request, defaultFilter.id]);
+
+    log(Analytics.Event.DELETE_FILTER, searchFilterForAnalytics(preset));
+  }, [remove, preset, request, defaultFilter.id, log]);
 
   return (
     <TooltipProvider>

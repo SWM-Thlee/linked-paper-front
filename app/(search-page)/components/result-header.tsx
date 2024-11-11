@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import useIsClient from "@/hooks/use-is-client";
 import { Search } from "@/features/search/types";
 import useSearchUpdate from "@/features/search/hooks/query/use-search-update";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
@@ -14,12 +13,6 @@ import SearchField from "@/ui/search-field";
 import LabelButton from "@/ui/label-button";
 import FilterIcon from "@/ui/icons/filter";
 import Select, { SelectComponentItem } from "@/ui/select";
-import CheckIcon from "@/ui/icons/check";
-import { Popover } from "@/ui/popover";
-import InfoIcon from "@/ui/icons/info";
-import Button from "@/ui/button";
-import CloseIcon from "@/ui/icons/close";
-import WarningIcon from "@/ui/icons/warning";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
@@ -45,11 +38,23 @@ function Attributes({
 
 function FilterChips() {
   const { filter } = useQuerySearchFilter();
-  const isClient = useIsClient();
 
-  if (!isClient) return null;
+  if (!filter) {
+    return (
+      <div className="flex flex-wrap items-center gap-4">
+        <LabelButton
+          ui_color="secondary"
+          ui_variant="light"
+          ui_size="small"
+          className="animate-pulse"
+        >
+          <FilterIcon ui_size="small" /> <span>Loading Filters...</span>
+        </LabelButton>
+      </div>
+    );
+  }
 
-  return filter ? <Attributes attributes={filter.attributes} /> : null;
+  return <Attributes attributes={filter.attributes} />;
 }
 
 function Sorting({
@@ -80,164 +85,16 @@ function Sorting({
   );
 }
 
-function ResultSize({
-  status,
-  onStatusChange,
-}: {
-  status: Search.Query.Size;
-  onStatusChange: (newStatus: Search.Query.Size) => void;
-}) {
-  const [open, setOpen] = useState(false);
-
-  const setStatus = useCallback(
-    (newStatus: Search.Query.Size) => {
-      setOpen(false);
-      onStatusChange(newStatus);
-    },
-    [onStatusChange],
-  );
-
-  return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger>
-        <LabelButton ui_color="secondary">{status} Results</LabelButton>
-      </Popover.Trigger>
-      <Popover.Content
-        ui_size="large"
-        className="flex max-w-[30rem] flex-col gap-6"
-      >
-        <InfoIcon />
-        <div className="text-title-medium">Select Result Size (Per Load)</div>
-        <p className="text-body-medium">
-          Determine the number of results to import each time new search results
-          are requested. The larger the number of results, the longer it may
-          take to import.
-        </p>
-        <div className="flex items-center gap-1">
-          {Search.Query.Size.options.map((size) => (
-            <LabelButton
-              ui_color={status === size ? "primary" : "secondary"}
-              ui_size="small"
-              className="flex items-center gap-2"
-              key={size}
-              onClick={() => setStatus(size)}
-            >
-              {status === size && <CheckIcon ui_size="small" />}
-              <span>{size}</span>
-            </LabelButton>
-          ))}
-        </div>
-      </Popover.Content>
-    </Popover.Root>
-  );
-}
-
-function SimilarityLimitation({
-  status,
-  onStatusChange,
-}: {
-  status: boolean;
-  onStatusChange: (newStatus: boolean) => void;
-}) {
-  const [open, setOpen] = useState(false);
-
-  const setStatus = useCallback(
-    (newStatus: boolean) => {
-      onStatusChange(newStatus);
-      setOpen(false);
-    },
-    [onStatusChange],
-  );
-
-  return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger>
-        <LabelButton
-          ui_color={status ? "tertiary" : "secondary"}
-          ui_variant={status ? "default" : "bordered"}
-        >
-          {status ? (
-            <CheckIcon ui_size="small" />
-          ) : (
-            <CloseIcon ui_size="small" />
-          )}
-          <span>Similarity Limitation</span>
-        </LabelButton>
-      </Popover.Trigger>
-      <Popover.Content
-        ui_size="large"
-        className="flex max-w-[30rem] flex-col gap-6"
-      >
-        {status ? (
-          <>
-            <InfoIcon />
-            <div className="text-title-medium">
-              What is Similarity Limitation?
-            </div>
-            <p className="text-body-medium">
-              For a better search experience, all search options only show
-              results above a certain similarity. If you want to see the
-              original search results, you can disable the similarity limitation
-              through the button below.
-            </p>
-            <Button
-              ui_size="small"
-              ui_color="secondary"
-              className="flex items-center justify-center gap-2 text-label-large"
-              onClick={() => setStatus(false)}
-            >
-              <CloseIcon ui_size="small" /> <span>Disable Limitation</span>
-            </Button>
-          </>
-        ) : (
-          <>
-            <WarningIcon />
-            <div className="text-title-medium">
-              Similarity Limitation Is Disabled
-            </div>
-            <p className="text-body-medium">
-              Showing all search results without similarity limitation can
-              increase the proportion of results that are far from your
-              intentions. For a better search experience, it is recommended to
-              enable similarity limitation.
-            </p>
-            <Button
-              ui_size="small"
-              className="flex items-center justify-center gap-2 text-label-large"
-              onClick={() => setStatus(true)}
-            >
-              <CheckIcon ui_size="small" /> <span>Enable Limitation</span>
-            </Button>
-          </>
-        )}
-      </Popover.Content>
-    </Popover.Root>
-  );
-}
-
 export default function SearchResultHeader() {
   const { log } = useAnalytics();
   const { update } = useSearchUpdate();
   const { requiredQuery, stale } = useSearchQueryInfo();
   const { filter } = useQuerySearchFilter();
-  const [text, setText] = useState("");
+  const [text, setText] = useState(requiredQuery.query);
 
   useEffect(() => {
     if (!stale) setText(requiredQuery.query);
   }, [stale, requiredQuery.query]);
-
-  /* User Event: 검색 결과의 크기 */
-  const onModifyResultSize = useCallback(
-    (size: Search.Query.Size) => update({ ...requiredQuery, size }),
-    [update, requiredQuery],
-  );
-
-  /* User Event: 유사도 제한 */
-  const onModifyLimitation = useCallback(
-    (similarity_limit: boolean) =>
-      update({ ...requiredQuery, similarity_limit }),
-    [update, requiredQuery],
-  );
 
   /* User Event: 정렬 옵션 */
   const onModifySorting = useCallback(
@@ -273,14 +130,6 @@ export default function SearchResultHeader() {
       />
       <div className="grid grid-cols-[1fr_auto]">
         <div className="flex items-center gap-2">
-          <ResultSize
-            status={requiredQuery.size}
-            onStatusChange={onModifyResultSize}
-          />
-          <SimilarityLimitation
-            status={requiredQuery.similarity_limit}
-            onStatusChange={onModifyLimitation}
-          />
           <FilterSettings>
             <LabelButton ui_color="secondary" ui_variant="bordered">
               <FilterIcon ui_size="small" /> <span>Configure Filter...</span>

@@ -18,6 +18,9 @@ import { createPresetSearchFilter } from "@/features/search/utils/filter/creator
 import FilterSettingsTab from "@/features/search/components/filter/filter-settings-tab";
 import useQuerySearchFilter from "@/features/search/hooks/filter/use-query-search-filter";
 import SearchIcon from "@/ui/icons/search";
+import useAnalytics from "@/features/analytics/hooks/use-analytics";
+import { Analytics } from "@/features/analytics/types";
+import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
 
 function FilterTab({ defaultFilter }: { defaultFilter: Search.Filter.Scheme }) {
   const { request } = useTabDirection();
@@ -29,6 +32,7 @@ function FilterTab({ defaultFilter }: { defaultFilter: Search.Filter.Scheme }) {
     request("SearchFilter", newFilter.id);
   }, [dispatch, request]);
 
+  /* User Event: 모든 프리셋 필터를 삭제합니다. */
   const onRemoveAllPreset = useCallback(() => {
     removeAll();
     request("SearchFilter", defaultFilter.id);
@@ -81,13 +85,17 @@ function DefaultFilterOptions({
 }) {
   const { request } = useTabDirection();
   const { id, dispatch: dispatchQuery } = useQuerySearchFilter();
+  const { log } = useAnalytics();
 
+  /* User Event: 기본 필터를 검색 쿼리에 적용합니다. */
   const onApplyToSearch = useCallback(() => {
     dispatchQuery(
       producer["search-default"]["search-query"](id, defaultFilter),
     );
     request("SearchFilter", id);
-  }, [dispatchQuery, request, defaultFilter, id]);
+
+    log(Analytics.Event.FILTER_APPLY, searchFilterForAnalytics(defaultFilter));
+  }, [dispatchQuery, request, defaultFilter, id, log]);
 
   return (
     <TooltipProvider>
@@ -95,7 +103,7 @@ function DefaultFilterOptions({
         <Button
           ui_size="small"
           ui_variant="light"
-          className="h-full"
+          className="h-full p-2"
           onClick={onApplyToSearch}
         >
           <SearchIcon />
@@ -109,16 +117,23 @@ function PresetFilterOptions({ preset }: { preset: Search.Filter.Preset }) {
   const { request } = useTabDirection();
   const { remove } = useFilters();
   const { id, dispatch: dispatchQuery } = useQuerySearchFilter();
+  const { log } = useAnalytics();
 
+  /* User Event: 프리셋 필터를 검색 쿼리에 적용합니다. */
   const onApplyToSearch = useCallback(() => {
     dispatchQuery(producer["search-preset"]["search-query"](id, preset));
     request("SearchFilter", id);
-  }, [dispatchQuery, request, preset, id]);
 
+    log(Analytics.Event.FILTER_APPLY, searchFilterForAnalytics(preset));
+  }, [dispatchQuery, request, preset, id, log]);
+
+  /* User Event: 프리셋 필터를 삭제합니다. */
   const onRemovePreset = useCallback(() => {
     remove(preset.id);
     request("SearchFilter", id);
-  }, [remove, preset, request, id]);
+
+    log(Analytics.Event.DELETE_FILTER, searchFilterForAnalytics(preset));
+  }, [remove, preset, request, id, log]);
 
   return (
     <TooltipProvider>

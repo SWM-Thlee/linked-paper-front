@@ -7,6 +7,7 @@ import AuthorChip from "@/features/search/components/chip/author";
 import CategoryChip from "@/features/search/components/chip/category";
 import JournalChip from "@/features/search/components/chip/journal";
 import OthersChip from "@/features/search/components/chip/others";
+import Badge from "@/ui/badge";
 import LabelButton from "@/ui/label-button";
 import OriginLinkButton from "@/features/paper/components/origin";
 import PdfLinkButton from "@/features/paper/components/pdf";
@@ -15,7 +16,14 @@ import { Paper } from "@/features/paper/types";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import useSearchQueryInfo from "@/features/search/hooks/query/use-search-query-info";
+import { getSimilarityLevel } from "@/features/search/utils/similarity";
 import Abstraction from "./abstraction";
+
+function SimilarityBadge({ similarity }: { similarity: number }) {
+  const { label } = getSimilarityLevel(similarity);
+
+  return <Badge>{label} Similarity</Badge>;
+}
 
 export default function SearchResultItem(data: Paper.Scheme.ResultMetadata) {
   const { log } = useAnalytics();
@@ -73,8 +81,11 @@ export default function SearchResultItem(data: Paper.Scheme.ResultMetadata) {
   return (
     <div className="grid animate-slideUpAndFade grid-cols-[auto_10rem] gap-8">
       <div className="flex flex-1 flex-col gap-8">
-        <div className="text-headline-small text-light-onSurface dark:text-dark-onSurface">
-          {title}
+        <div className="flex flex-col items-start gap-2">
+          <SimilarityBadge similarity={similarity} />
+          <div className="text-headline-small text-light-onSurface dark:text-dark-onSurface">
+            {title}
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <AuthorChip
