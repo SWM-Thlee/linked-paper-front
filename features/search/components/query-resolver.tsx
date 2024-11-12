@@ -74,9 +74,13 @@ export default function SearchQueryResolver({
   const { dispatch } = useFilters();
   const initial = useRef(false);
 
+  useEffect(() => {
+    initial.current = false;
+  }, []);
+
   // 0. Filter가 없을 경우 Query에서 Filter를 불러옵니다.
   useEffect(() => {
-    if (filter || initial.current) return;
+    if (filter && initial.current) return;
 
     initial.current = true;
 

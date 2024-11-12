@@ -16,6 +16,7 @@ import Select, { SelectComponentItem } from "@/ui/select";
 import { Analytics } from "@/features/analytics/types";
 import useAnalytics from "@/features/analytics/hooks/use-analytics";
 import { searchFilterForAnalytics } from "@/features/analytics/utils/filter";
+import { queryToFilter } from "@/features/search/utils/query";
 import FilterSettings from "./filters/filter-settings";
 
 function Attributes({
@@ -38,23 +39,18 @@ function Attributes({
 
 function FilterChips() {
   const { filter } = useQuerySearchFilter();
+  const { query } = useSearchQueryInfo();
 
-  if (!filter) {
-    return (
-      <div className="flex flex-wrap items-center gap-4">
-        <LabelButton
-          ui_color="secondary"
-          ui_variant="light"
-          ui_size="small"
-          className="animate-pulse"
-        >
-          <FilterIcon ui_size="small" /> <span>Loading Filters...</span>
-        </LabelButton>
-      </div>
-    );
-  }
-
-  return <Attributes attributes={filter.attributes} />;
+  return (
+    <Attributes
+      attributes={
+        filter
+          ? filter.attributes
+          : // Server Render 시, Query에서 Filter를 불러옵니다.
+            queryToFilter({ ...query, id: "" }).attributes
+      }
+    />
+  );
 }
 
 function Sorting({

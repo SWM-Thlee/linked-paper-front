@@ -86,7 +86,7 @@ export function Title({ children, extra }: SettingsTabTitleProps) {
   if (!useIsClient() || !tab) return null;
 
   return createPortal(
-    <div className="flex animate-scaleIn items-center gap-2">
+    <div className="flex items-center gap-2">
       <TabButton
         ui_variant={tab.id === currentTabID ? "selected" : "default"}
         ref={refCallback}
