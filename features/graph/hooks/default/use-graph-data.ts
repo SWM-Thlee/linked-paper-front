@@ -3,7 +3,7 @@ import { produce } from "immer";
 
 import { Optional } from "@/utils/type-helper";
 import { Graph } from "../../types";
-import { makeExtensible } from "../../utils/graph";
+import { createLink, makeExtensible } from "../../utils/graph";
 
 type Node = Graph.Element.Node;
 type NodeID = Graph.Element.NodeID;
@@ -34,11 +34,11 @@ export default function useGraphData() {
   const graphDataRef = useRef(staticData);
 
   /* 데이터를 인덱싱합니다. */
-  const [nodes, setNodes] = useState<Map<NodeID, Node>>(new Map());
-  const [links, setLinks] = useState<Map<LinkID, Link>>(new Map());
-  const [rels, setRels] = useState<Map<NodeID, Set<NodeID>>>(new Map());
-  const [srcLinks, setSrcLinks] = useState<Map<NodeID, Set<Link>>>(new Map());
-  const [tarLinks, setTarLinks] = useState<Map<NodeID, Set<Link>>>(new Map());
+  const nodes = useRef<Map<NodeID, Node>>(new Map());
+  const links = useRef<Map<LinkID, Link>>(new Map());
+  const rels = useRef<Map<NodeID, Set<NodeID>>>(new Map());
+  const srcLinks = useRef<Map<NodeID, Set<Link>>>(new Map());
+  const tarLinks = useRef<Map<NodeID, Set<Link>>>(new Map());
 
   /* Node의 동적 데이터를 일회성으로 적용하기 위해 담아놓는 공간입니다. */
   const dynamicPatchers = useRef<Map<NodeID, Optional<Node>>>(new Map());
@@ -48,23 +48,20 @@ export default function useGraphData() {
     new Map(),
   );
 
-  const has = useCallback(
-    (elementID: NodeID | LinkID) => {
-      if (isNodeID(elementID)) return nodes.has(elementID);
-      return links.has(elementID);
-    },
-    [nodes, links],
-  );
+  const has = useCallback((elementID: NodeID | LinkID) => {
+    if (isNodeID(elementID)) return nodes.current.has(elementID);
+    return links.current.has(elementID);
+  }, []);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const get = useCallback(
     <T extends NodeID | LinkID>(
       elementID: T,
     ): T extends NodeID ? Node | undefined : Link | undefined => {
-      if (isNodeID(elementID)) return nodes.get(elementID) as any;
-      return links.get(elementID) as any;
+      if (isNodeID(elementID)) return nodes.current.get(elementID) as any;
+      return links.current.get(elementID) as any;
     },
-    [nodes, links],
+    [],
   );
 
   /**
@@ -76,39 +73,35 @@ export default function useGraphData() {
     return graphDataRef.current.nodes.find((node) => node.id === nodeID);
   }, []);
 
-  const getNodes = useCallback(
-    (filterFn: (node: Node) => boolean) => {
-      return [...nodes.values()].filter(filterFn);
-    },
-    [nodes],
-  );
+  const getNodes = useCallback((filterFn: (node: Node) => boolean) => {
+    return [...nodes.current.values()].filter(filterFn);
+  }, []);
 
   const hasLinkFromSource = useCallback(
-    (sourceNodeID: NodeID) => srcLinks.has(sourceNodeID),
-    [srcLinks],
+    (sourceNodeID: NodeID) => srcLinks.current.has(sourceNodeID),
+    [],
   );
 
   const hasLinkFromTarget = useCallback(
-    (targetNodeID: NodeID) => tarLinks.has(targetNodeID),
-    [tarLinks],
+    (targetNodeID: NodeID) => tarLinks.current.has(targetNodeID),
+    [],
   );
 
   const getLinksFromSource = useCallback(
-    (sourceNodeID: NodeID) => srcLinks.get(sourceNodeID),
-    [srcLinks],
+    (sourceNodeID: NodeID) => srcLinks.current.get(sourceNodeID),
+    [],
   );
 
   const getLinksFromTarget = useCallback(
-    (targetNodeID: NodeID) => tarLinks.get(targetNodeID),
-    [tarLinks],
+    (targetNodeID: NodeID) => tarLinks.current.get(targetNodeID),
+    [],
   );
 
-  const getConnectedNodes = useCallback(
-    (nodeID: NodeID) => rels.get(nodeID),
-    [rels],
-  );
+  const getConnectedNodes = useCallback((nodeID: NodeID) => {
+    return rels.current.get(nodeID);
+  }, []);
 
-  const upsertNode = useCallback(
+  const upsertInitialNode = useCallback(
     (node: Node, onUpsert?: (dynamic: Node) => void) => {
       setStaticData((previousData) =>
         produce(previousData, (draft) => {
@@ -143,16 +136,53 @@ export default function useGraphData() {
     [],
   );
 
-  const upsertLink = useCallback((link: Link) => {
-    setStaticData((previousData) =>
-      produce(previousData, (draft) => {
-        draft.links = draft.links.filter((prevLink) => link.id !== prevLink.id);
-        draft.links.push(link);
-      }),
-    );
-  }, []);
+  const upsertGraph = useCallback(
+    (fromNode: Node, toNode: Node, onUpsert?: (dynamic: Node) => void) => {
+      setStaticData((previousData) =>
+        produce(previousData, (draft) => {
+          // 1. Node를 새로 등록하거나 업데이트합니다.
+          draft.nodes = draft.nodes.filter(
+            (prevNode) => toNode.id !== prevNode.id,
+          );
 
-  const removeNode = useCallback((nodeID: NodeID) => {
+          const { fx, fy, x, y, vx, vy, ...staticNodeData } = toNode;
+
+          /* 동적인 데이터는 별도로 저장 후 Update Phase에서 적용합니다. */
+          dynamicPatchers.current.set(toNode.id, {
+            fx,
+            fy,
+            x,
+            y,
+            vx,
+            vy,
+          });
+
+          /* Upsert된 이후 Listener를 호출합니다. */
+          if (onUpsert) {
+            upsertListeners.current.set(
+              toNode.id,
+              (upsertListeners.current.get(toNode.id) ?? new Set()).add(
+                onUpsert,
+              ),
+            );
+          }
+
+          draft.nodes.push(staticNodeData);
+
+          // 2. Link를 새로 등록합니다.
+          draft.links = draft.links.filter(
+            (prevLink) => prevLink.targetID !== toNode.id,
+          );
+
+          const link = createLink(fromNode, toNode);
+          draft.links.push(link);
+        }),
+      );
+    },
+    [],
+  );
+
+  const removeGraph = useCallback((nodeID: NodeID) => {
     setStaticData((previousData) =>
       produce(previousData, (draft) => {
         draft.nodes = draft.nodes.filter((prevNode) => prevNode.id !== nodeID);
@@ -164,35 +194,64 @@ export default function useGraphData() {
     );
   }, []);
 
-  const removeLink = useCallback((linkID: LinkID) => {
-    setStaticData((previousData) =>
-      produce(previousData, (draft) => {
-        draft.links = draft.links.filter((prevLink) => prevLink.id !== linkID);
-      }),
-    );
-  }, []);
-
   /* Graph Data가 변경될 때마다 Indexing을 업데이트합니다. */
   useEffect(() => {
-    setNodes(
-      staticData.nodes.reduce(
-        (result, node) => result.set(node.id, node),
-        new Map<NodeID, Node>(),
-      ),
+    nodes.current = staticData.nodes.reduce(
+      (result, node) => result.set(node.id, node),
+      new Map<NodeID, Node>(),
     );
-  }, [staticData]);
 
-  useEffect(() => {
+    links.current = staticData.links.reduce(
+      (result, link) => result.set(link.id, link),
+      new Map<LinkID, Link>(),
+    );
+
+    srcLinks.current = staticData.links.reduce(
+      (result, link) =>
+        result.set(
+          link.source.id,
+          (result.get(link.source.id) ?? new Set()).add(link),
+        ),
+      new Map<NodeID, Set<Link>>(),
+    );
+
+    tarLinks.current = staticData.links.reduce(
+      (result, link) =>
+        result.set(
+          link.target.id,
+          (result.get(link.target.id) ?? new Set()).add(link),
+        ),
+      new Map<NodeID, Set<Link>>(),
+    );
+
+    rels.current = staticData.links.reduce((result, { source, target }) => {
+      result.set(
+        source.id,
+        (result.get(source.id) ?? new Set()).add(target.id),
+      );
+      result.set(
+        target.id,
+        (result.get(target.id) ?? new Set()).add(source.id),
+      );
+      return result;
+    }, new Map<NodeID, Set<NodeID>>());
+
+    const patch = makeExtensible<Data>(staticData);
+
     const nodeIndexes = new Map(
       graphDataRef.current.nodes.map((node) => [node.id, node]),
     );
 
-    const staticNodes = nodes;
+    const linkIndexes = new Map(
+      graphDataRef.current.links.map((link) => [link.id, link]),
+    );
 
     graphDataRef.current = makeExtensible({
       ...graphDataRef.current,
-      nodes: [...staticNodes.values()].map((prevNode) => {
+
+      nodes: patch.nodes.map((prevNode) => {
         const dynamicData = dynamicPatchers.current.get(prevNode.id);
+
         const result = makeExtensible({
           ...(nodeIndexes.get(prevNode.id) ?? {}),
           ...(dynamicData ?? {}),
@@ -212,61 +271,7 @@ export default function useGraphData() {
 
         return result as Node;
       }),
-    });
-  }, [nodes]);
 
-  useEffect(() => {
-    setLinks(
-      staticData.links.reduce(
-        (result, link) => result.set(link.id, link),
-        new Map<LinkID, Link>(),
-      ),
-    );
-
-    setSrcLinks(
-      staticData.links.reduce(
-        (result, link) =>
-          result.set(
-            link.source.id,
-            (result.get(link.source.id) ?? new Set()).add(link),
-          ),
-        new Map<NodeID, Set<Link>>(),
-      ),
-    );
-
-    setTarLinks(
-      staticData.links.reduce(
-        (result, link) =>
-          result.set(
-            link.target.id,
-            (result.get(link.target.id) ?? new Set()).add(link),
-          ),
-        new Map<NodeID, Set<Link>>(),
-      ),
-    );
-
-    setRels(
-      staticData.links.reduce((result, { source, target }) => {
-        result.set(
-          source.id,
-          (result.get(source.id) ?? new Set()).add(target.id),
-        );
-        result.set(
-          target.id,
-          (result.get(target.id) ?? new Set()).add(source.id),
-        );
-        return result;
-      }, new Map<NodeID, Set<NodeID>>()),
-    );
-
-    const patch = makeExtensible<Data>(staticData);
-
-    const linkIndexes = new Map(
-      graphDataRef.current.links.map((link) => [link.id, link]),
-    );
-
-    graphDataRef.current = makeExtensible({
-      ...graphDataRef.current,
       links: patch.links.map((prevLink) => ({
         ...(linkIndexes.get(prevLink.id) ?? {}),
         ...prevLink,
@@ -285,9 +290,8 @@ export default function useGraphData() {
     getNodeDynamicData,
     has,
     get,
-    upsertNode,
-    upsertLink,
-    removeNode,
-    removeLink,
+    upsertInitialNode,
+    upsertGraph,
+    removeGraph,
   };
 }

@@ -24,11 +24,7 @@ import { Graph } from "@/features/graph/types";
 import { Analytics } from "@/features/analytics/types";
 import { merge } from "@/utils/merge";
 import { defaultRenderer } from "@/features/graph/utils/default-renderer";
-import {
-  createChildNode,
-  createLink,
-  createRootNode,
-} from "@/features/graph/utils/graph";
+import { createChildNode, createRootNode } from "@/features/graph/utils/graph";
 import { isChildNode, isRootNode } from "@/features/graph/utils/validator";
 
 import Feedback from "@/features/feedback/components/feedback";
@@ -66,10 +62,9 @@ export default function FlowerGraphView() {
   const {
     data,
     get,
-    upsertNode,
-    upsertLink,
-    removeNode,
-    removeLink,
+    upsertInitialNode,
+    upsertGraph,
+    removeGraph,
     getNodes,
     getLinksFromTarget,
     getConnectedNodes,
@@ -416,10 +411,10 @@ export default function FlowerGraphView() {
   useEffect(() => {
     if (isFlowerLoading(initial) || isFlowerLoaded(initial)) return;
 
-    upsertNode({ ...createRootNode(initial), fx: 0, fy: 0 }, () =>
+    upsertInitialNode({ ...createRootNode(initial), fx: 0, fy: 0 }, () =>
       loadFlower(initial),
     );
-  }, [initial, loadFlower, upsertNode, isFlowerLoading, isFlowerLoaded]);
+  }, [initial, loadFlower, upsertInitialNode, isFlowerLoading, isFlowerLoaded]);
 
   /* Event: Flower를 불러오는 중 Error 발생 */
   useEffect(() => {
@@ -465,12 +460,10 @@ export default function FlowerGraphView() {
           )
           .forEach((childPaper) => {
             const childNode = createChildNode(childPaper.id, currentNode.id);
-            const link = createLink(currentNode, childNode);
 
             setSimilarity(paper.id, childPaper.id, childPaper.similarity);
+            upsertGraph(currentNode, childNode);
             upsertPaper(childPaper);
-            upsertNode(childNode);
-            upsertLink(link);
           });
 
         select(currentNode.id, true);
@@ -484,58 +477,51 @@ export default function FlowerGraphView() {
           throw new Error("Error from Loading Flower: Parent node is invalid.");
 
         const rootNode = createRootNode(paper.id);
-        const rootLink = createLink(parentNode, rootNode);
 
-        /* 위치 계산 */
         const dx = b.x! - a.x!;
         const dy = b.y! - a.y!;
 
-        // 벡터의 길이 계산
         const length = Math.sqrt(dx * dx + dy * dy);
 
-        // 방향 벡터를 distance만큼 이동
         const locX = a.x! + (2400 * dx) / length;
         const locY = a.y! + (2400 * dy) / length;
 
-        upsertNode(rootNode, (dynamic) => {
+        // Root Node를 새로 생성합니다.
+        upsertGraph(parentNode, rootNode, (dynamic) => {
           dynamic.fx = locX;
           dynamic.fy = locY;
 
           select(rootNode.id, true);
-        });
-        upsertLink(rootLink);
 
-        removeNode(currentNode.id);
-        getLinksFromTarget(currentNode.id)?.forEach((link) =>
-          removeLink(link.id),
-        );
+          /* Child Node 중복 제거 및 등록 */
+          childData
+            .filter(
+              (child) =>
+                !(
+                  hasPaper(child.id) ||
+                  hasPaperFromSource(
+                    Paper.Scheme.Source.ARXIV,
+                    child.extraID.arxiv,
+                  )
+                ),
+            )
+            .forEach((childPaper) => {
+              const childNode = createChildNode(childPaper.id, rootNode.id);
+
+              setSimilarity(paper.id, childPaper.id, childPaper.similarity);
+              upsertPaper(childPaper);
+              upsertGraph(rootNode, {
+                ...childNode,
+                x: locX,
+                y: locY,
+              });
+            });
+        });
+
         upsertPaper(paper);
 
-        /* Child Node 중복 제거 및 등록 */
-        childData
-          .filter(
-            (child) =>
-              !(
-                hasPaper(child.id) ||
-                hasPaperFromSource(
-                  Paper.Scheme.Source.ARXIV,
-                  child.extraID.arxiv,
-                )
-              ),
-          )
-          .forEach((childPaper) => {
-            const childNode = createChildNode(childPaper.id, rootNode.id);
-            const link = createLink(rootNode, childNode);
-
-            setSimilarity(paper.id, childPaper.id, childPaper.similarity);
-            upsertPaper(childPaper);
-            upsertLink(link);
-            upsertNode({
-              ...childNode,
-              x: locX,
-              y: locY,
-            });
-          });
+        // 기존 Child Node 및 Link를 제거합니다.
+        removeGraph(currentNode.id);
       } else {
         throw new Error(
           "Error from Loading Flower: Target Node is not supported for flowering.",
@@ -552,11 +538,9 @@ export default function FlowerGraphView() {
     hasPaperFromSource,
     onFlowerLoaded,
     select,
-    upsertNode,
-    upsertLink,
-    removeNode,
-    removeLink,
     upsertPaper,
+    upsertGraph,
+    removeGraph,
   ]);
 
   /* Event: 한 쪽이 Selected 상태인 Root-Root Link Click 시 Select되지 않은 쪽을 Select합니다. */
