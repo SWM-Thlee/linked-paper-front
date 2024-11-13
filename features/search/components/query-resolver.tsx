@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Search } from "@/features/search/types";
 import useFilters from "@/features/filter/hooks/use-filters";
 import usePrevious from "@/hooks/use-previous";
+import { STORAGE_KEY } from "@/features/filter/stores/filter";
 import {
   queryAtom,
   queryFilterIdAtom,
@@ -76,6 +77,11 @@ export default function SearchQueryResolver({
 
   useEffect(() => {
     initial.current = false;
+
+    return () => {
+      if (typeof sessionStorage === "undefined") return;
+      sessionStorage.removeItem(STORAGE_KEY);
+    };
   }, []);
 
   // 0. Filter가 없을 경우 Query에서 Filter를 불러옵니다.
